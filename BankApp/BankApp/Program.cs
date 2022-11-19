@@ -1,17 +1,21 @@
 using BankApp.Data;
+using BankApp.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using BankApp.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var DBconnectionString = builder.Configuration.GetConnectionString("LoansComparer");
+builder.Services.AddDbContext<LoansComparerDBContext>(options =>
+    options.UseSqlServer(DBconnectionString));
+builder.Services.AddTransient<IClientRepository, ClientRepository>();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddEntityFrameworkStores<LoansComparerDBContext>();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();

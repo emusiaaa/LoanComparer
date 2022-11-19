@@ -1,4 +1,6 @@
-﻿using BankApp.Models;
+﻿using BankApp.Data;
+using BankApp.Models;
+using BankApp.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -7,10 +9,13 @@ namespace BankApp.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IClientRepository _clientRepository;
 
-        public HomeController(ILogger<HomeController> logger)
+       
+        public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository)
         {
             _logger = logger;
+            _clientRepository = clientRepository;
         }
 
         public IActionResult Index()
