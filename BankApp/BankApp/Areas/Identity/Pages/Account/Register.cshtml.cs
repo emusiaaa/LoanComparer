@@ -75,7 +75,7 @@ namespace BankApp.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            [Name]
+            //[]
             [Display(Name = "Name")]
             public string Name { get; set; }
 
