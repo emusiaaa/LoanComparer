@@ -2,6 +2,19 @@
   "version": 3,
   "targets": {
     "net6.0": {
+      "AdvancedStringBuilder/0.1.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/AdvancedStringBuilder.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/AdvancedStringBuilder.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Azure.Core/1.24.0": {
         "type": "package",
         "dependencies": {
@@ -55,6 +68,89 @@
         },
         "runtime": {
           "lib/net6.0/Humanizer.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "JavaScriptEngineSwitcher.Core/3.19.0": {
+        "type": "package",
+        "dependencies": {
+          "AdvancedStringBuilder": "0.1.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/JavaScriptEngineSwitcher.Core.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/JavaScriptEngineSwitcher.Core.dll": {
+            "related": ".xml"
+          }
+        },
+        "resource": {
+          "lib/netstandard2.0/ru-RU/JavaScriptEngineSwitcher.Core.resources.dll": {
+            "locale": "ru-RU"
+          }
+        }
+      },
+      "JavaScriptEngineSwitcher.Extensions.MsDependencyInjection/3.19.0": {
+        "type": "package",
+        "dependencies": {
+          "JavaScriptEngineSwitcher.Core": "3.19.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "2.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/JavaScriptEngineSwitcher.Extensions.MsDependencyInjection.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/JavaScriptEngineSwitcher.Extensions.MsDependencyInjection.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "JavaScriptEngineSwitcher.V8/3.20.7": {
+        "type": "package",
+        "dependencies": {
+          "AdvancedStringBuilder": "0.1.0",
+          "JavaScriptEngineSwitcher.Core": "3.19.0",
+          "Microsoft.ClearScript.V8": "7.3.5"
+        },
+        "compile": {
+          "lib/net5.0/JavaScriptEngineSwitcher.V8.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net5.0/JavaScriptEngineSwitcher.V8.dll": {
+            "related": ".xml"
+          }
+        },
+        "resource": {
+          "lib/net5.0/ru-RU/JavaScriptEngineSwitcher.V8.resources.dll": {
+            "locale": "ru-RU"
+          }
+        }
+      },
+      "JavaScriptEngineSwitcher.V8.Native.win-x64/3.20.7": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.ClearScript.V8.Native.win-x64": "7.3.5"
+        }
+      },
+      "JSPool/4.0.0": {
+        "type": "package",
+        "dependencies": {
+          "JavaScriptEngineSwitcher.Core": "3.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/JSPool.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/JSPool.dll": {
             "related": ".xml"
           }
         }
@@ -159,6 +255,62 @@
         "runtime": {
           "lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll": {
             "related": ".xml"
+          }
+        }
+      },
+      "Microsoft.ClearScript.Core/7.3.5": {
+        "type": "package",
+        "compile": {
+          "lib/net5.0/ClearScript.Core.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net5.0/ClearScript.Core.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Microsoft.ClearScript.V8/7.3.5": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.ClearScript.Core": "7.3.5",
+          "Microsoft.ClearScript.V8.ICUData": "7.3.5",
+          "Newtonsoft.Json": "13.0.1"
+        },
+        "compile": {
+          "lib/net5.0/ClearScript.V8.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net5.0/ClearScript.V8.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Microsoft.ClearScript.V8.ICUData/7.3.5": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard1.0/ClearScript.V8.ICUData.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard1.0/ClearScript.V8.ICUData.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Microsoft.ClearScript.V8.Native.win-x64/7.3.5": {
+        "type": "package",
+        "build": {
+          "build/Microsoft.ClearScript.V8.Native.win-x64.props": {}
+        },
+        "runtimeTargets": {
+          "runtimes/win-x64/native/ClearScriptV8.win-x64.dll": {
+            "assetType": "native",
+            "rid": "win-x64"
           }
         }
       },
@@ -835,6 +987,77 @@
           "lib/netstandard2.0/Mono.TextTemplating.dll": {}
         }
       },
+      "Newtonsoft.Json/13.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "React.AspNet/5.2.12": {
+        "type": "package",
+        "dependencies": {
+          "React.AspNet.Middleware": "5.2.12",
+          "React.Core": "5.2.12"
+        },
+        "compile": {
+          "lib/netcoreapp3.0/React.AspNet.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netcoreapp3.0/React.AspNet.dll": {
+            "related": ".xml"
+          }
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
+      "React.AspNet.Middleware/5.2.12": {
+        "type": "package",
+        "dependencies": {
+          "React.Core": "5.2.12"
+        },
+        "compile": {
+          "lib/netcoreapp3.0/React.AspNet.Middleware.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/netcoreapp3.0/React.AspNet.Middleware.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
+      "React.Core/5.2.12": {
+        "type": "package",
+        "dependencies": {
+          "JSPool": "4.0.0",
+          "JavaScriptEngineSwitcher.Core": "3.1.0",
+          "Microsoft.Extensions.DependencyModel": "2.1.0",
+          "Newtonsoft.Json": "12.0.3"
+        },
+        "compile": {
+          "lib/netstandard2.0/React.Core.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/React.Core.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
       "System.Buffers/4.5.1": {
         "type": "package",
         "compile": {
@@ -1328,6 +1551,25 @@
     }
   },
   "libraries": {
+    "AdvancedStringBuilder/0.1.0": {
+      "sha512": "IbN3r5whlJvi8MhCDPVpIb+NVScyUcKSdcJZrnoXFDyzPDISl3AbWouNBYIHRdZdfGuzqCQEhM1vkxbIKqQVaQ==",
+      "type": "package",
+      "path": "advancedstringbuilder/0.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "advancedstringbuilder.0.1.0.nupkg.sha512",
+        "advancedstringbuilder.nuspec",
+        "lib/net40-client/AdvancedStringBuilder.dll",
+        "lib/net40-client/AdvancedStringBuilder.xml",
+        "lib/net45/AdvancedStringBuilder.dll",
+        "lib/net45/AdvancedStringBuilder.xml",
+        "lib/netstandard1.0/AdvancedStringBuilder.dll",
+        "lib/netstandard1.0/AdvancedStringBuilder.xml",
+        "lib/netstandard2.0/AdvancedStringBuilder.dll",
+        "lib/netstandard2.0/AdvancedStringBuilder.xml"
+      ]
+    },
     "Azure.Core/1.24.0": {
       "sha512": "+/qI1j2oU1S4/nvxb2k/wDsol00iGf1AyJX5g3epV7eOpQEP/2xcgh/cxgKMeFgn3U2fmgSiBnQZdkV+l5y0Uw==",
       "type": "package",
@@ -1382,6 +1624,120 @@
         "lib/netstandard2.0/Humanizer.dll",
         "lib/netstandard2.0/Humanizer.xml",
         "logo.png"
+      ]
+    },
+    "JavaScriptEngineSwitcher.Core/3.19.0": {
+      "sha512": "cFZG0+8OzRP7xDgmJpVwAA9V04Y3uWlAyjP+wx801crLfZr/nw1ohJtH8kBK+m9CIUHfyR1iw2b2F8q6WW2O4w==",
+      "type": "package",
+      "path": "javascriptengineswitcher.core/3.19.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.txt",
+        "advanced-string-builder-license.txt",
+        "icon.png",
+        "javascriptengineswitcher.core.3.19.0.nupkg.sha512",
+        "javascriptengineswitcher.core.nuspec",
+        "lib/net40-client/JavaScriptEngineSwitcher.Core.dll",
+        "lib/net40-client/JavaScriptEngineSwitcher.Core.xml",
+        "lib/net40-client/ru-RU/JavaScriptEngineSwitcher.Core.resources.dll",
+        "lib/net45/JavaScriptEngineSwitcher.Core.dll",
+        "lib/net45/JavaScriptEngineSwitcher.Core.xml",
+        "lib/net45/ru-RU/JavaScriptEngineSwitcher.Core.resources.dll",
+        "lib/netstandard1.3/JavaScriptEngineSwitcher.Core.dll",
+        "lib/netstandard1.3/JavaScriptEngineSwitcher.Core.xml",
+        "lib/netstandard1.3/ru-RU/JavaScriptEngineSwitcher.Core.resources.dll",
+        "lib/netstandard2.0/JavaScriptEngineSwitcher.Core.dll",
+        "lib/netstandard2.0/JavaScriptEngineSwitcher.Core.xml",
+        "lib/netstandard2.0/ru-RU/JavaScriptEngineSwitcher.Core.resources.dll",
+        "readme.txt"
+      ]
+    },
+    "JavaScriptEngineSwitcher.Extensions.MsDependencyInjection/3.19.0": {
+      "sha512": "0DbdX2JnVhfP3zcdrW679i+rNCn7Lv1ruIrKQywxr7YfIZpRyXM6gBa4owKA2JLwbr72U1YdtTGe2X5E3oowCw==",
+      "type": "package",
+      "path": "javascriptengineswitcher.extensions.msdependencyinjection/3.19.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.txt",
+        "icon.png",
+        "javascriptengineswitcher.extensions.msdependencyinjection.3.19.0.nupkg.sha512",
+        "javascriptengineswitcher.extensions.msdependencyinjection.nuspec",
+        "lib/net45/JavaScriptEngineSwitcher.Extensions.MsDependencyInjection.dll",
+        "lib/net45/JavaScriptEngineSwitcher.Extensions.MsDependencyInjection.xml",
+        "lib/netstandard1.3/JavaScriptEngineSwitcher.Extensions.MsDependencyInjection.dll",
+        "lib/netstandard1.3/JavaScriptEngineSwitcher.Extensions.MsDependencyInjection.xml",
+        "lib/netstandard2.0/JavaScriptEngineSwitcher.Extensions.MsDependencyInjection.dll",
+        "lib/netstandard2.0/JavaScriptEngineSwitcher.Extensions.MsDependencyInjection.xml",
+        "readme.txt"
+      ]
+    },
+    "JavaScriptEngineSwitcher.V8/3.20.7": {
+      "sha512": "RH4dzdqen/MyL2roFACMHf0IzY+d5fETq6u8eX/ieydPOm2XDU1b010kIzoamcylrXdF2LiaiYcYHeL1F35yGA==",
+      "type": "package",
+      "path": "javascriptengineswitcher.v8/3.20.7",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.txt",
+        "advanced-string-builder-license.txt",
+        "clearscript-license.txt",
+        "icon.png",
+        "javascriptengineswitcher.v8.3.20.7.nupkg.sha512",
+        "javascriptengineswitcher.v8.nuspec",
+        "lib/net45/JavaScriptEngineSwitcher.V8.dll",
+        "lib/net45/JavaScriptEngineSwitcher.V8.xml",
+        "lib/net45/ru-RU/JavaScriptEngineSwitcher.V8.resources.dll",
+        "lib/net471/JavaScriptEngineSwitcher.V8.dll",
+        "lib/net471/JavaScriptEngineSwitcher.V8.xml",
+        "lib/net471/ru-RU/JavaScriptEngineSwitcher.V8.resources.dll",
+        "lib/net5.0/JavaScriptEngineSwitcher.V8.dll",
+        "lib/net5.0/JavaScriptEngineSwitcher.V8.xml",
+        "lib/net5.0/ru-RU/JavaScriptEngineSwitcher.V8.resources.dll",
+        "lib/netcoreapp3.1/JavaScriptEngineSwitcher.V8.dll",
+        "lib/netcoreapp3.1/JavaScriptEngineSwitcher.V8.xml",
+        "lib/netcoreapp3.1/ru-RU/JavaScriptEngineSwitcher.V8.resources.dll",
+        "lib/netstandard2.1/JavaScriptEngineSwitcher.V8.dll",
+        "lib/netstandard2.1/JavaScriptEngineSwitcher.V8.xml",
+        "lib/netstandard2.1/ru-RU/JavaScriptEngineSwitcher.V8.resources.dll",
+        "readme.txt",
+        "v8-license.txt"
+      ]
+    },
+    "JavaScriptEngineSwitcher.V8.Native.win-x64/3.20.7": {
+      "sha512": "mAjMkZfuq7OqzG8GbDtFFfedLXvOi59xfeRz429Owz8g3tPnIeurAEMADjBAXdN2MLZCfkRKZbY4eatVSZBKeg==",
+      "type": "package",
+      "path": "javascriptengineswitcher.v8.native.win-x64/3.20.7",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.txt",
+        "clearscript-license.txt",
+        "icon.png",
+        "javascriptengineswitcher.v8.native.win-x64.3.20.7.nupkg.sha512",
+        "javascriptengineswitcher.v8.native.win-x64.nuspec",
+        "readme.txt",
+        "v8-license.txt"
+      ]
+    },
+    "JSPool/4.0.0": {
+      "sha512": "r+AeQ9R50HxU+HLqASYvZz6Mvg7RmZwEnCVhQ+xGYVexFjYYqlkW6by9HaflGaHjy+/28YLbb3qxDLRJ3AbZGQ==",
+      "type": "package",
+      "path": "jspool/4.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "jspool.4.0.0.nupkg.sha512",
+        "jspool.nuspec",
+        "lib/net40-client/JSPool.dll",
+        "lib/net40-client/JSPool.xml",
+        "lib/net45/JSPool.dll",
+        "lib/net45/JSPool.xml",
+        "lib/netstandard1.3/JSPool.dll",
+        "lib/netstandard1.3/JSPool.xml",
+        "lib/netstandard2.0/JSPool.dll",
+        "lib/netstandard2.0/JSPool.xml"
       ]
     },
     "Microsoft.AspNetCore.Cryptography.Internal/6.0.10": {
@@ -1593,6 +1949,109 @@
         "ref/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll",
         "useSharedDesignerContext.txt",
         "version.txt"
+      ]
+    },
+    "Microsoft.ClearScript.Core/7.3.5": {
+      "sha512": "vMYhLXJQrudkVocM23MMx3vWiT5szjymN4Afka+1WmGYL/DAue/DqkKQq37uz/4TlS++mv7V65OgRSo5wr0ZWQ==",
+      "type": "package",
+      "path": "microsoft.clearscript.core/7.3.5",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "License.txt",
+        "images/ClearScript.png",
+        "lib/net45/ClearScript.Core.dll",
+        "lib/net45/ClearScript.Core.xml",
+        "lib/net471/ClearScript.Core.dll",
+        "lib/net471/ClearScript.Core.xml",
+        "lib/net5.0/ClearScript.Core.dll",
+        "lib/net5.0/ClearScript.Core.xml",
+        "lib/netcoreapp3.1/ClearScript.Core.dll",
+        "lib/netcoreapp3.1/ClearScript.Core.xml",
+        "lib/netstandard2.1/ClearScript.Core.dll",
+        "lib/netstandard2.1/ClearScript.Core.xml",
+        "lib/uap10.0/ClearScript.Core.dll",
+        "lib/uap10.0/ClearScript.Core.xml",
+        "licenses/ClearScript/License.txt",
+        "licenses/V8/LICENSE",
+        "licenses/V8/LICENSE.fdlibm",
+        "licenses/V8/LICENSE.strongtalk",
+        "licenses/V8/LICENSE.v8",
+        "microsoft.clearscript.core.7.3.5.nupkg.sha512",
+        "microsoft.clearscript.core.nuspec"
+      ]
+    },
+    "Microsoft.ClearScript.V8/7.3.5": {
+      "sha512": "u0jIL8FQTy4proJr+yOSfrHpRE9ksLy1qh7Yd1q9gj8O1H0tzB8pREevwjiWnCRRi+AdcryQbrA2yG4TNGI88w==",
+      "type": "package",
+      "path": "microsoft.clearscript.v8/7.3.5",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "License.txt",
+        "images/ClearScript.png",
+        "lib/net45/ClearScript.V8.dll",
+        "lib/net45/ClearScript.V8.xml",
+        "lib/net471/ClearScript.V8.dll",
+        "lib/net471/ClearScript.V8.xml",
+        "lib/net5.0/ClearScript.V8.dll",
+        "lib/net5.0/ClearScript.V8.xml",
+        "lib/netcoreapp3.1/ClearScript.V8.dll",
+        "lib/netcoreapp3.1/ClearScript.V8.xml",
+        "lib/netstandard2.1/ClearScript.V8.dll",
+        "lib/netstandard2.1/ClearScript.V8.xml",
+        "lib/uap10.0/ClearScript.V8.dll",
+        "lib/uap10.0/ClearScript.V8.xml",
+        "licenses/ClearScript/License.txt",
+        "licenses/V8/LICENSE",
+        "licenses/V8/LICENSE.fdlibm",
+        "licenses/V8/LICENSE.strongtalk",
+        "licenses/V8/LICENSE.v8",
+        "microsoft.clearscript.v8.7.3.5.nupkg.sha512",
+        "microsoft.clearscript.v8.nuspec"
+      ]
+    },
+    "Microsoft.ClearScript.V8.ICUData/7.3.5": {
+      "sha512": "+uRBM08yE31cqpAZHQFEUxCmHRlDJT3F76YqdQWwChPyfLbBOEkiiZvjkwfP5Cvez8ONs5nJ9JK2wlEnhHX4Hw==",
+      "type": "package",
+      "path": "microsoft.clearscript.v8.icudata/7.3.5",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "License.txt",
+        "images/ClearScript.png",
+        "lib/netstandard1.0/ClearScript.V8.ICUData.dll",
+        "lib/netstandard1.0/ClearScript.V8.ICUData.xml",
+        "licenses/ClearScript/License.txt",
+        "licenses/V8/LICENSE",
+        "licenses/V8/LICENSE.fdlibm",
+        "licenses/V8/LICENSE.strongtalk",
+        "licenses/V8/LICENSE.v8",
+        "microsoft.clearscript.v8.icudata.7.3.5.nupkg.sha512",
+        "microsoft.clearscript.v8.icudata.nuspec"
+      ]
+    },
+    "Microsoft.ClearScript.V8.Native.win-x64/7.3.5": {
+      "sha512": "LOe/o6lUb6v+sq8t+Q2X69pI54w+Mij7YmKfIq8MjtrbC0kzLilzOPfnDeJHAXFXBT3EfPf/Bz5TWmlBZbOH0A==",
+      "type": "package",
+      "path": "microsoft.clearscript.v8.native.win-x64/7.3.5",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "License.txt",
+        "build/Microsoft.ClearScript.V8.Native.win-x64.props",
+        "images/ClearScript.png",
+        "licenses/ClearScript/License.txt",
+        "licenses/V8/LICENSE",
+        "licenses/V8/LICENSE.fdlibm",
+        "licenses/V8/LICENSE.strongtalk",
+        "licenses/V8/LICENSE.v8",
+        "microsoft.clearscript.v8.native.win-x64.7.3.5.nupkg.sha512",
+        "microsoft.clearscript.v8.native.win-x64.nuspec",
+        "runtimes/win-x64/native/ClearScriptV8.win-x64.dll",
+        "tools/Install.ps1",
+        "tools/Uninstall.ps1"
       ]
     },
     "Microsoft.CSharp/4.5.0": {
@@ -2566,6 +3025,88 @@
         "lib/netstandard2.0/Mono.TextTemplating.dll",
         "mono.texttemplating.2.2.1.nupkg.sha512",
         "mono.texttemplating.nuspec"
+      ]
+    },
+    "Newtonsoft.Json/13.0.1": {
+      "sha512": "ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A==",
+      "type": "package",
+      "path": "newtonsoft.json/13.0.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.md",
+        "lib/net20/Newtonsoft.Json.dll",
+        "lib/net20/Newtonsoft.Json.xml",
+        "lib/net35/Newtonsoft.Json.dll",
+        "lib/net35/Newtonsoft.Json.xml",
+        "lib/net40/Newtonsoft.Json.dll",
+        "lib/net40/Newtonsoft.Json.xml",
+        "lib/net45/Newtonsoft.Json.dll",
+        "lib/net45/Newtonsoft.Json.xml",
+        "lib/netstandard1.0/Newtonsoft.Json.dll",
+        "lib/netstandard1.0/Newtonsoft.Json.xml",
+        "lib/netstandard1.3/Newtonsoft.Json.dll",
+        "lib/netstandard1.3/Newtonsoft.Json.xml",
+        "lib/netstandard2.0/Newtonsoft.Json.dll",
+        "lib/netstandard2.0/Newtonsoft.Json.xml",
+        "newtonsoft.json.13.0.1.nupkg.sha512",
+        "newtonsoft.json.nuspec",
+        "packageIcon.png"
+      ]
+    },
+    "React.AspNet/5.2.12": {
+      "sha512": "98zc2aIyA4gef24O+NbdODnpXTSq9VPYgT53JxFC0U5iptW5tmct2OghbXyJyMZrh7J68V9pxhdo1y7lWmMGsQ==",
+      "type": "package",
+      "path": "react.aspnet/5.2.12",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netcoreapp3.0/React.AspNet.dll",
+        "lib/netcoreapp3.0/React.AspNet.xml",
+        "lib/netstandard2.0/React.AspNet.dll",
+        "lib/netstandard2.0/React.AspNet.xml",
+        "logo_64.png",
+        "react.aspnet.5.2.12.nupkg.sha512",
+        "react.aspnet.nuspec"
+      ]
+    },
+    "React.AspNet.Middleware/5.2.12": {
+      "sha512": "pY6Ux6Xy8/y5kP4apskU7sMf4ZjBoMipSsIwH/k0XYleBjCPGi+MjSMrE2T1CGHr2eKqRG5ahWPmC6VPKzwKJQ==",
+      "type": "package",
+      "path": "react.aspnet.middleware/5.2.12",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netcoreapp3.0/React.AspNet.Middleware.dll",
+        "lib/netcoreapp3.0/React.AspNet.Middleware.pdb",
+        "lib/netcoreapp3.0/React.AspNet.Middleware.xml",
+        "lib/netstandard2.0/React.AspNet.Middleware.dll",
+        "lib/netstandard2.0/React.AspNet.Middleware.pdb",
+        "lib/netstandard2.0/React.AspNet.Middleware.xml",
+        "logo_64.png",
+        "react.aspnet.middleware.5.2.12.nupkg.sha512",
+        "react.aspnet.middleware.nuspec"
+      ]
+    },
+    "React.Core/5.2.12": {
+      "sha512": "UqaxnMqVhQDLLNkIR4cNwJAR0lxdT8IwYl6iqXvw9+60uEcOXtbZIlD5TIHVsrenBaovNNsqJwE1ZqB/vEo+lg==",
+      "type": "package",
+      "path": "react.core/5.2.12",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net40/React.Core.dll",
+        "lib/net40/React.Core.pdb",
+        "lib/net40/React.Core.xml",
+        "lib/net45/React.Core.dll",
+        "lib/net45/React.Core.pdb",
+        "lib/net45/React.Core.xml",
+        "lib/netstandard2.0/React.Core.dll",
+        "lib/netstandard2.0/React.Core.pdb",
+        "lib/netstandard2.0/React.Core.xml",
+        "logo_64.png",
+        "react.core.5.2.12.nupkg.sha512",
+        "react.core.nuspec"
       ]
     },
     "System.Buffers/4.5.1": {
@@ -3943,34 +4484,33 @@
   },
   "projectFileDependencyGroups": {
     "net6.0": [
+      "JavaScriptEngineSwitcher.Extensions.MsDependencyInjection >= 3.19.0",
+      "JavaScriptEngineSwitcher.V8 >= 3.20.7",
+      "JavaScriptEngineSwitcher.V8.Native.win-x64 >= 3.20.7",
       "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore >= 6.0.10",
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 6.0.10",
       "Microsoft.AspNetCore.Identity.UI >= 6.0.1",
       "Microsoft.EntityFrameworkCore >= 7.0.0",
       "Microsoft.EntityFrameworkCore.Design >= 7.0.0",
       "Microsoft.EntityFrameworkCore.SqlServer >= 7.0.0",
-      "Microsoft.EntityFrameworkCore.Tools >= 6.0.10"
+      "Microsoft.EntityFrameworkCore.Tools >= 6.0.10",
+      "React.AspNet >= 5.2.12"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\rut30\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\agata\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\rut30\\Desktop\\LoansComparer\\BankApp\\BankApp\\BankApp.csproj",
+      "projectUniqueName": "C:\\Users\\agata\\Desktop\\LoansComparer\\BankApp\\BankApp\\BankApp.csproj",
       "projectName": "BankApp",
-      "projectPath": "C:\\Users\\rut30\\Desktop\\LoansComparer\\BankApp\\BankApp\\BankApp.csproj",
-      "packagesPath": "C:\\Users\\rut30\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\rut30\\Desktop\\LoansComparer\\BankApp\\BankApp\\obj\\",
+      "projectPath": "C:\\Users\\agata\\Desktop\\LoansComparer\\BankApp\\BankApp\\BankApp.csproj",
+      "packagesPath": "C:\\Users\\agata\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\agata\\Desktop\\LoansComparer\\BankApp\\BankApp\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\rut30\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\agata\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -3996,6 +4536,18 @@
       "net6.0": {
         "targetAlias": "net6.0",
         "dependencies": {
+          "JavaScriptEngineSwitcher.Extensions.MsDependencyInjection": {
+            "target": "Package",
+            "version": "[3.19.0, )"
+          },
+          "JavaScriptEngineSwitcher.V8": {
+            "target": "Package",
+            "version": "[3.20.7, )"
+          },
+          "JavaScriptEngineSwitcher.V8.Native.win-x64": {
+            "target": "Package",
+            "version": "[3.20.7, )"
+          },
           "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
             "target": "Package",
             "version": "[6.0.10, )"
@@ -4025,6 +4577,10 @@
           "Microsoft.EntityFrameworkCore.Tools": {
             "target": "Package",
             "version": "[6.0.10, )"
+          },
+          "React.AspNet": {
+            "target": "Package",
+            "version": "[5.2.12, )"
           }
         },
         "imports": [
@@ -4046,7 +4602,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.402\\RuntimeIdentifierGraph.json"
       }
     }
   }
