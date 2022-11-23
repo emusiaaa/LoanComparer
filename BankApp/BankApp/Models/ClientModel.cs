@@ -8,20 +8,17 @@ using System.Runtime.InteropServices;
 
 namespace BankApp.Models
 {
-    [Table("Clients")]
-    public class ClientModel
+    
+    public class ClientModel: IdentityUser
     {
-        [Key]
-        public int ClientId { get; set; }
+        [Required(ErrorMessage = "Pole Imię jest wymagane.")]
         [DisplayName("Imię")]
-        //[Required(ErrorMessage = "Pole Imię jest wymagane.")]
+        public string UserFirstName { get; set; }
 
-        public string ClientFirstName { get; set; }
+        [Required(ErrorMessage = "Pole Nazwisko jest wymagane.")]
         [DisplayName("Nazwisko")]
-        //[Required(ErrorMessage = "Pole Nazwisko jest wymagane.")]
-        public string ClientLastName { get; set; }
-        [DisplayName("Email")]
-        public string ClientEmail { get; set; }
+        public string UserLastName { get; set; }
+
         [DisplayName("Numer dokumentu tożsamości")]
         public string ClientGovernmentIDNumber { get; set; }
         [DisplayName("Rodzaj dokumentu tożsamości (dowód/paszport)")]

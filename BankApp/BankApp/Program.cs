@@ -14,7 +14,7 @@ builder.Services.AddDbContext<LoansComparerDBContext>(options =>
 builder.Services.AddTransient<IClientRepository, ClientRepository>();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<ClientModel>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<LoansComparerDBContext>();
 builder.Services.AddControllersWithViews();
 

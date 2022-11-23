@@ -4,12 +4,12 @@ namespace BankApp.Repositories
 {
     public interface IClientRepository
     {
-        public ClientModel Get(int clientID);
+        public ClientModel Get(string clientID);
         
         public void Add(ClientModel client);
 
-        public void Update(int clientID, ClientModel client);
+        public void Update(string clientID, ClientModel client);
 
-        public void Delete(int clientID);
+        public void Delete(string clientID);
     }
 }

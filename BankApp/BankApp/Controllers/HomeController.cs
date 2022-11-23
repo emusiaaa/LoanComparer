@@ -11,7 +11,6 @@ namespace BankApp.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IClientRepository _clientRepository;
 
-       
         public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository)
         {
             _logger = logger;
