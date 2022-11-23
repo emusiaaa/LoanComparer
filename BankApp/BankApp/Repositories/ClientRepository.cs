@@ -12,7 +12,7 @@ namespace BankApp.Repositories
             _context = context;
         }
 
-        public ClientModel Get(int clientID) => _context.Clients.SingleOrDefault(x => x.ClientId == clientID);
+        public ClientModel Get(string clientID) => _context.Clients.SingleOrDefault(x => x.Id == clientID);
 
         public void Add(ClientModel client)
         {
@@ -20,12 +20,12 @@ namespace BankApp.Repositories
             _context.SaveChanges();
         }
 
-        public void Update(int clientID, ClientModel client)
+        public void Update(string clientID, ClientModel client)
         {
-            var result = _context.Clients.SingleOrDefault(x => x.ClientId == clientID);
+            var result = _context.Clients.SingleOrDefault(x => x.Id == clientID);
             if (result != null)
             {
-                result.ClientEmail = client.ClientEmail;
+                result.Email = client.Email;
                 result.ClientIncomeLevel = client.ClientIncomeLevel;
                 result.ClientJobType = client.ClientJobType;
 
@@ -33,9 +33,9 @@ namespace BankApp.Repositories
             }
         }
 
-        public void Delete(int clientID)
+        public void Delete(string clientID)
         {
-            var result = _context.Clients.SingleOrDefault(x => x.ClientId == clientID);
+            var result = _context.Clients.SingleOrDefault(x => x.Id == clientID);
             if (result != null)
             {
                 _context.Clients.Remove(result);

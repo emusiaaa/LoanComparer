@@ -6,10 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using BankApp.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -23,17 +25,17 @@ namespace BankApp.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly IUserStore<IdentityUser> _userStore;
-        private readonly IUserEmailStore<IdentityUser> _emailStore;
+        private readonly SignInManager<ClientModel> _signInManager;
+        private readonly UserManager<ClientModel> _userManager;
+        private readonly IUserStore<ClientModel> _userStore;
+        private readonly IUserEmailStore<ClientModel> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
         public RegisterModel(
-            UserManager<IdentityUser> userManager,
-            IUserStore<IdentityUser> userStore,
-            SignInManager<IdentityUser> signInManager,
+            UserManager<ClientModel> userManager,
+            IUserStore<ClientModel> userStore,
+            SignInManager<ClientModel> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
@@ -75,9 +77,28 @@ namespace BankApp.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            //[]
-            [Display(Name = "Name")]
-            public string Name { get; set; }
+            [Display(Name = "First Name")]
+            public string UserFirstName { get; set; }
+
+            [Required]
+            [Display(Name = "Last Name")]
+            public string UserLastName { get; set; }
+
+            [Required]
+            [Display(Name = "Job Type")]
+            public string ClientJobType { get; set; }
+
+            [Required]
+            [Display(Name = "Income Level")]
+            public string ClientIncomeLevel { get; set; }
+
+            [Required]
+            [Display(Name = "Government ID Type")]
+            public string ClientGovernmentIDType { get; set; }
+
+            [Required]
+            [Display(Name = "Government ID Number")]
+            public string ClientGovernmentIDNumber { get; set; }
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -123,8 +144,16 @@ namespace BankApp.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
+                user.ClientGovernmentIDNumber = Input.ClientGovernmentIDNumber;
+                user.ClientGovernmentIDType = Input.ClientGovernmentIDType;
+                user.UserLastName = Input.UserLastName;
+                user.ClientIncomeLevel = Input.ClientIncomeLevel;
+                user.ClientJobType = Input.ClientJobType;
+                user.UserFirstName = Input.UserFirstName;
+
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
@@ -163,27 +192,27 @@ namespace BankApp.Areas.Identity.Pages.Account
             return Page();
         }
 
-        private IdentityUser CreateUser()
+        private ClientModel CreateUser()
         {
             try
             {
-                return Activator.CreateInstance<IdentityUser>();
+                return Activator.CreateInstance<ClientModel>();
             }
             catch
             {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(IdentityUser)}'. " +
-                    $"Ensure that '{nameof(IdentityUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(ClientModel)}'. " +
+                    $"Ensure that '{nameof(ClientModel)}' is not an abstract class and has a parameterless constructor, or alternatively " +
                     $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
             }
         }
 
-        private IUserEmailStore<IdentityUser> GetEmailStore()
+        private IUserEmailStore<ClientModel> GetEmailStore()
         {
             if (!_userManager.SupportsUserEmail)
             {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
-            return (IUserEmailStore<IdentityUser>)_userStore;
+            return (IUserEmailStore<ClientModel>)_userStore;
         }
     }
 }
