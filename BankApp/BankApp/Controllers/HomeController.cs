@@ -16,19 +16,25 @@ namespace BankApp.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IClientRepository _clientRepository;
         private readonly UserManager<ClientModel> _userManager;
+        private readonly IInquiryRepository _inquiryRepository;
 
-        public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository, UserManager<ClientModel> userManager)
+        public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository, UserManager<ClientModel> userManager, IInquiryRepository inquiryRepository)
         {
             _logger = logger;
             _clientRepository = clientRepository;
             _userManager = userManager;
+            _inquiryRepository = inquiryRepository;
         }
 
         public IActionResult Index()
         {
             return View();
         }
-
+        public ViewResult HistoryOfInquiries()
+        {
+            var model = _inquiryRepository.GetAll();
+            return View(model);
+        }
         public IActionResult Privacy()
         {
             return View();

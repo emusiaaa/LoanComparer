@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Inquiries";
+}
+@model IEnumerable<BankApp.Models.InquiryModel>
+
+<table class="table table-hover">
+     <thead>
+         <tr>
+             <th scope="col">ID</th>
+             <th scope="col">Loan Value</th>
+             <th scope="col">Number Of installments</th>
+         </tr>
+     </thead>
+     <tbody>
+         @foreach(var inquiry in Model){
+            <tr class="table-info">
+                 <td>@inquiry.FormId</td>
+                 <td>@inquiry.LoanValue</td>
+                 <td>@inquiry.InstallmentsCount</td>
+             </tr>
+         }
+     </tbody>
+ </table>

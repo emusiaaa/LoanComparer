@@ -3,6 +3,7 @@ using BankApp.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using BankApp.Models;
+using NuGet.Protocol.Core.Types;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,9 @@ builder.Services.AddDbContext<LoansComparerDBContext>(options =>
     options.UseSqlServer(DBconnectionString));
 builder.Services.AddTransient<IClientRepository, ClientRepository>();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+//tu dodaje
+builder.Services.AddScoped<IInquiryRepository, MockInquiryRepository>();
+//
 
 builder.Services.AddDefaultIdentity<ClientModel>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<LoansComparerDBContext>();
