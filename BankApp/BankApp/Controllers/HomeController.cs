@@ -15,12 +15,14 @@ namespace BankApp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IClientRepository _clientRepository;
+        ILoggedInquiryRepository _loggedInquiryRepository;
         private readonly UserManager<ClientModel> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository, UserManager<ClientModel> userManager)
+        public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository,ILoggedInquiryRepository loggedInquiryRepository, UserManager<ClientModel> userManager)
         {
             _logger = logger;
             _clientRepository = clientRepository;
+            _loggedInquiryRepository = loggedInquiryRepository;
             _userManager = userManager;
         }
 
@@ -39,21 +41,26 @@ namespace BankApp.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        [HttpPost]
-        public ViewResult Inquiry(InquiryModel inquiry)
+        
+        public IActionResult InquiryCompleted()
+        {
+            return View("InquiryCompleted");
+        }
+        public IActionResult LoggedInquiry()
         {
             return View();
         }
 
-        [Authorize, HttpGet("Profile")]
-        public async Task<IActionResult> Inquiry()
+        [Authorize,HttpPost]
+        public async Task<IActionResult> LoggedInquiry(InquiryModel inquiry)
         {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
-            
-            dynamic mymodel = new ExpandoObject();
-            mymodel.Inquiry = new InquiryModel();
-            mymodel.Client = user;
-            return View(mymodel);
+            inquiry.ClientId = user.Id;
+            DateTime dt = DateTime.Now;
+            inquiry.SubmisionDate = dt.ToString("yyyy-MM-dd");
+
+            _loggedInquiryRepository.Add(inquiry);
+            return View("Index");
         }
 
         [HttpPost]

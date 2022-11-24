@@ -14,5 +14,6 @@ namespace BankApp.Data
         }
 
         public DbSet<ClientModel> Clients { get; set; }
+        public DbSet<InquiryModel> LoggedInquiries { get; set; }
     }
 }
