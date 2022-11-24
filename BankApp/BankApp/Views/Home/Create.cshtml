@@ -1,0 +1,65 @@
+﻿@model BankApp.Models.InquiryModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>InquiryModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="InquiryId" class="control-label"></label>
+                <input asp-for="InquiryId" class="form-control" />
+                <span asp-validation-for="InquiryId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ClientFirstName" class="control-label"></label>
+                <input asp-for="ClientFirstName" class="form-control" />
+                <span asp-validation-for="ClientFirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ClientLastName" class="control-label"></label>
+                <input asp-for="ClientLastName" class="form-control" />
+                <span asp-validation-for="ClientLastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ClientEmail" class="control-label"></label>
+                <input asp-for="ClientEmail" class="form-control" />
+                <span asp-validation-for="ClientEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ClientGovernmentIDNumber" class="control-label"></label>
+                <input asp-for="ClientGovernmentIDNumber" class="form-control" />
+                <span asp-validation-for="ClientGovernmentIDNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ClientGovernmentIDType" class="control-label"></label>
+                <input asp-for="ClientGovernmentIDType" class="form-control" />
+                <span asp-validation-for="ClientGovernmentIDType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ClientJobType" class="control-label"></label>
+                <input asp-for="ClientJobType" class="form-control" />
+                <span asp-validation-for="ClientJobType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ClientIncomeLevel" class="control-label"></label>
+                <input asp-for="ClientIncomeLevel" class="form-control" />
+                <span asp-validation-for="ClientIncomeLevel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
