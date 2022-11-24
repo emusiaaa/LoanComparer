@@ -16,7 +16,7 @@ namespace BankApp.Models
         [DisplayName("Imię")]
         //[Required(ErrorMessage = "Pole Imię jest wymagane.")]
 
-        public string ClientFirstName { get; set; }
+        public string? ClientFirstName { get; set; }
         [DisplayName("Nazwisko")]
         //[Required(ErrorMessage = "Pole Nazwisko jest wymagane.")]
         public string ClientLastName { get; set; }

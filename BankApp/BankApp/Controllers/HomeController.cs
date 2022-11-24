@@ -10,12 +10,13 @@ namespace BankApp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IClientRepository _clientRepository;
-
+        private readonly List<FormModel> lista;
        
         public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository)
         {
             _logger = logger;
             _clientRepository = clientRepository;
+            lista = new List<FormModel>();
         }
 
         public IActionResult Index()
@@ -32,6 +33,21 @@ namespace BankApp.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+        public ViewResult AddNewBook()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ViewResult AddNewBook(FormModel formModel)
+        {
+            lista.Add(formModel);
+            return View();
+        }
+        public ViewResult DAYS30()
+        {
+            return View();
         }
     }
 }

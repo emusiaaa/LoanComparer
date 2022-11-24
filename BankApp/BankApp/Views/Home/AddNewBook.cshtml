@@ -1,0 +1,14 @@
+﻿@model FormModel
+<form method="post" asp-action="AddNewBook">
+    <label asp-for="LoanValue">Loan Value</label>
+    <input asp-for="LoanValue" />
+    <label asp-for="InstallmentsCount">Number of installments</label>
+    <input asp-for="InstallmentsCount" />
+    <label asp-for="Client.ClientFirstName">First Name</label>
+    <input asp-for="Client.ClientFirstName"/>
+    <label asp-for="Client.ClientLastName">Last Name</label>
+    <input asp-for="Client.ClientLastName" />
+    <label asp-for="Client.ClientJobType">Job type</label>
+    <input asp-for="Client.ClientJobType" />
+    <input type="submit" value="Add book"/>
+</form>
