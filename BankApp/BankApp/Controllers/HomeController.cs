@@ -32,5 +32,15 @@ namespace BankApp.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+        public ViewResult Inquiry()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ViewResult Inquiry(InquiryModel inquiry)
+        {
+            return View();
+        }
     }
 }
