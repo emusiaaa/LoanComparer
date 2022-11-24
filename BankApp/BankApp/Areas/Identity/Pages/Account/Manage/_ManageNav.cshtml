@@ -1,4 +1,5 @@
-﻿@inject SignInManager<BankApp.Models.ClientModel> SignInManager
+﻿@using BankApp.Models
+@inject SignInManager<ClientModel> SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }
