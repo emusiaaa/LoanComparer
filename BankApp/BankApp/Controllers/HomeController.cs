@@ -62,7 +62,7 @@ namespace BankApp.Controllers
         public ViewResult InquiryNotRegistered(NotRegisteredInquiryModel inquiry)
         {
             _notRegisteredInquiryRepository.Add(inquiry);
-            return View();
+            return View("NotRegisteredInquirySubmitted");
         }
 
         public IActionResult InquiryNotRegistered()
