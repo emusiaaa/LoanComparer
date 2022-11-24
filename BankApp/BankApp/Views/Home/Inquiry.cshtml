@@ -10,20 +10,15 @@
 
     <form method="post" asp-action="Inquiry">
         <label asp-for="@inquiry.LoanValue">loan value</label>
-        <input asp-for="@inquiry.LoanValue" value=""/>
+        <input asp-for="@inquiry.LoanValue" value="" />
         <label asp-for="@inquiry.InstallmentsCount">number of installments</label>
-        <input asp-for="@inquiry.InstallmentsCount"/>
-        @if (SignInManager.IsSignedIn(User))
-        {
+        <input asp-for="@inquiry.InstallmentsCount" />
 
-            <label asp-for="@client.UserFirstName">First Name</label>
-            <input asp-for="@client.UserFirstName" />
-            <label asp-for="@client.UserLastName">Last Name</label>
-            <input asp-for="@client.UserLastName" value="@client.UserLastName" disabled />
-            @*   <label asp-for="Client.ClientJobType">Job type</label>
-    <input asp-for="Client.ClientJobType" />*@
+        <label asp-for="@client.UserFirstName">First Name</label>
+        <input asp-for="@client.UserFirstName" />
+        <label asp-for="@client.UserLastName">Last Name</label>
+        <input asp-for="@client.UserLastName" value="@client.UserLastName" disabled />
 
-        }
 
         <input type="submit" value="Submit inquiry" />
     </form>

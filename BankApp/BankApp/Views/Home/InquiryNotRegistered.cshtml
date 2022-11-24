@@ -1,0 +1,11 @@
+﻿
+@model InquiryModel
+
+    <form method="post" asp-action="Inquiry">
+        <label asp-for="LoanValue">loan value</label>
+        <input asp-for="LoanValue" value="" />
+        <label asp-for="InstallmentsCount">number of installments</label>
+        <input asp-for="InstallmentsCount" />
+       
+        <input type="submit" value="Submit inquiry" />
+    </form>

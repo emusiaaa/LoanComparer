@@ -39,6 +39,11 @@ namespace BankApp.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+        [HttpPost]
+        public ViewResult Inquiry(InquiryModel inquiry)
+        {
+            return View();
+        }
 
         [Authorize, HttpGet("Profile")]
         public async Task<IActionResult> Inquiry()
@@ -52,12 +57,18 @@ namespace BankApp.Controllers
         }
 
         [HttpPost]
-        public ViewResult Inquiry(InquiryModel inquiry)
+        public ViewResult InquiryNotRegistered(InquiryModel inquiry)
+        {
+            return View();
+        }
+
+        public IActionResult InquiryNotRegistered()
         {
             return View();
         }
 
         
+
         //public IActionResult Inquiry()
         //{
         //    var user = _userManager.FindByIdAsync(User.Identity.Name);
