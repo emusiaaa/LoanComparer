@@ -15,13 +15,15 @@ namespace BankApp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IClientRepository _clientRepository;
+        private readonly INotRegisteredInquiryRepository _notRegisteredInquiryRepository;
         private readonly UserManager<ClientModel> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository, UserManager<ClientModel> userManager)
+        public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository, UserManager<ClientModel> userManager, INotRegisteredInquiryRepository notRegisteredInquiryRepository)
         {
             _logger = logger;
             _clientRepository = clientRepository;
             _userManager = userManager;
+            _notRegisteredInquiryRepository = notRegisteredInquiryRepository;
         }
 
         public IActionResult Index()
@@ -45,7 +47,7 @@ namespace BankApp.Controllers
             return View();
         }
 
-        [Authorize, HttpGet("Profile")]
+        [Authorize, HttpGet]
         public async Task<IActionResult> Inquiry()
         {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
@@ -57,14 +59,15 @@ namespace BankApp.Controllers
         }
 
         [HttpPost]
-        public ViewResult InquiryNotRegistered(InquiryModel inquiry)
+        public ViewResult InquiryNotRegistered(NotRegisteredInquiryModel inquiry)
         {
+            _notRegisteredInquiryRepository.Add(inquiry);
             return View();
         }
 
         public IActionResult InquiryNotRegistered()
         {
-            return View();
+            return View(new NotRegisteredInquiryModel());
         }
 
         

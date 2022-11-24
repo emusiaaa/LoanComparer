@@ -1,11 +1,34 @@
-﻿
-@model InquiryModel
+﻿@model NotRegisteredInquiryModel
 
-    <form method="post" asp-action="Inquiry">
-        <label asp-for="LoanValue">loan value</label>
-        <input asp-for="LoanValue" value="" />
-        <label asp-for="InstallmentsCount">number of installments</label>
-        <input asp-for="InstallmentsCount" />
-       
-        <input type="submit" value="Submit inquiry" />
-    </form>
+
+<form method="post" asp-action="InquiryNotRegistered">
+    <label asp-for="LoanValue">Insert loan value</label>
+    <input type="number" asp-for="LoanValue" value="" required /><br />
+
+    <label asp-for="InstallmentsCount">Insert number of installments</label>
+    <input type="number" asp-for="InstallmentsCount" required /><br />
+
+    <label asp-for="UserFirstName">First name:</label>
+    <input asp-for="UserFirstName" required /><br />
+
+    <label asp-for="UserLastName">Last name:</label>
+    <input asp-for="UserLastName" required /><br />
+
+    <label asp-for="ClientGovernmentIDType">Government ID Type:</label>
+    <input asp-for="ClientGovernmentIDType" required /><br />
+
+    <label asp-for="ClientGovernmentIDNumber">Government ID Number:</label>
+    <input asp-for="ClientGovernmentIDNumber" required /><br />
+
+    <label asp-for="ClientJobType">Job type:</label>
+    <input asp-for="ClientJobType" required /><br />
+
+    <label asp-for="ClientIncomeLevel">Income level:</label>
+    <input asp-for="ClientIncomeLevel" required /><br />
+
+    <label asp-for="Email">Email:</label>
+    <input type="email" asp-for="Email" /><br required />
+    <span asp-validation-for="Email" class="text-danger"></span>
+
+    <input type="submit" value="Submit inquiry" />
+</form>
