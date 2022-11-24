@@ -61,6 +61,8 @@ namespace BankApp.Controllers
         [HttpPost]
         public ViewResult InquiryNotRegistered(NotRegisteredInquiryModel inquiry)
         {
+            DateTime dt = DateTime.Now;
+            inquiry.SubmissionDate = dt.ToString("yyyy-MM-dd");
             _notRegisteredInquiryRepository.Add(inquiry);
             return View("NotRegisteredInquirySubmitted");
         }
@@ -69,20 +71,5 @@ namespace BankApp.Controllers
         {
             return View(new NotRegisteredInquiryModel());
         }
-
-        
-
-        //public IActionResult Inquiry()
-        //{
-        //    var user = _userManager.FindByIdAsync(User.Identity.Name);
-
-        //    //return Json(new
-        //    //{
-        //    //    IsAuthenticated = User.Identity.IsAuthenticated,
-        //    //    Id = User.Identity.Name,
-        //    //    Name = $"{user.UserName} {user.UserLastName}",
-        //    //    Type = User.Identity.AuthenticationType,
-        //    //});
-        //}
     }
 }

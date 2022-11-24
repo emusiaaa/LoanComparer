@@ -15,6 +15,9 @@ namespace BankApp.Models
         public int Id { get; set; }
 
         [Required]
+        public string SubmissionDate { get; set; } 
+
+        [Required]
         public int InstallmentsCount { get; set; }
 
         [Required]
