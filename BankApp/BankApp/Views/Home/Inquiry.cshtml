@@ -1,14 +1,30 @@
-﻿@model InquiryModel
-<form method="post" asp-action="Inquiry">
-    <label asp-for="LoanValue">Loan Value</label>
-    <input asp-for="LoanValue" />
-    <label asp-for="InstallmentsCount">Number of installments</label>
-    <input asp-for="InstallmentsCount" />
-    <label asp-for="Client.UserFirstName">First Name</label>
-    <input asp-for="Client.UserFirstName" />
-    <label asp-for="Client.UserLastName">Last Name</label>
-    <input asp-for="Client.UserLastName" />
-    <label asp-for="Client.ClientJobType">Job type</label>
-    <input asp-for="Client.ClientJobType" />
-    <input type="submit" value="Submit inquiry" />
-</form>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<BankApp.Models.ClientModel> SignInManager
+@inject UserManager<BankApp.Models.ClientModel> UserManager
+
+@*@model BankApp.Models.ClientModel*@
+@*@model InquiryModel*@
+@{
+    ClientModel client = ViewData.Model.Client;
+    InquiryModel inquiry = ViewData.Model.Inquiry;
+
+    <form method="post" asp-action="Inquiry">
+        <label asp-for="@inquiry.LoanValue">loan value</label>
+        <input asp-for="@inquiry.LoanValue" value=""/>
+        <label asp-for="@inquiry.InstallmentsCount">number of installments</label>
+        <input asp-for="@inquiry.InstallmentsCount"/>
+        @if (SignInManager.IsSignedIn(User))
+        {
+
+            <label asp-for="@client.UserFirstName">First Name</label>
+            <input asp-for="@client.UserFirstName" />
+            <label asp-for="@client.UserLastName">Last Name</label>
+            <input asp-for="@client.UserLastName" value="@client.UserLastName" disabled />
+            @*   <label asp-for="Client.ClientJobType">Job type</label>
+    <input asp-for="Client.ClientJobType" />*@
+
+        }
+
+        <input type="submit" value="Submit inquiry" />
+    </form>
+}
