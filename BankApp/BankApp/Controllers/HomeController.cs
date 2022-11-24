@@ -15,13 +15,15 @@ namespace BankApp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IClientRepository _clientRepository;
+        private readonly INotRegisteredInquiryRepository _notRegisteredInquiryRepository;
         private readonly UserManager<ClientModel> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository, UserManager<ClientModel> userManager)
+        public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository, UserManager<ClientModel> userManager, INotRegisteredInquiryRepository notRegisteredInquiryRepository)
         {
             _logger = logger;
             _clientRepository = clientRepository;
             _userManager = userManager;
+            _notRegisteredInquiryRepository = notRegisteredInquiryRepository;
         }
 
         public IActionResult Index()
@@ -45,7 +47,7 @@ namespace BankApp.Controllers
             return View();
         }
 
-        [Authorize, HttpGet("Profile")]
+        [Authorize, HttpGet]
         public async Task<IActionResult> Inquiry()
         {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
@@ -57,29 +59,17 @@ namespace BankApp.Controllers
         }
 
         [HttpPost]
-        public ViewResult InquiryNotRegistered(InquiryModel inquiry)
+        public ViewResult InquiryNotRegistered(NotRegisteredInquiryModel inquiry)
         {
-            return View();
+            DateTime dt = DateTime.Now;
+            inquiry.SubmissionDate = dt.ToString("yyyy-MM-dd");
+            _notRegisteredInquiryRepository.Add(inquiry);
+            return View("NotRegisteredInquirySubmitted");
         }
 
         public IActionResult InquiryNotRegistered()
         {
-            return View();
+            return View(new NotRegisteredInquiryModel());
         }
-
-        
-
-        //public IActionResult Inquiry()
-        //{
-        //    var user = _userManager.FindByIdAsync(User.Identity.Name);
-
-        //    //return Json(new
-        //    //{
-        //    //    IsAuthenticated = User.Identity.IsAuthenticated,
-        //    //    Id = User.Identity.Name,
-        //    //    Name = $"{user.UserName} {user.UserLastName}",
-        //    //    Type = User.Identity.AuthenticationType,
-        //    //});
-        //}
     }
 }
