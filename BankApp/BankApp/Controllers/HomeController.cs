@@ -21,10 +21,9 @@ namespace BankApp.Controllers
         private readonly INotRegisteredInquiryRepository _notRegisteredInquiryRepository;
         private readonly UserManager<ClientModel> _userManager;
         private readonly IEmailSender _emailSender;
-        private readonly IInquiryRepository _inquiryRepository;
 
         public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository, UserManager<ClientModel> userManager,
-            INotRegisteredInquiryRepository notRegisteredInquiryRepository, IEmailSender emailSender, ILoggedInquiryRepository loggedInquiryRepository, IInquiryRepository inquiryRepository)
+            INotRegisteredInquiryRepository notRegisteredInquiryRepository, IEmailSender emailSender, ILoggedInquiryRepository loggedInquiryRepository)
         {
             _logger = logger;
             _clientRepository = clientRepository;
@@ -32,7 +31,6 @@ namespace BankApp.Controllers
             _userManager = userManager;
             _notRegisteredInquiryRepository = notRegisteredInquiryRepository;
             _emailSender = emailSender;
-            _inquiryRepository = inquiryRepository;
         }
 
         public IActionResult Index()
