@@ -26,15 +26,14 @@ public class EmailSender : IEmailSender
         }
         await Execute(Options.SendGridKey, subject, message, toEmail);
     }
-
     public async Task Execute(string apiKey, string subject, string message, string toEmail)
     {
         var client = new SendGridClient(apiKey);
         var msg = new SendGridMessage()
         {
-            From = new EmailAddress("getaloanfrombankgirls@gmail.com", "Password Recovery"),
+            From = new EmailAddress("getaloanfrombankgirls@gmail.com"),
             Subject = subject,
-            PlainTextContent = message,
+            PlainTextContent = "",
             HtmlContent = message
         };
         msg.AddTo(new EmailAddress(toEmail));
