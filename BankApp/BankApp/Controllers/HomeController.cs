@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Security.Claims;
 using System.Dynamic;
-
+using Microsoft.AspNetCore.Identity.UI.Services;
+using BankApp.Services;
+using System.Text.Encodings.Web;
 
 namespace BankApp.Controllers
 {
@@ -15,15 +17,20 @@ namespace BankApp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IClientRepository _clientRepository;
-        ILoggedInquiryRepository _loggedInquiryRepository;
+        private readonly ILoggedInquiryRepository _loggedInquiryRepository;
+        private readonly INotRegisteredInquiryRepository _notRegisteredInquiryRepository;
         private readonly UserManager<ClientModel> _userManager;
+        private readonly IEmailSender _emailSender;
 
-        public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository,ILoggedInquiryRepository loggedInquiryRepository, UserManager<ClientModel> userManager)
+        public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository, UserManager<ClientModel> userManager,
+            INotRegisteredInquiryRepository notRegisteredInquiryRepository, IEmailSender emailSender, ILoggedInquiryRepository loggedInquiryRepository)
         {
             _logger = logger;
             _clientRepository = clientRepository;
             _loggedInquiryRepository = loggedInquiryRepository;
             _userManager = userManager;
+            _notRegisteredInquiryRepository = notRegisteredInquiryRepository;
+            _emailSender = emailSender;
         }
 
         public IActionResult Index()
@@ -64,29 +71,29 @@ namespace BankApp.Controllers
         }
 
         [HttpPost]
-        public ViewResult InquiryNotRegistered(InquiryModel inquiry)
+        public async Task<ViewResult> InquiryNotRegistered(NotRegisteredInquiryModel inquiry)
         {
-            return View();
+            DateTime dt = DateTime.Now;
+            inquiry.SubmissionDate = dt.ToString("yyyy-MM-dd");
+            _notRegisteredInquiryRepository.Add(inquiry);
+            await _emailSender.SendEmailAsync(inquiry.Email, "Confirmation of submitting inquiry",
+                     "<h3>Thanks for submitting your form!</h3>" +
+                     "<p>Here's a little summary: " +
+                     "</p><p>Loan value: " + inquiry.LoanValue +
+                     "</p>" +
+                     "<p>Number of installments: " + inquiry.InstallmentsCount +
+                     "</p><p>Name: " + inquiry.UserFirstName + " " + inquiry.UserLastName +
+                     "</p><p>Government ID Type: " + inquiry.ClientGovernmentIDType +
+                     "</p><p>Government ID Number: " + inquiry.ClientGovernmentIDNumber +
+                     "</p><p>Job type: " + inquiry.ClientJobType +
+                     "</p><p>Income level: " + inquiry.ClientIncomeLevel +
+                     "</p>");
+            return View("NotRegisteredInquirySubmitted");
         }
 
         public IActionResult InquiryNotRegistered()
         {
-            return View();
+            return View(new NotRegisteredInquiryModel());
         }
-
-        
-
-        //public IActionResult Inquiry()
-        //{
-        //    var user = _userManager.FindByIdAsync(User.Identity.Name);
-
-        //    //return Json(new
-        //    //{
-        //    //    IsAuthenticated = User.Identity.IsAuthenticated,
-        //    //    Id = User.Identity.Name,
-        //    //    Name = $"{user.UserName} {user.UserLastName}",
-        //    //    Type = User.Identity.AuthenticationType,
-        //    //});
-        //}
     }
 }

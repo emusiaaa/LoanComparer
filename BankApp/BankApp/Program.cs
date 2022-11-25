@@ -3,7 +3,8 @@ using BankApp.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using BankApp.Models;
-
+using Microsoft.AspNetCore.Identity.UI.Services;
+using BankApp.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -12,12 +13,17 @@ var DBconnectionString = builder.Configuration.GetConnectionString("LoansCompare
 builder.Services.AddDbContext<LoansComparerDBContext>(options =>
     options.UseSqlServer(DBconnectionString));
 builder.Services.AddTransient<IClientRepository, ClientRepository>();
+builder.Services.AddTransient<INotRegisteredInquiryRepository, NotRegisteredInquiryRepository>();
 builder.Services.AddTransient<ILoggedInquiryRepository, LoggedInquiryRepository>();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<ClientModel>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<LoansComparerDBContext>();
 builder.Services.AddControllersWithViews();
+
+
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
 var app = builder.Build();
 
