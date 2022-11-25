@@ -1,5 +1,6 @@
 ﻿using BankApp.Data;
 using BankApp.Models;
+using System.ComponentModel.Design;
 
 namespace BankApp.Repositories
 {
@@ -38,6 +39,15 @@ namespace BankApp.Repositories
                 _context.LoggedInquiries.Remove(result);
                 _context.SaveChanges();
             }
+        }
+        public IEnumerable<InquiryModel> GetAll(string userID)
+        {
+            var res = _context.LoggedInquiries
+                 .Where(s => s.ClientId == userID &&
+                             (DateTime)(object)s.SubmisionDate >= DateTime.Now.AddDays(-30))
+                 .ToList();
+            //var result = _context.LoggedInquiries.FirstOrDefault(x => (x.ClientId == userID && x.SubmisionDate.))
+            return res;
         }
 
     }

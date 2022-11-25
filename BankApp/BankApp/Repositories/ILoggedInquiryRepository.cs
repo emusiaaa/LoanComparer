@@ -11,5 +11,6 @@ namespace BankApp.Repositories
         public void Update(int clientID, InquiryModel client);
 
         public void Delete(int clientID);
+        public IEnumerable<InquiryModel> GetAll(string userID);
     }
 }

@@ -42,6 +42,13 @@ namespace BankApp.Controllers
         {
             return View();
         }
+        [Authorize]
+        public async Task<IActionResult> HistoryOfInquiries()
+        {
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            var model = _loggedInquiryRepository.GetAll(user.Id);
+            return View(model);
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
@@ -67,6 +74,19 @@ namespace BankApp.Controllers
             inquiry.SubmisionDate = dt.ToString("yyyy-MM-dd");
 
             _loggedInquiryRepository.Add(inquiry);
+            await _emailSender.SendEmailAsync(user.Email, "Confirmation of submitting inquiry",
+                    "<h3>Thanks for submitting your form!</h3>" +
+                    "<p>Here's a little summary: " +
+                    "</p><p>Loan value: " + inquiry.LoanValue +
+                    "</p>" +
+                    "<p>Number of installments: " + inquiry.InstallmentsCount +
+                    "</p><p>Name: " + user.UserFirstName + " " + user.UserLastName +
+                    "</p><p>Government ID Type: " + user.ClientGovernmentIDType +
+                    "</p><p>Government ID Number: " + user.ClientGovernmentIDNumber +
+                    "</p><p>Job type: " + user.ClientJobType +
+                    "</p><p>Income level: " + user.ClientIncomeLevel +
+                    "</p>");
+
             return View("Index");
         }
 
