@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BankApp.Migrations
 {
     [DbContext(typeof(LoansComparerDBContext))]
-    [Migration("20221124202817_updat ey")]
-    partial class updatey
+    [Migration("20221124194218_LoggdInquries")]
+    partial class LoggdInquries
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -114,7 +114,7 @@ namespace BankApp.Migrations
                 b.ToTable("AspNetUsers", (string)null);
             });
 
-            modelBuilder.Entity("BankApp.Models.NotRegisteredInquiryModel", b =>
+            modelBuilder.Entity("BankApp.Models.InquiryModel", b =>
             {
                 b.Property<int>("Id")
                     .ValueGeneratedOnAdd()
@@ -122,23 +122,7 @@ namespace BankApp.Migrations
 
                 SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<string>("ClientGovernmentIDNumber")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
-
-                b.Property<string>("ClientGovernmentIDType")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
-
-                b.Property<string>("ClientIncomeLevel")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
-
-                b.Property<string>("ClientJobType")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
-
-                b.Property<string>("Email")
+                b.Property<string>("ClientId")
                     .IsRequired()
                     .HasColumnType("nvarchar(max)");
 
@@ -148,17 +132,9 @@ namespace BankApp.Migrations
                 b.Property<float>("LoanValue")
                     .HasColumnType("real");
 
-                b.Property<string>("UserFirstName")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
-
-                b.Property<string>("UserLastName")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
-
                 b.HasKey("Id");
 
-                b.ToTable("NotRegisteredInquiries");
+                b.ToTable("Inquiries");
             });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

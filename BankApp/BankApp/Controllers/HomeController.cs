@@ -17,15 +17,17 @@ namespace BankApp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IClientRepository _clientRepository;
+        private readonly ILoggedInquiryRepository _loggedInquiryRepository;
         private readonly INotRegisteredInquiryRepository _notRegisteredInquiryRepository;
         private readonly UserManager<ClientModel> _userManager;
         private readonly IEmailSender _emailSender;
 
         public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository, UserManager<ClientModel> userManager,
-            INotRegisteredInquiryRepository notRegisteredInquiryRepository, IEmailSender emailSender)
+            INotRegisteredInquiryRepository notRegisteredInquiryRepository, IEmailSender emailSender, ILoggedInquiryRepository loggedInquiryRepository)
         {
             _logger = logger;
             _clientRepository = clientRepository;
+            _loggedInquiryRepository = loggedInquiryRepository;
             _userManager = userManager;
             _notRegisteredInquiryRepository = notRegisteredInquiryRepository;
             _emailSender = emailSender;
@@ -46,21 +48,26 @@ namespace BankApp.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        [HttpPost]
-        public ViewResult Inquiry(InquiryModel inquiry)
+        
+        public IActionResult InquiryCompleted()
+        {
+            return View("InquiryCompleted");
+        }
+        public IActionResult LoggedInquiry()
         {
             return View();
         }
 
-        [Authorize, HttpGet]
-        public async Task<IActionResult> Inquiry()
+        [Authorize,HttpPost]
+        public async Task<IActionResult> LoggedInquiry(InquiryModel inquiry)
         {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
-            
-            dynamic mymodel = new ExpandoObject();
-            mymodel.Inquiry = new InquiryModel();
-            mymodel.Client = user;
-            return View(mymodel);
+            inquiry.ClientId = user.Id;
+            DateTime dt = DateTime.Now;
+            inquiry.SubmisionDate = dt.ToString("yyyy-MM-dd");
+
+            _loggedInquiryRepository.Add(inquiry);
+            return View("Index");
         }
 
         [HttpPost]

@@ -14,6 +14,7 @@ builder.Services.AddDbContext<LoansComparerDBContext>(options =>
     options.UseSqlServer(DBconnectionString));
 builder.Services.AddTransient<IClientRepository, ClientRepository>();
 builder.Services.AddTransient<INotRegisteredInquiryRepository, NotRegisteredInquiryRepository>();
+builder.Services.AddTransient<ILoggedInquiryRepository, LoggedInquiryRepository>();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<ClientModel>(options => options.SignIn.RequireConfirmedAccount = true)
