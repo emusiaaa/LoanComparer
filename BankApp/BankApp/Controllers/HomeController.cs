@@ -21,9 +21,10 @@ namespace BankApp.Controllers
         private readonly INotRegisteredInquiryRepository _notRegisteredInquiryRepository;
         private readonly UserManager<ClientModel> _userManager;
         private readonly IEmailSender _emailSender;
+        private readonly IInquiryRepository _inquiryRepository;
 
         public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository, UserManager<ClientModel> userManager,
-            INotRegisteredInquiryRepository notRegisteredInquiryRepository, IEmailSender emailSender, ILoggedInquiryRepository loggedInquiryRepository)
+            INotRegisteredInquiryRepository notRegisteredInquiryRepository, IEmailSender emailSender, ILoggedInquiryRepository loggedInquiryRepository, IInquiryRepository inquiryRepository)
         {
             _logger = logger;
             _clientRepository = clientRepository;
@@ -31,6 +32,7 @@ namespace BankApp.Controllers
             _userManager = userManager;
             _notRegisteredInquiryRepository = notRegisteredInquiryRepository;
             _emailSender = emailSender;
+            _inquiryRepository = inquiryRepository;
         }
 
         public IActionResult Index()
@@ -41,6 +43,13 @@ namespace BankApp.Controllers
         public IActionResult Privacy()
         {
             return View();
+        }
+        [Authorize]
+        public async Task<IActionResult> HistoryOfInquiries()
+        {
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            var model = _loggedInquiryRepository.GetAll(user.Id);
+            return View(model);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -67,6 +76,19 @@ namespace BankApp.Controllers
             inquiry.SubmisionDate = dt.ToString("yyyy-MM-dd");
 
             _loggedInquiryRepository.Add(inquiry);
+            await _emailSender.SendEmailAsync(user.Email, "Confirmation of submitting inquiry",
+                    "<h3>Thanks for submitting your form!</h3>" +
+                    "<p>Here's a little summary: " +
+                    "</p><p>Loan value: " + inquiry.LoanValue +
+                    "</p>" +
+                    "<p>Number of installments: " + inquiry.InstallmentsCount +
+                    "</p><p>Name: " + user.UserFirstName + " " + user.UserLastName +
+                    "</p><p>Government ID Type: " + user.ClientGovernmentIDType +
+                    "</p><p>Government ID Number: " + user.ClientGovernmentIDNumber +
+                    "</p><p>Job type: " + user.ClientJobType +
+                    "</p><p>Income level: " + user.ClientIncomeLevel +
+                    "</p>");
+
             return View("Index");
         }
 

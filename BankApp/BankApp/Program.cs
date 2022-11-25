@@ -21,6 +21,7 @@ builder.Services.AddDefaultIdentity<ClientModel>(options => options.SignIn.Requi
     .AddEntityFrameworkStores<LoansComparerDBContext>();
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddScoped<IInquiryRepository, MockInquiryRepository>();
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
