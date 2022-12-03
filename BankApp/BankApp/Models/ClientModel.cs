@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace BankApp.Models
 {
-    
+    [Table("Users")]
     public class ClientModel: IdentityUser
     {
         [Required(ErrorMessage = "Pole Imię jest wymagane.")]
@@ -27,6 +27,7 @@ namespace BankApp.Models
         public string ClientJobType { get; set; }
         [DisplayName("Miesięczny przychód")]
         public string ClientIncomeLevel { get; set; }
+        public bool IsBankEmployee { get; set; }
     }
 
 }

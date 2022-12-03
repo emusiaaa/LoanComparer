@@ -50,5 +50,11 @@ namespace BankApp.Repositories
             return res;
         }
 
+        public IEnumerable<InquiryModel> GetAllForBankEmployee(string bankEmployeeID)
+        {
+            var res = _context.LoggedInquiries.ToList();
+            return res;
+        }
+
     }
 }

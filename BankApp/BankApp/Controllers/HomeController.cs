@@ -50,6 +50,15 @@ namespace BankApp.Controllers
             return View(model);
         }
 
+        [Authorize]
+        public async Task<IActionResult> AllBankInquiries()
+        {
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            var model = _loggedInquiryRepository.GetAllForBankEmployee(user.Id);
+            return View(model);
+            //var model = _loggedInquiryRepository.GetAll()
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
