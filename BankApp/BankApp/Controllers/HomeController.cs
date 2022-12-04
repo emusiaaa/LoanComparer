@@ -10,6 +10,10 @@ using System.Dynamic;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using BankApp.Services;
 using System.Text.Encodings.Web;
+using System.Net.Http;
+using Newtonsoft.Json.Linq;
+using System.Net.Http.Headers;
+using System.Web;
 
 namespace BankApp.Controllers
 {
@@ -21,9 +25,10 @@ namespace BankApp.Controllers
         private readonly INotRegisteredInquiryRepository _notRegisteredInquiryRepository;
         private readonly UserManager<ClientModel> _userManager;
         private readonly IEmailSender _emailSender;
+        private readonly System.Net.Http.IHttpClientFactory _clientFactory;
 
         public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository, UserManager<ClientModel> userManager,
-            INotRegisteredInquiryRepository notRegisteredInquiryRepository, IEmailSender emailSender, ILoggedInquiryRepository loggedInquiryRepository)
+            INotRegisteredInquiryRepository notRegisteredInquiryRepository, IEmailSender emailSender, ILoggedInquiryRepository loggedInquiryRepository, IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
             _clientRepository = clientRepository;
@@ -31,6 +36,33 @@ namespace BankApp.Controllers
             _userManager = userManager;
             _notRegisteredInquiryRepository = notRegisteredInquiryRepository;
             _emailSender = emailSender;
+            _clientFactory = httpClientFactory;
+        }
+        public async Task<ActionResult<string>> Get()
+        {
+            var client = _clientFactory.CreateClient("API");
+            var clientId = "team4c";
+            var clientSecret = "7D84D860-87AC-46AE-B955-68DC7D8C48E3";
+
+            var p = new List<KeyValuePair<string, string>>();
+            p.Add(new KeyValuePair<string, string>("grant_type", "client_credentials"));
+            p.Add(new KeyValuePair<string, string>("client_id", HttpUtility.UrlEncode(clientId)));
+            p.Add(new KeyValuePair<string, string>("client_secret", HttpUtility.UrlEncode(clientSecret)));
+
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://indentitymanager.snet.com.pl/connect/token");
+            request.Content = new FormUrlEncodedContent(p);
+            request.Headers.Clear();
+
+            HttpResponseMessage response = await client.SendAsync(request);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            // response would be a JSON, just extract token from it
+            var accessToken = (string)JToken.Parse(responseBody)["access_token"];
+            client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", accessToken);
+            var responseI = await client.GetAsync("/api/v1/Inquire" + $"/{31}");
+            //response.EnsureSuccessStatusCode();
+            var result = await responseI.Content.ReadAsStringAsync();
+            return result;
         }
 
         public IActionResult Index()
@@ -40,6 +72,7 @@ namespace BankApp.Controllers
 
         public IActionResult Privacy()
         {
+            _=Get();
             return View();
         }
         [Authorize]

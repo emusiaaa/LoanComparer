@@ -5,11 +5,24 @@ using Microsoft.EntityFrameworkCore;
 using BankApp.Models;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using BankApp.Services;
+using RestSharp;
+using Microsoft.Net.Http.Headers;
+using System.Net.Http.Headers;
+using Newtonsoft.Json.Linq;
+using System.Web;
+using Microsoft.AspNetCore.Http.Extensions;
+using System.Security.Policy;
+using System;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 var DBconnectionString = builder.Configuration.GetConnectionString("LoansComparer");
+builder.Services.AddHttpClient("API", async httpClient =>
+{
+
+    httpClient.BaseAddress = new Uri("https://mini.loanbank.api.snet.com.pl/swagger/index.html");
+});
+
 builder.Services.AddDbContext<LoansComparerDBContext>(options =>
     options.UseSqlServer(DBconnectionString));
 builder.Services.AddTransient<IClientRepository, ClientRepository>();
