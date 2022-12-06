@@ -29,16 +29,33 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        @if (SignInManager.IsSignedIn(User)){
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="InquiryCompleted">Inquiry</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="HistoryOfInquiries">History</a>
-                            </li>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            var currentUser = this.User;
+                            var currentUserName = currentUser.Identity.Name;
+                            ClientModel user = await UserManager.FindByNameAsync(currentUserName);
+                            if (!user.IsBankEmployee)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="InquiryCompleted">Inquiry</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="HistoryOfInquiries">History</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="AllBankInquiries">View all inquiries</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="AllBankOffersRequests">View offer requests</a>
+                                </li>
+                            }
                         }
-                        else{
-                             <li class="nav-item">
+                        else
+                        {
+                            <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="InquiryNotRegistered">Inquiry</a>
                             </li>
                         }

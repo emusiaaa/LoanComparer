@@ -12,5 +12,7 @@ namespace BankApp.Repositories
 
         public void Delete(int clientID);
         public IEnumerable<InquiryModel> GetAll(string userID);
+
+        public IEnumerable<InquiryModel> GetAllForBankEmployee(string bankEmployeeID);
     }
 }
