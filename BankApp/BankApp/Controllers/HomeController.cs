@@ -14,6 +14,10 @@ using System.Net.Http;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 using System.Web;
+using Newtonsoft.Json;
+using System.Text;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
 
 namespace BankApp.Controllers
 {
@@ -38,7 +42,7 @@ namespace BankApp.Controllers
             _emailSender = emailSender;
             _clientFactory = httpClientFactory;
         }
-        public async Task<ActionResult<string>> Get()
+        public async Task<HttpClient> GetToken()
         {
             var client = _clientFactory.CreateClient("API");
             var clientId = "team4c";
@@ -59,10 +63,7 @@ namespace BankApp.Controllers
             var accessToken = (string)JToken.Parse(responseBody)["access_token"];
             client.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", accessToken);
-            var responseI = await client.GetAsync("/api/v1/Inquire" + $"/{31}");
-            //response.EnsureSuccessStatusCode();
-            var result = await responseI.Content.ReadAsStringAsync();
-            return result;
+            return client;
         }
 
         public IActionResult Index()
@@ -72,7 +73,7 @@ namespace BankApp.Controllers
 
         public IActionResult Privacy()
         {
-            _=Get();
+            _ = GetToken();
             return View();
         }
         [Authorize]
@@ -88,7 +89,7 @@ namespace BankApp.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        
+
         public IActionResult InquiryCompleted()
         {
             return View("InquiryCompleted");
@@ -98,7 +99,7 @@ namespace BankApp.Controllers
             return View();
         }
 
-        [Authorize,HttpPost]
+        [Authorize, HttpPost]
         public async Task<IActionResult> LoggedInquiry(InquiryModel inquiry)
         {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
@@ -107,20 +108,30 @@ namespace BankApp.Controllers
             inquiry.SubmisionDate = dt.ToString("yyyy-MM-dd");
 
             _loggedInquiryRepository.Add(inquiry);
-            await _emailSender.SendEmailAsync(user.Email, "Confirmation of submitting inquiry",
-                    "<h3>Thanks for submitting your form!</h3>" +
-                    "<p>Here's a little summary: " +
-                    "</p><p>Loan value: " + inquiry.LoanValue +
-                    "</p>" +
-                    "<p>Number of installments: " + inquiry.InstallmentsCount +
-                    "</p><p>Name: " + user.UserFirstName + " " + user.UserLastName +
-                    "</p><p>Government ID Type: " + user.ClientGovernmentIDType +
-                    "</p><p>Government ID Number: " + user.ClientGovernmentIDNumber +
-                    "</p><p>Job type: " + user.ClientJobType +
-                    "</p><p>Income level: " + user.ClientIncomeLevel +
-                    "</p>");
 
-            return View("Index");
+            HttpClient api = await GetToken();
+            var stringInquiry = JsonConvert.SerializeObject(inquiry);
+            var httpContent = new StringContent(stringInquiry, Encoding.UTF8, "application/json");
+            var httpResponse = await api.PostAsync("/api/v1/Inquire", httpContent);
+
+            httpResponse.EnsureSuccessStatusCode();
+            var responseContent = await httpResponse.Content.ReadAsStringAsync();
+            var inquireId = JObject.Parse(responseContent)["inquireId"];
+
+            await _emailSender.SendEmailAsync(user.Email, "Confirmation of submitting inquiry",
+                "<h3>Thanks for submitting your form!</h3>" +
+                "<p>Here's a little summary: " +
+                "</p><p>Loan value: " + inquiry.LoanValue +
+                "</p>" +
+                "<p>Number of installments: " + inquiry.InstallmentsCount +
+                "</p><p>Name: " + user.UserFirstName + " " + user.UserLastName +
+                "</p><p>Government ID Type: " + user.ClientGovernmentIDType +
+                "</p><p>Government ID Number: " + user.ClientGovernmentIDNumber +
+                "</p><p>Job type: " + user.ClientJobType +
+                "</p><p>Income level: " + user.ClientIncomeLevel +
+                "</p>");
+
+            return View("NotRegisteredInquirySubmitted");
         }
 
         [HttpPost]
@@ -129,18 +140,54 @@ namespace BankApp.Controllers
             DateTime dt = DateTime.Now;
             inquiry.SubmissionDate = dt.ToString("yyyy-MM-dd");
             _notRegisteredInquiryRepository.Add(inquiry);
+
+            HttpClient api = await GetToken();
+            //var inquiryJson = new jsonclass.Loan
+            //{
+            //    value = 3000,
+            //    installmentsNumber = 4,
+            //    personalData = new jsonclass.PersonalData
+            //    {
+            //        firstName = "Johny",
+            //        lastName = "String",
+            //        birthDate = "1990-12-06T19:27:33.591Z",
+            //    },
+            //    governmentDocument = new jsonclass.GovernmentDocument
+            //    {
+            //        typeId = 2,
+            //        name = "Passport",
+            //        description = "Passport",
+            //        number = "123",
+            //    },
+            //    jobDetails = new jsonclass.JobDetails
+            //    {
+            //        typeId = 37,
+            //        name = "Agent",
+            //        description = "Agent",
+            //        jobStartDate = "2022-09-16T19:27:33.591Z",
+            //        jobEndDate = "2022-12-06T19:27:33.591Z",
+            //    },
+            //};
+            var stringInquiry = JsonConvert.SerializeObject(inquiry);
+            var httpContent = new StringContent(stringInquiry, Encoding.UTF8, "application/json");
+            var httpResponse = await api.PostAsync("/api/v1/Inquire", httpContent);
+            httpResponse.EnsureSuccessStatusCode();
+            
+            var responseContent = await httpResponse.Content.ReadAsStringAsync();
+            var inquireId = JObject.Parse(responseContent)["inquireId"];
+
             await _emailSender.SendEmailAsync(inquiry.Email, "Confirmation of submitting inquiry",
-                     "<h3>Thanks for submitting your form!</h3>" +
-                     "<p>Here's a little summary: " +
-                     "</p><p>Loan value: " + inquiry.LoanValue +
-                     "</p>" +
-                     "<p>Number of installments: " + inquiry.InstallmentsCount +
-                     "</p><p>Name: " + inquiry.UserFirstName + " " + inquiry.UserLastName +
-                     "</p><p>Government ID Type: " + inquiry.ClientGovernmentIDType +
-                     "</p><p>Government ID Number: " + inquiry.ClientGovernmentIDNumber +
-                     "</p><p>Job type: " + inquiry.ClientJobType +
-                     "</p><p>Income level: " + inquiry.ClientIncomeLevel +
-                     "</p>");
+                             "<h3>Thanks for submitting your form!</h3>" +
+                             "<p>Here's a little summary: " +
+                             "</p><p>Loan value: " + inquiry.LoanValue +
+                             "</p>" +
+                             "<p>Number of installments: " + inquiry.InstallmentsCount +
+                             "</p><p>Name: " + inquiry.UserFirstName + " " + inquiry.UserLastName +
+                             "</p><p>Government ID Type: " + inquiry.ClientGovernmentIDType +
+                             "</p><p>Government ID Number: " + inquiry.ClientGovernmentIDNumber +
+                             "</p><p>Job type: " + inquiry.ClientJobType +
+                             "</p><p>Income level: " + inquiry.ClientIncomeLevel +
+                             "</p>");
             return View("NotRegisteredInquirySubmitted");
         }
 

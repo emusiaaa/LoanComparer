@@ -19,7 +19,6 @@ var builder = WebApplication.CreateBuilder(args);
 var DBconnectionString = builder.Configuration.GetConnectionString("LoansComparer");
 builder.Services.AddHttpClient("API", async httpClient =>
 {
-
     httpClient.BaseAddress = new Uri("https://mini.loanbank.api.snet.com.pl/swagger/index.html");
 });
 
