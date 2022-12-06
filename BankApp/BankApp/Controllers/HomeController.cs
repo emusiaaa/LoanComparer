@@ -51,10 +51,24 @@ namespace BankApp.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> AllBankInquiries()
+        public async Task<IActionResult> AllBankInquiries(string sortOrder)
         {
+            ViewBag.DateSortParam = String.IsNullOrEmpty(sortOrder) ? "date_desc" : "";
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
-            var model = _loggedInquiryRepository.GetAllForBankEmployee(user.Id);
+            IEnumerable<InquiryModel> model;
+
+            switch (sortOrder)
+            {
+                case "date_desc":
+                    model = _loggedInquiryRepository.GetAllByDateDesc(user.Id);
+                    break;
+                default:
+                    model = _loggedInquiryRepository.GetAllForBankEmployee(user.Id);
+                    break;
+            }
+           
+
+            
             return View(model);
             //var model = _loggedInquiryRepository.GetAll()
         }

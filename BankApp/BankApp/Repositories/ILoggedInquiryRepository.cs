@@ -14,5 +14,6 @@ namespace BankApp.Repositories
         public IEnumerable<InquiryModel> GetAll(string userID);
 
         public IEnumerable<InquiryModel> GetAllForBankEmployee(string bankEmployeeID);
+        public IEnumerable<InquiryModel> GetAllByDateDesc(string bankEmployeeID);
     }
 }

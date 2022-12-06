@@ -3,6 +3,17 @@
 }
 @model IEnumerable<BankApp.Models.InquiryModel>
 
+<div class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle show" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">Dropdown</a>
+    <div class="dropdown-menu show" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(0px, 42px);" data-popper-placement="bottom-start">
+        <a class="dropdown-item" asp-action="AllBankInquiries" asp-route-sortOrder="@ViewBag.DateSortParam">Najnowsze</a>
+        <a class="dropdown-item">Another action</a>
+        <a class="dropdown-item">Something else here</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="#">Separated link</a>
+    </div>
+</div>
+
 <table class="table table-hover">
     <thead>
         <tr>

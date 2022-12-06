@@ -56,5 +56,12 @@ namespace BankApp.Repositories
             return res;
         }
 
+        public IEnumerable<InquiryModel> GetAllByDateDesc(string bankEmployeeID)
+        {
+            var res = _context.LoggedInquiries
+                .OrderByDescending(d => d.SubmisionDate)
+                .ToList();
+            return res;
+        }
     }
 }
