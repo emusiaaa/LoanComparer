@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 namespace BankApp.Models
 {
     [Table("Users")]
-    public class ClientModel: IdentityUser
+    public class ClientModel : IdentityUser
     {
         [Required(ErrorMessage = "Field FirstName is required.")]
         [DisplayName("First name")]
@@ -48,4 +48,39 @@ namespace BankApp.Models
         public bool IsBankEmployee { get; set; }
     }
 
+    public enum GovIDType
+    {
+        Passport,
+        DriversLicense,
+        GovernmentID
+    }
+
+    public enum JobType
+    {
+        Director,
+        Agent,
+        Administrator,
+        Coordinator,
+        Specialist,
+        Orchestrator,
+        Assistant,
+        Designer,
+        Facilitator,
+        Analyst,
+        Producer,
+        Technician,
+        Manager,
+        Liaison,
+        Associate,
+        Consultant,
+        Engineer,
+        Strategist,
+        Supervisor,
+        Executive,
+        Developer,
+        Officer,
+        Planner,
+        Architect,
+        Representative
+    }
 }

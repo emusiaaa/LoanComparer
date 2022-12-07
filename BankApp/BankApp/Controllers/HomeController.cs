@@ -153,7 +153,6 @@ namespace BankApp.Controllers
             inquiry.ClientId = user.Id;
             DateTime dt = DateTime.Now;
             inquiry.SubmisionDate = dt.ToString("yyyy-MM-dd");
-
             _loggedInquiryRepository.Add(inquiry);
 
             HttpClient api = await GetToken();
@@ -185,42 +184,42 @@ namespace BankApp.Controllers
         public async Task<ViewResult> InquiryNotRegistered(NotRegisteredInquiryModel inquiry)
         {
             DateTime dt = DateTime.Now;
-            inquiry.SubmissionDate = dt.ToString("yyyy-MM-dd");
+            inquiry.SubmissionDate = dt.ToString("o");
+            inquiry.ClientJobEndDay = dt;
             _notRegisteredInquiryRepository.Add(inquiry);
 
             HttpClient api = await GetToken();
             var inquiryJson = new jsonclass.Loan
             {
-                value = 10000,
-                installmentsNumber = 40,
+                value = (int)inquiry.LoanValue,
+                installmentsNumber = inquiry.InstallmentsCount,
                 personalData = new jsonclass.PersonalData
                 {
-                    firstName = "A",
-                    lastName = "B",
-                    birthDate = (new DateTime(1980, 8, 15, 13, 45, 30,
-                                    DateTimeKind.Utc)).ToString("o"),
+                    firstName = inquiry.UserFirstName,
+                    lastName = inquiry.UserLastName,
+                    birthDate = inquiry.UserBirthDay.ToString("o"),
                 },
                 governmentDocument = new jsonclass.GovernmentDocument
                 {
                     typeId = 2,
-                    name = "Passport",
-                    description = "Passport",
-                    number = "q123",
+                    name = inquiry.ClientGovernmentIDType,
+                    description = inquiry.ClientGovernmentIDType,
+                    number = inquiry.ClientGovernmentIDNumber
                 },
                 jobDetails = new jsonclass.JobDetails
                 {
                     typeId = 37,
-                    name = "Agent",
-                    description = "Agent",
-                    jobStartDate = "2022-09-16T19:27:33.591Z",
-                    jobEndDate = "2022-12-06T19:27:33.591Z",
+                    name = inquiry.ClientJobType,
+                    description = inquiry.ClientJobType,
+                    jobStartDate = inquiry.ClientJobStartDay.ToString("o"),
+                    jobEndDate = inquiry.ClientJobEndDay.ToString("o"),
                 },
             };
             var stringInquiry = JsonConvert.SerializeObject(inquiry);
             var httpContent = new StringContent(stringInquiry, Encoding.UTF8, "application/json");
             var httpResponse = await api.PostAsync("/api/v1/Inquire", httpContent);
             httpResponse.EnsureSuccessStatusCode();
-            
+
             var responseContent = await httpResponse.Content.ReadAsStringAsync();
             var inquireId = (JObject.Parse(responseContent)["inquireId"]).ToObject<int>();
 

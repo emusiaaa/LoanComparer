@@ -59,7 +59,7 @@ namespace BankApp.Models
 
         [Required]
         [DisplayName("Job start date")]
-        public string ClientJobStartDay { get; set; }
+        public DateTime ClientJobStartDay { get; set; }
 
         [DisplayName("Job end date")]
         public DateTime ClientJobEndDay { get; set; }
