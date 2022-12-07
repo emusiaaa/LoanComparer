@@ -63,5 +63,19 @@ namespace BankApp.Repositories
                 .ToList();
             return res;
         }
+        public IEnumerable<InquiryModel> GetAllByLoanDesc(string bankEmployeeID)
+        {
+            var res = _context.LoggedInquiries
+               .OrderByDescending(d => d.LoanValue)
+               .ToList();
+            return res;
+        }
+        public IEnumerable<InquiryModel> GetAllByLoanAsc(string bankEmployeeID)
+        {
+            var res = _context.LoggedInquiries
+               .OrderBy(d => d.LoanValue)
+               .ToList();
+            return res;
+        }
     }
 }
