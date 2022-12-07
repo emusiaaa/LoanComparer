@@ -18,15 +18,33 @@ namespace BankApp.Models
         [Required(ErrorMessage = "Field LastName is required.")]
         [DisplayName("Last name")]
         public string UserLastName { get; set; }
+        [Required]
+        [DisplayName("Birth date")]
+        public string UserBirthDay { get; set; }
 
-        [DisplayName("Government ID Number")]
+        [Required]
+        [DisplayName("ID Number")]
         public string ClientGovernmentIDNumber { get; set; }
-        [DisplayName("Government ID Type")]
+
+        [Required]
+        [DisplayName("ID type (id/passport)")]
         public string ClientGovernmentIDType { get; set; }
-        [DisplayName("Job Type")]
+
+        [Required]
+        [DisplayName("Job type")]
         public string ClientJobType { get; set; }
-        [DisplayName("Income Level")]
+
+        [Required]
+        [DisplayName("Monthly income")]
         public string ClientIncomeLevel { get; set; }
+
+        [Required]
+        [DisplayName("Job start date")]
+        public string ClientJobStartDay { get; set; }
+
+        [DisplayName("Job end date")]
+        public string ClientJobEndDay { get; set; }
+
         public bool IsBankEmployee { get; set; }
     }
 

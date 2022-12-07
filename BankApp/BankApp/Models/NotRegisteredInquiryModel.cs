@@ -33,11 +33,20 @@ namespace BankApp.Models
         public string UserLastName { get; set; }
 
         [Required]
-        [DisplayName("Government ID Number")]
+        [DisplayName("Birth date")]
+        public DateTime UserBirthDay { get; set; }
+
+        [Required]
+        [EmailAddress]
+        [DisplayName("Email")]
+        public string Email { get; set; }
+
+        [Required]
+        [DisplayName("ID number")]
         public string ClientGovernmentIDNumber { get; set; }
 
         [Required]
-        [DisplayName("Government ID Type")]
+        [DisplayName("ID type (id/passport)")]
         public string ClientGovernmentIDType { get; set; }
 
         [Required]
@@ -45,12 +54,15 @@ namespace BankApp.Models
         public string ClientJobType { get; set; }
 
         [Required]
-        [DisplayName("Income Level")]
+        [DisplayName("Monthly income")]
         public string ClientIncomeLevel { get; set; }
 
         [Required]
-        [EmailAddress]
-        [DisplayName("Email")]
-        public string Email { get; set; }
+        [DisplayName("Job start date")]
+        public string ClientJobStartDay { get; set; }
+
+        [DisplayName("Job end date")]
+        public DateTime ClientJobEndDay { get; set; }
+
     }
 }
