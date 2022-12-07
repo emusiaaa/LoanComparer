@@ -11,6 +11,16 @@
     </div>
 </div>
 
+<form asp-action="AllBankInquiries" method="get">
+<div class="form-actions no-color">
+    <p>
+        Find by name: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+        <input type="submit" value="Search" /> |
+        <a asp-action="AllBankInquiries">Back to Full List</a>
+    </p>
+</div>
+</form>
+
 <table class="table table-hover">
     <thead>
         <tr>

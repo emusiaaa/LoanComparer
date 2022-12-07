@@ -51,28 +51,43 @@ namespace BankApp.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> AllBankInquiries(string sortOrder)
+        public async Task<IActionResult> AllBankInquiries(string sortOrder, string searchString)
         {
             ViewData["DateSortParam"] = String.IsNullOrEmpty(sortOrder) ? "date_desc" : "";
             ViewData["LoanSortParam"] = String.IsNullOrEmpty(sortOrder) ? "loan_desc" : "loan_asc";
-        
-            var user = await _userManager.FindByNameAsync(User.Identity.Name);
-            IEnumerable<InquiryModel> model;
+            ViewData["CurrentFilter"] = searchString;
 
+            IEnumerable<InquiryModel> model;
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                model = _loggedInquiryRepository.FilterName(user.Id, searchString);
+            }
+            else
+            {
+                model = _loggedInquiryRepository.GetAllForBankEmployee(user.Id);
+            }
+            
             switch (sortOrder)
             {
                 case "date_desc":
-                    model = _loggedInquiryRepository.GetAllByDateDesc(user.Id);
+                    model = model
+                        .OrderByDescending(d => d.SubmisionDate)
+                        .ToList();
                     break;
                 case "loan_desc":
-                    model = _loggedInquiryRepository.GetAllByLoanDesc(user.Id);
+                    model = model
+                        .OrderByDescending(d => d.LoanValue)
+                        .ToList();
                     break;
                 case "loan_asc":
-                    model = _loggedInquiryRepository.GetAllByLoanAsc(user.Id);
+                    model = model
+                        .OrderBy(d => d.LoanValue)
+                        .ToList();
                     ViewData["LoanSortParam"] = "loan_desc";
                     break;
                 default:
-                    model = _loggedInquiryRepository.GetAllForBankEmployee(user.Id);
                     break;
             }
             

@@ -77,5 +77,12 @@ namespace BankApp.Repositories
                .ToList();
             return res;
         }
+        public IEnumerable<InquiryModel> FilterName(string bankEmployeeID, string searchString)
+        {
+            var res = _context.LoggedInquiries
+             .Where(d => d.ClientId.Contains(searchString))
+             .ToList();
+            return res;
+        }
     }
 }

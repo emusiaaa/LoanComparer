@@ -17,5 +17,6 @@ namespace BankApp.Repositories
         public IEnumerable<InquiryModel> GetAllByDateDesc(string bankEmployeeID);
         public IEnumerable<InquiryModel> GetAllByLoanDesc(string bankEmployeeID);
         public IEnumerable<InquiryModel> GetAllByLoanAsc(string bankEmployeeID);
+        public IEnumerable<InquiryModel> FilterName(string bankEmployeeID, string searchString);
     }
 }
