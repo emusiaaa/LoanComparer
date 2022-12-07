@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace BankApp.Models
 {
+    [Table("NotRegisteredInquiries")] 
     public class NotRegisteredInquiryModel
     {
         [Key]
@@ -24,27 +25,27 @@ namespace BankApp.Models
         public float LoanValue { get; set; }
 
         [Required]
-        [DisplayName("Imię")]
+        [DisplayName("First Name")]
         public string UserFirstName { get; set; }
 
         [Required]
-        [DisplayName("Nazwisko")]
+        [DisplayName("Last Name")]
         public string UserLastName { get; set; }
 
         [Required]
-        [DisplayName("Numer dokumentu tożsamości")]
+        [DisplayName("Government ID Number")]
         public string ClientGovernmentIDNumber { get; set; }
 
         [Required]
-        [DisplayName("Rodzaj dokumentu tożsamości (dowód/paszport)")]
+        [DisplayName("Government ID Type")]
         public string ClientGovernmentIDType { get; set; }
 
         [Required]
-        [DisplayName("Zawód")]
+        [DisplayName("Job Type")]
         public string ClientJobType { get; set; }
 
         [Required]
-        [DisplayName("Miesięczny przychód")]
+        [DisplayName("Income Level")]
         public string ClientIncomeLevel { get; set; }
 
         [Required]

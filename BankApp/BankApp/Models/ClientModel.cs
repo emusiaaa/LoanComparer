@@ -11,21 +11,21 @@ namespace BankApp.Models
     [Table("Users")]
     public class ClientModel: IdentityUser
     {
-        [Required(ErrorMessage = "Pole Imię jest wymagane.")]
-        [DisplayName("Imię")]
+        [Required(ErrorMessage = "Field FirstName is required.")]
+        [DisplayName("First name")]
         public string UserFirstName { get; set; }
 
-        [Required(ErrorMessage = "Pole Nazwisko jest wymagane.")]
-        [DisplayName("Nazwisko")]
+        [Required(ErrorMessage = "Field LastName is required.")]
+        [DisplayName("Last name")]
         public string UserLastName { get; set; }
 
-        [DisplayName("Numer dokumentu tożsamości")]
+        [DisplayName("Government ID Number")]
         public string ClientGovernmentIDNumber { get; set; }
-        [DisplayName("Rodzaj dokumentu tożsamości (dowód/paszport)")]
+        [DisplayName("Government ID Type")]
         public string ClientGovernmentIDType { get; set; }
-        [DisplayName("Zawód")]
+        [DisplayName("Job Type")]
         public string ClientJobType { get; set; }
-        [DisplayName("Miesięczny przychód")]
+        [DisplayName("Income Level")]
         public string ClientIncomeLevel { get; set; }
         public bool IsBankEmployee { get; set; }
     }

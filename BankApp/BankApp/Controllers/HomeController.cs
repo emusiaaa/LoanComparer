@@ -54,9 +54,11 @@ namespace BankApp.Controllers
         public async Task<IActionResult> AllBankInquiries()
         {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
-            var model = _loggedInquiryRepository.GetAllForBankEmployee(user.Id);
-            return View(model);
-            //var model = _loggedInquiryRepository.GetAll()
+            
+            AllInquiryViewModel inquiryModel = new AllInquiryViewModel();
+            inquiryModel.LoggedInquiriesFullData = _loggedInquiryRepository.GetAllForBankEmployee(user.Id);
+            inquiryModel.NotRegisteredInquiries = _notRegisteredInquiryRepository.GetAllForBankEmployee(user.Id);
+            return View(inquiryModel);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

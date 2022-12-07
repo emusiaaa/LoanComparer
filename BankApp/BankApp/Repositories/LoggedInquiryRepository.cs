@@ -1,5 +1,6 @@
 ﻿using BankApp.Data;
 using BankApp.Models;
+using Microsoft.EntityFrameworkCore.Internal;
 using System.ComponentModel.Design;
 
 namespace BankApp.Repositories
@@ -50,10 +51,27 @@ namespace BankApp.Repositories
             return res;
         }
 
-        public IEnumerable<InquiryModel> GetAllForBankEmployee(string bankEmployeeID)
+        public dynamic GetAllForBankEmployee(string bankEmployeeID)
         {
-            var res = _context.LoggedInquiries.ToList();
-            return res;
+
+            var query = from loggedInquiry in _context.LoggedInquiries
+                        join client in _context.Clients on
+                        loggedInquiry.ClientId equals client.Id select new
+                        {
+                            Id = loggedInquiry.Id,
+                            SubmissionDate = loggedInquiry.SubmisionDate,
+                            InstallmentsCount = loggedInquiry.InstallmentsCount,
+                            LoanValue = loggedInquiry.LoanValue,
+                            UserFirstName = client.UserFirstName,
+                            UserLastName = client.UserLastName,
+                            ClientGovernmentIDNumber = client.ClientGovernmentIDNumber,
+                            ClientGovernmentIDType = client.ClientGovernmentIDType,
+                            ClientJobType = client.ClientJobType,
+                            ClientIncomeLevel = client.ClientIncomeLevel,
+                            Email = client.Email
+                        };
+
+            return query.AsEnumerable();
         }
 
     }
