@@ -18,15 +18,33 @@ namespace BankApp.Models
         [Required(ErrorMessage = "Pole Nazwisko jest wymagane.")]
         [DisplayName("Nazwisko")]
         public string UserLastName { get; set; }
+        [Required]
+        [DisplayName("Data urodzenia")]
+        public string UserBirthDay { get; set; }
 
+        [Required]
         [DisplayName("Numer dokumentu tożsamości")]
         public string ClientGovernmentIDNumber { get; set; }
+
+        [Required]
         [DisplayName("Rodzaj dokumentu tożsamości (dowód/paszport)")]
         public string ClientGovernmentIDType { get; set; }
+
+        [Required]
         [DisplayName("Zawód")]
         public string ClientJobType { get; set; }
+
+        [Required]
         [DisplayName("Miesięczny przychód")]
         public string ClientIncomeLevel { get; set; }
+
+        [Required]
+        [DisplayName("Data rozpoczęcia pracy")]
+        public string ClientJobStartDay { get; set; }
+
+        [Required]
+        [DisplayName("Data zakończenia pracy")]
+        public string ClientJobEndDay { get; set; }
     }
 
 }

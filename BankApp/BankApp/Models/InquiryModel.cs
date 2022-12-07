@@ -13,10 +13,15 @@ namespace BankApp.Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public int InstallmentsCount { get; set; }
+        [Required]
         public float LoanValue { get; set; }
 
-        public string ClientId { get; set; }
+        [Required]
         public string SubmisionDate { get; set; }
+
+        [Required]
+        public string ClientId { get; set; }
     }
 }
