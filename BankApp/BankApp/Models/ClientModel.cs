@@ -8,43 +8,44 @@ using System.Runtime.InteropServices;
 
 namespace BankApp.Models
 {
-    
+    [Table("Users")]
     public class ClientModel: IdentityUser
     {
-        [Required(ErrorMessage = "Pole Imię jest wymagane.")]
-        [DisplayName("Imię")]
+        [Required(ErrorMessage = "Field FirstName is required.")]
+        [DisplayName("First name")]
         public string UserFirstName { get; set; }
 
-        [Required(ErrorMessage = "Pole Nazwisko jest wymagane.")]
-        [DisplayName("Nazwisko")]
+        [Required(ErrorMessage = "Field LastName is required.")]
+        [DisplayName("Last name")]
         public string UserLastName { get; set; }
         [Required]
-        [DisplayName("Data urodzenia")]
+        [DisplayName("Birth date")]
         public string UserBirthDay { get; set; }
 
         [Required]
-        [DisplayName("Numer dokumentu tożsamości")]
+        [DisplayName("ID Number")]
         public string ClientGovernmentIDNumber { get; set; }
 
         [Required]
-        [DisplayName("Rodzaj dokumentu tożsamości (dowód/paszport)")]
+        [DisplayName("ID type (id/passport)")]
         public string ClientGovernmentIDType { get; set; }
 
         [Required]
-        [DisplayName("Zawód")]
+        [DisplayName("Job type")]
         public string ClientJobType { get; set; }
 
         [Required]
-        [DisplayName("Miesięczny przychód")]
+        [DisplayName("Monthly income")]
         public string ClientIncomeLevel { get; set; }
 
         [Required]
-        [DisplayName("Data rozpoczęcia pracy")]
+        [DisplayName("Job start date")]
         public string ClientJobStartDay { get; set; }
 
-        [Required]
-        [DisplayName("Data zakończenia pracy")]
+        [DisplayName("Job end date")]
         public string ClientJobEndDay { get; set; }
+
+        public bool IsBankEmployee { get; set; }
     }
 
 }

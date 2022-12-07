@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace BankApp.Models
 {
+    [Table("NotRegisteredInquiries")] 
     public class NotRegisteredInquiryModel
     {
         [Key]
@@ -24,15 +25,15 @@ namespace BankApp.Models
         public float LoanValue { get; set; }
 
         [Required]
-        [DisplayName("Imię")]
+        [DisplayName("First Name")]
         public string UserFirstName { get; set; }
 
         [Required]
-        [DisplayName("Nazwisko")]
+        [DisplayName("Last Name")]
         public string UserLastName { get; set; }
 
         [Required]
-        [DisplayName("Data urodzenia")]
+        [DisplayName("Birth date")]
         public DateTime UserBirthDay { get; set; }
 
         [Required]
@@ -41,27 +42,26 @@ namespace BankApp.Models
         public string Email { get; set; }
 
         [Required]
-        [DisplayName("Numer dokumentu tożsamości")]
+        [DisplayName("ID number")]
         public string ClientGovernmentIDNumber { get; set; }
 
         [Required]
-        [DisplayName("Rodzaj dokumentu tożsamości (dowód/paszport)")]
+        [DisplayName("ID type (id/passport)")]
         public string ClientGovernmentIDType { get; set; }
 
         [Required]
-        [DisplayName("Zawód")]
+        [DisplayName("Job Type")]
         public string ClientJobType { get; set; }
 
         [Required]
-        [DisplayName("Miesięczny przychód")]
+        [DisplayName("Monthly income")]
         public string ClientIncomeLevel { get; set; }
 
         [Required]
-        [DisplayName("Data rozpoczęcia pracy")]
+        [DisplayName("Job start date")]
         public string ClientJobStartDay { get; set; }
 
-        [Required]
-        [DisplayName("Data zakończenia pracy")]
+        [DisplayName("Job end date")]
         public DateTime ClientJobEndDay { get; set; }
 
     }

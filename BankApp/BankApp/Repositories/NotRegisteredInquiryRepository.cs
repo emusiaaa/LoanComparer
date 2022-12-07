@@ -42,5 +42,11 @@ namespace BankApp.Repositories
                 _context.SaveChanges();
             }
         }
+
+        public IEnumerable<NotRegisteredInquiryModel> GetAllForBankEmployee(string bankEmployeeID)
+        {
+            var res = _context.NotRegisteredInquiries.ToList();
+            return res;
+        }
     }
 }
