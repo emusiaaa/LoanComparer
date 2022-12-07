@@ -1,7 +1,7 @@
-﻿@{
+﻿@model AllInquiryViewModel
+@{
     ViewData["Title"] = "Inquiries";
 }
-@model IEnumerable<BankApp.Models.InquiryModel>
 
 <table class="table table-hover">
     <thead>
@@ -9,17 +9,32 @@
             <th scope="col">Date</th>
             <th scope="col">Loan Value</th>
             <th scope="col">Number Of installments</th>
-            <th scope="col">Client's ID</th>
+            <th scope="col">Client's last name</th>
+            <th scope="col">Client's first name</th>
+            <th scope="col">CLient's email</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var inquiry in Model)
+        @foreach (var inquiry in Model.LoggedInquiriesFullData)
         {
             <tr class="table-info">
-                <td>@inquiry.SubmisionDate</td>
+                <td>@inquiry.SubmissionDate</td>
                 <td>@inquiry.LoanValue</td>
                 <td>@inquiry.InstallmentsCount</td>
-                <td>@inquiry.ClientId</td>
+                <td>@inquiry.UserLastName</td>
+                <td>@inquiry.UserFirstName</td>
+                <td>@inquiry.Email</td>
+            </tr>
+        }
+        @foreach (var inquiry in Model.NotRegisteredInquiries)
+        {
+            <tr class="table-info">
+                <td>@inquiry.SubmissionDate</td>
+                <td>@inquiry.LoanValue</td>
+                <td>@inquiry.InstallmentsCount</td>
+                <td>@inquiry.UserLastName</td>
+                <td>@inquiry.UserFirstName</td>
+                <td>@inquiry.Email</td>
             </tr>
         }
     </tbody>
