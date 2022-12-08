@@ -1,7 +1,37 @@
-﻿@model AllInquiryViewModel
+﻿@model IEnumerable<AllInquiryViewModel>
 @{
     ViewData["Title"] = "Inquiries";
 }
+<!DOCTYPE html>
+<script>
+    function myFunction() {
+        var x = document.getElementById("dateRange").value;
+        document.getElementById("days").textContent = x;
+    }
+</script>
+<div class="nav-item dropdown left">
+    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">Dropdown</a>
+    <div class="dropdown-menu" data-bs-popper="static">
+        <a class="dropdown-item" asp-action="AllBankInquiries" asp-route-sortOrder="@ViewData["DateAscSort"]">DATE, NEW TO OLD</a>
+        <a class="dropdown-item" asp-action="AllBankInquiries" asp-route-sortOrder="@ViewData["DateDescSort"]">DATE, OLD TO NEW</a>
+        <a class="dropdown-item" asp-action="AllBankInquiries" asp-route-sortOrder="@ViewData["LoanAscSort"]">LOAN, LOW TO HIGH</a>
+        <a class="dropdown-item" asp-action="AllBankInquiries" asp-route-sortOrder="@ViewData["LoanDescSort"]">LOAN, HIGH TO LOW</a>
+    </div>
+</div>
+
+<form asp-action="AllBankInquiries" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by name: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+           <input type="range" class="form-range" id="dateRange" name="dateRange" min="1" max="100" value="@ViewData["DateFilter"]" oninput="myFunction()">
+            <label for="dateRange" class="form-label">Show the last <label id="days">  @ViewData["DateFilter"]  </label> days</label>
+            <input type="submit" value="Search" />
+            <a asp-action="AllBankInquiries">Back to Full List</a>
+        </p>
+         </div>
+    
+    
+</form>
 
 <table class="table table-hover">
     <thead>
@@ -11,22 +41,11 @@
             <th scope="col">Number Of installments</th>
             <th scope="col">Client's last name</th>
             <th scope="col">Client's first name</th>
-            <th scope="col">CLient's email</th>
+            <th scope="col">Client's email</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var inquiry in Model.LoggedInquiriesFullData)
-        {
-            <tr class="table-info">
-                <td>@inquiry.SubmissionDate</td>
-                <td>@inquiry.LoanValue</td>
-                <td>@inquiry.InstallmentsCount</td>
-                <td>@inquiry.UserLastName</td>
-                <td>@inquiry.UserFirstName</td>
-                <td>@inquiry.Email</td>
-            </tr>
-        }
-        @foreach (var inquiry in Model.NotRegisteredInquiries)
+        @foreach (var inquiry in Model)
         {
             <tr class="table-info">
                 <td>@inquiry.SubmissionDate</td>
@@ -39,3 +58,4 @@
         }
     </tbody>
 </table>
+</!html>

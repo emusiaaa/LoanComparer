@@ -10,6 +10,8 @@ namespace BankApp.Repositories
 
         public void Update(int inquiryID, NotRegisteredInquiryModel notRegisteredInquiry);
         public IEnumerable<NotRegisteredInquiryModel> GetAllForBankEmployee(string bankEmployeeID);
+        public IEnumerable<AllInquiryViewModel> ToAllInquiryModel();
+        public IEnumerable<AllInquiryViewModel> ToAllInquiryModelFilteredByName(string filter, int dateRange);
         public void Delete(int inquiryID);
     }
 }

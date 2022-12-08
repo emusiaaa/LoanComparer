@@ -47,32 +47,52 @@ namespace BankApp.Repositories
                  .Where(s => s.ClientId == userID &&
                              (DateTime)(object)s.SubmisionDate >= DateTime.Now.AddDays(-30))
                  .ToList();
-            //var result = _context.LoggedInquiries.FirstOrDefault(x => (x.ClientId == userID && x.SubmisionDate.))
             return res;
         }
-
-        public dynamic GetAllForBankEmployee(string bankEmployeeID)
+        public IEnumerable<AllInquiryViewModel> ToAllInquiryModel()
         {
-
-            var query = from loggedInquiry in _context.LoggedInquiries
-                        join client in _context.Clients on
-                        loggedInquiry.ClientId equals client.Id select new
-                        {
-                            Id = loggedInquiry.Id,
-                            SubmissionDate = loggedInquiry.SubmisionDate,
-                            InstallmentsCount = loggedInquiry.InstallmentsCount,
-                            LoanValue = loggedInquiry.LoanValue,
-                            UserFirstName = client.UserFirstName,
-                            UserLastName = client.UserLastName,
-                            ClientGovernmentIDNumber = client.ClientGovernmentIDNumber,
-                            ClientGovernmentIDType = client.ClientGovernmentIDType,
-                            ClientJobType = client.ClientJobType,
-                            ClientIncomeLevel = client.ClientIncomeLevel,
-                            Email = client.Email
-                        };
-
-            return query.AsEnumerable();
+            var res = _context.LoggedInquiries
+                 .Join(_context.Clients, i => i.ClientId, c => c.Id, 
+                 (i,c) => new AllInquiryViewModel
+                 {
+                     SubmissionDate = i.SubmisionDate,
+                     InstallmentsCount = i.InstallmentsCount,
+                     LoanValue = i.LoanValue,
+                     UserFirstName = c.UserFirstName,
+                     UserLastName = c.UserLastName,
+                     ClientGovernmentIDNumber = c.ClientGovernmentIDNumber,
+                     ClientGovernmentIDType = c.ClientGovernmentIDType,
+                     ClientJobType = c.ClientJobType,
+                     ClientIncomeLevel = c.ClientIncomeLevel,
+                     Email = c.Email
+                 })
+                 .ToList();
+            return res;
         }
-
+        public IEnumerable<AllInquiryViewModel> ToAllInquiryModelFilteredByName(string filter, int dateRange)
+        {
+            if (filter == null) filter = "";
+            var res = _context.LoggedInquiries
+                 .Join(_context.Clients, i => i.ClientId, c => c.Id,
+                 (i, c) => new AllInquiryViewModel
+                 {
+                     SubmissionDate = i.SubmisionDate,
+                     InstallmentsCount = i.InstallmentsCount,
+                     LoanValue = i.LoanValue,
+                     UserFirstName = c.UserFirstName,
+                     UserLastName = c.UserLastName,
+                     ClientGovernmentIDNumber = c.ClientGovernmentIDNumber,
+                     ClientGovernmentIDType = c.ClientGovernmentIDType,
+                     ClientJobType = c.ClientJobType,
+                     ClientIncomeLevel = c.ClientIncomeLevel,
+                     Email = c.Email
+                 })
+                 .Where(
+                     dateRange == 0 ?
+                    (i => i.UserFirstName.Contains(filter) || i.UserLastName.Contains(filter))
+                     : (i => (i.UserFirstName.Contains(filter) || i.UserLastName.Contains(filter)) && (DateTime)(object)i.SubmissionDate >= DateTime.Now.AddDays(-dateRange)))
+                 .ToList();
+            return res;
+        }
     }
 }
