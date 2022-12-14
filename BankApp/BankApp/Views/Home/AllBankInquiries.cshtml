@@ -12,7 +12,7 @@
 <div class="nav-item dropdown left">
     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">Dropdown</a>
     <div class="dropdown-menu" data-bs-popper="static">
-        <a class="dropdown-item" asp-action="AllBankInquiries" asp-route-sortOrder="@ViewData["DateAscSort"]">DATE, NEW TO OLD</a>
+        <a class="dropdown-item" asp-action="Filter" asp-route-sortOrder="@ViewData["DateAscSort"]">DATE, NEW TO OLD</a>
         <a class="dropdown-item" asp-action="AllBankInquiries" asp-route-sortOrder="@ViewData["DateDescSort"]">DATE, OLD TO NEW</a>
         <a class="dropdown-item" asp-action="AllBankInquiries" asp-route-sortOrder="@ViewData["LoanAscSort"]">LOAN, LOW TO HIGH</a>
         <a class="dropdown-item" asp-action="AllBankInquiries" asp-route-sortOrder="@ViewData["LoanDescSort"]">LOAN, HIGH TO LOW</a>

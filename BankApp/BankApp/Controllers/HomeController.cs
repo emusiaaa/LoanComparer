@@ -18,7 +18,7 @@ using Newtonsoft.Json;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
-using NuGet.Common;
+using System.Text.Json;
 
 namespace BankApp.Controllers
 {
@@ -171,7 +171,26 @@ namespace BankApp.Controllers
             }
             return View(model);
         }
+        public async Task<IEnumerable<AllInquiryViewModel>> Filter()
+        {
+            IEnumerable<AllInquiryViewModel> model1, model2;
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
+            //if (String.IsNullOrEmpty(searchString) && dateRange == 0)
+            //{
+                model1 = _loggedInquiryRepository.ToAllInquiryModel();
+                model2 = _notRegisteredInquiryRepository.ToAllInquiryModel();
+            //}
+            //else
+            //{
+            //    model1 = _loggedInquiryRepository.ToAllInquiryModelFilteredByName(searchString, dateRange);
+            //    model2 = _notRegisteredInquiryRepository.ToAllInquiryModelFilteredByName(searchString, dateRange);
+            //}
+
+            var model = model1.Concat(model2);
+
+            return model;
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
