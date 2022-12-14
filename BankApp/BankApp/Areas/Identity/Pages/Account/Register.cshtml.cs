@@ -170,6 +170,7 @@ namespace BankApp.Areas.Identity.Pages.Account
                 user.ClientJobEndDay = DateTime.Now.ToString("o");
                 user.ClientJobStartDay = Input.ClientJobStartDay;
                 user.IsBankEmployee = false;
+                user.EmployeesBankName = null;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);

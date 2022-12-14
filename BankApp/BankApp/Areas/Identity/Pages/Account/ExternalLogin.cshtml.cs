@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel;
+using System.Security.Policy;
 
 namespace BankApp.Areas.Identity.Pages.Account
 {
@@ -95,6 +97,10 @@ namespace BankApp.Areas.Identity.Pages.Account
             public string UserLastName { get; set; }
 
             [Required]
+            [DisplayName("Birth date")]
+            public string UserBirthDay { get; set; }
+
+            [Required]
             [Display(Name = "Job Type")]
             public string ClientJobType { get; set; }
 
@@ -109,6 +115,17 @@ namespace BankApp.Areas.Identity.Pages.Account
             [Required]
             [Display(Name = "Government ID Number")]
             public string ClientGovernmentIDNumber { get; set; }
+
+            [Required]
+            [DisplayName("Job start date")]
+            public string ClientJobStartDay { get; set; }
+
+            [DisplayName("Job end date")]
+            public string ClientJobEndDay { get; set; }
+
+            public bool IsBankEmployee { get; set; }
+
+            public string EmployeesBankName { get; set; }
         }
         
         public IActionResult OnGet() => RedirectToPage("./Login");
@@ -184,9 +201,14 @@ namespace BankApp.Areas.Identity.Pages.Account
                 user.ClientGovernmentIDNumber = Input.ClientGovernmentIDNumber;
                 user.ClientGovernmentIDType = Input.ClientGovernmentIDType;
                 user.UserLastName = Input.UserLastName;
+                user.UserBirthDay = Input.UserBirthDay;
                 user.ClientIncomeLevel = Input.ClientIncomeLevel;
                 user.ClientJobType = Input.ClientJobType;
                 user.UserFirstName = Input.UserFirstName;
+                user.ClientJobEndDay = DateTime.Now.ToString("o");
+                user.ClientJobStartDay = Input.ClientJobStartDay;
+                user.IsBankEmployee = false;
+                user.EmployeesBankName = null;
 
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)

@@ -34,7 +34,7 @@ namespace BankApp.Models
 
         [Required]
         [DisplayName("Birth date")]
-        public DateTime UserBirthDay { get; set; }
+        public string UserBirthDay { get; set; }
 
         [Required]
         [EmailAddress]
@@ -59,10 +59,10 @@ namespace BankApp.Models
 
         [Required]
         [DisplayName("Job start date")]
-        public DateTime ClientJobStartDay { get; set; }
+        public string ClientJobStartDay { get; set; }
 
         [DisplayName("Job end date")]
-        public DateTime ClientJobEndDay { get; set; }
+        public string ClientJobEndDay { get; set; }
 
     }
 }
