@@ -63,7 +63,7 @@
                 <span asp-validation-for="Input.ClientJobStartDay" class="text-danger"></span>
             </div>
             <div class="form-floating">
-                <input type="text" for="Input.ClientGovernmentIDNumber" class="form-control" autocomplete="username" aria-required="true" />
+                <input type="text" asp-for="Input.ClientGovernmentIDNumber" class="form-control" autocomplete="username" aria-required="true" />
                 <label asp-for="Input.ClientGovernmentIDNumber"></label>
                 <span asp-validation-for="Input.ClientGovernmentIDNumber" class="text-danger"></span>
             </div>
