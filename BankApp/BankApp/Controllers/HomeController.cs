@@ -171,7 +171,7 @@ namespace BankApp.Controllers
             }
             return View(model);
         }
-        public async Task<IEnumerable<AllInquiryViewModel>> Filter()
+        public async Task<IActionResult> Filter()
         {
             IEnumerable<AllInquiryViewModel> model1, model2;
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
@@ -188,8 +188,8 @@ namespace BankApp.Controllers
             //}
 
             var model = model1.Concat(model2);
-
-            return model;
+            var j = Json(model);
+            return Json(model) ;
         }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

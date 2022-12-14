@@ -3,12 +3,85 @@
     ViewData["Title"] = "Inquiries";
 }
 <!DOCTYPE html>
+ <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"></script>
+
 <script>
     function myFunction() {
         var x = document.getElementById("dateRange").value;
         document.getElementById("days").textContent = x;
     }
+    let data;
+
 </script>
+<script>
+       
+    $(function () {
+
+        $('#loaddata').click(function () {
+
+            Promise.resolve($.ajax({
+                type: "GET",
+                url: '/Home/Filter',
+                contentType: false,
+                processData: false
+            })).then(function (result) {
+                if (result) {                   
+                    data= result;
+                    //$.each(result, function (i, v){
+                    //    var row = "<tr>";
+                        
+                    //    row += "<td>" + v.submissionDate + "</td>";
+                    //    row += "<td>" + v.loanValue + "</td>";
+                    //    row += "<td>" + v.installmentsCount + "</td>";
+                    //    row += "<td>" + v.userFirstName + "</td>";
+                    //    row += "<td>" + v.userLastName + "</td>";
+                    //    row += "<td>" + v.email + "</td>";
+
+                    //    row+= "</tr>";
+                    //    console.log(row);
+                    //    $("#mainTable").append($(row));
+                    //});
+
+                    Show(data);
+                    
+                }
+            }).catch(function (e) {
+                console.log(e);
+            });
+        });
+
+    });
+  
+</script>
+<script>
+      function Filter(){
+          let i = data.filter((el) => el.userFirstName == "Agat");
+          console.log(i);
+          return data.filter((el) => el.userFirstName == "Agat");
+      }
+      function Show(inquiries){
+        $("#mainTable").empty();
+        $.each(inquiries, function (i, v) {
+            var row = "<tr>";
+
+            row += "<td>" + v.submissionDate + "</td>";
+            row += "<td>" + v.loanValue + "</td>";
+            row += "<td>" + v.installmentsCount + "</td>";
+            row += "<td>" + v.userFirstName + "</td>";
+            row += "<td>" + v.userLastName + "</td>";
+            row += "<td>" + v.email + "</td>";
+
+            row += "</tr>";
+           // console.log(row);
+            $("#mainTable").append($(row));
+        });
+      }
+      function ShowAfter(){
+          let filtered = Filter();
+          Show(filtered);
+      }
+</script>
+
 <div class="nav-item dropdown left">
     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">Dropdown</a>
     <div class="dropdown-menu" data-bs-popper="static">
@@ -18,7 +91,8 @@
         <a class="dropdown-item" asp-action="AllBankInquiries" asp-route-sortOrder="@ViewData["LoanDescSort"]">LOAN, HIGH TO LOW</a>
     </div>
 </div>
-
+<input type="button" value="Load Data" id="loaddata" />
+<input type="button" value="filetr" id="Filter" onclick="ShowAfter()" />
 <form asp-action="AllBankInquiries" method="get">
     <div class="form-actions no-color">
         <p>
@@ -44,18 +118,9 @@
             <th scope="col">Client's email</th>
         </tr>
     </thead>
-    <tbody>
-        @foreach (var inquiry in Model)
-        {
-            <tr class="table-info">
-                <td>@inquiry.SubmissionDate</td>
-                <td>@inquiry.LoanValue</td>
-                <td>@inquiry.InstallmentsCount</td>
-                <td>@inquiry.UserLastName</td>
-                <td>@inquiry.UserFirstName</td>
-                <td>@inquiry.Email</td>
-            </tr>
-        }
+    <tbody id="mainTable">
+   
     </tbody>
 </table>
+
 </!html>
