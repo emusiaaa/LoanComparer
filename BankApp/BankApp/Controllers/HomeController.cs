@@ -144,27 +144,28 @@ namespace BankApp.Controllers
                 model2 = _notRegisteredInquiryRepository.ToAllInquiryModelFilteredByName(searchString, dateRange);
             }
 
-            var model = model1.Concat(model2);
-
-            switch (sortOrder)
+            var model3 = model1.Concat(model2);
+            tempModel model = new tempModel();
+            model.inquiries = model3;
+            switch (model.sortOrder)
             {
                 case "date_desc":
-                    model = model
+                    model.inquiries = model.inquiries
                         .OrderByDescending(d => d.SubmissionDate)
                         .ToList();
                     break;
                 case "loan_desc":
-                    model = model
+                    model.inquiries = model.inquiries
                         .OrderByDescending(d => d.LoanValue)
                         .ToList();
                     break;
                 case "loan_asc":
-                    model = model
+                    model.inquiries = model.inquiries
                         .OrderBy(d => d.LoanValue)
                         .ToList();
                     break;
                 default:
-                    model = model
+                    model.inquiries = model.inquiries
                         .OrderBy(d => d.SubmissionDate)
                         .ToList();
                     break;
