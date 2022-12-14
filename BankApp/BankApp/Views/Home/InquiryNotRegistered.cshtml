@@ -25,7 +25,7 @@
     <label asp-for="ClientGovernmentIDType">Government ID Type:</label>
     @Html.DropDownListFor(
     m=>m.ClientGovernmentIDType,
-    new SelectList(Enum.GetValues(typeof(GovIDType))),"Select Government ID Type", new {required = (string)null}) <br />
+    new SelectList(BankApp.Models.DocumentTypes.DocumentTypesDictionary.Keys),"Select Government ID Type", new {required = (string)null}) <br />
     <br/>
 
     <label asp-for="ClientGovernmentIDNumber">Government ID Number:</label>
@@ -35,7 +35,7 @@
     <label asp-for="ClientJobType">Job type:</label>
     @Html.DropDownListFor(
     m=>m.ClientJobType,
-    new SelectList(Enum.GetValues(typeof(JobType))),"Select Job Type", new {required = (string)null}) <br />
+    new SelectList(BankApp.Models.JobTypes.JobTypesDictionary.Keys),"Select Job Type", new {required = (string)null}) <br />
     <br />
 
     <label asp-for="ClientJobStartDay">Job start date:</label>

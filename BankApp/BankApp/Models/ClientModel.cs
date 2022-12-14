@@ -50,14 +50,7 @@ namespace BankApp.Models
         public string? EmployeesBankName { get; set; }
     }
 
-    public enum GovIDType
-    {
-        Passport,
-        DriversLicense,
-        GovernmentID
-    }
-
-    public static class Dictionary
+    public static class JobTypes
     {
         public static Dictionary<String, int> JobTypesDictionary = new Dictionary<string, int>
         {
@@ -89,32 +82,15 @@ namespace BankApp.Models
         };
     }
 
-    public enum JobType
+    public static class DocumentTypes
     {
-        Director,
-        Agent,
-        Administrator,
-        Coordinator,
-        Specialist,
-        Orchestrator,
-        Assistant,
-        Designer,
-        Facilitator,
-        Analyst,
-        Producer,
-        Technician,
-        Manager,
-        Liaison,
-        Associate,
-        Consultant,
-        Engineer,
-        Strategist,
-        Supervisor,
-        Executive,
-        Developer,
-        Officer,
-        Planner,
-        Architect,
-        Representative
+        public static Dictionary<String, int> DocumentTypesDictionary = new Dictionary<string, int>
+        {
+            { "Driver License", 1 },
+            { "Passport",  2 },
+            { "Government Id", 3 },
+        };
     }
+
+
 }

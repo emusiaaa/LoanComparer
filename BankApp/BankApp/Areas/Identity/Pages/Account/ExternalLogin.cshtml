@@ -41,7 +41,7 @@
             <div class="form-floating">
                 @Html.DropDownListFor(
                 m=>m.Input.ClientJobType,
-                new SelectList(Enum.GetValues(typeof(BankApp.Models.JobType))),"Select Job Type", new {required = (string)null})
+                new SelectList(BankApp.Models.JobTypes.JobTypesDictionary.Keys),"Select Job Type", new {required = (string)null}))
                 <br />
                 <span asp-validation-for="Input.ClientJobType" class="text-danger"></span>
             </div>
@@ -53,7 +53,7 @@
             <div class="form-floating">
                 @Html.DropDownListFor(
                 m=>m.Input.ClientGovernmentIDType,
-                new SelectList(Enum.GetValues(typeof(BankApp.Models.GovIDType))),"Select Government ID Type", new {required = (string)null})
+                new SelectList(BankApp.Models.DocumentTypes.DocumentTypesDictionary.Keys),"Select Government ID Type", new {required = (string)null})
                 <br />
                 <span asp-validation-for="Input.ClientGovernmentIDType" class="text-danger"></span>
             </div>

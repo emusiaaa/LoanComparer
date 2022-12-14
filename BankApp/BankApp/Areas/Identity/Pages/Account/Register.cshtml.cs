@@ -78,7 +78,7 @@ namespace BankApp.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             /// 
-            
+
             [Required]
             [Display(Name = "First Name")]
             public string UserFirstName { get; set; }
@@ -163,8 +163,8 @@ namespace BankApp.Areas.Identity.Pages.Account
                 user.ClientGovernmentIDNumber = Input.ClientGovernmentIDNumber;
                 user.ClientGovernmentIDType = Input.ClientGovernmentIDType;
                 user.UserLastName = Input.UserLastName;
-                user.UserBirthDay = Input.UserBirthDay;
-                user.ClientIncomeLevel = Input.ClientIncomeLevel;
+                user.UserBirthDay = DateTime.Parse(Input.UserBirthDay).ToUniversalTime().ToString("o");
+                    user.ClientIncomeLevel = Input.ClientIncomeLevel;
                 user.ClientJobType = Input.ClientJobType;
                 user.UserFirstName = Input.UserFirstName;
                 user.ClientJobEndDay = DateTime.Now.ToString("o");
@@ -237,3 +237,4 @@ namespace BankApp.Areas.Identity.Pages.Account
         }
     }
 }
+
