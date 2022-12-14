@@ -66,27 +66,6 @@ namespace BankApp.Controllers
             var accessToken = (string)JToken.Parse(responseBody)["access_token"];
             client.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", accessToken);
-
-            //var stringInquiry = JsonConvert.SerializeObject(inquiryJson);
-            //var httpContent = new StringContent(stringInquiry, Encoding.UTF8, "application/json");
-            //var httpResponse = await client.PostAsync("/api/v1/Inquire", httpContent);
-
-            //httpResponse.EnsureSuccessStatusCode();
-            //var responseContent = await httpResponse.Content.ReadAsStringAsync();
-            //var inquireId = JObject.Parse(responseContent)["inquireId"];
-
-            //while (true)
-            //{
-            //    var r = await client.GetAsync("/api/v1/Inquire" + $"/{inquireId}");
-            //    var rContent = await r.Content.ReadAsStringAsync();
-            //    var status = JObject.Parse(rContent)["statusDescription"].ToString();
-            //    if (status == "OfferPrepared") break;
-            //    Thread.Sleep(1000);
-            //}
-
-            //var result = await client.GetAsync("/api/v1/Inquire" + $"/{inquireId}");
-            //var resultContent = await result.Content.ReadAsStringAsync();
-            //var offerId = JObject.Parse(resultContent)["offerId"]?.ToObject<int>();
             return client;
         }
 
@@ -97,43 +76,7 @@ namespace BankApp.Controllers
 
         public async Task<IActionResult> Privacy()
         {
-            var inquiry = new jsonclass.Loan
-            {
-                value = 15000,
-                installmentsNumber = 20,
-                personalData = new jsonclass.PersonalData
-                {
-                    firstName = "Ac",
-                    lastName = "Ba",
-                    birthDate = (new DateTime(1970, 8, 15, 13, 45, 30,
-                                    DateTimeKind.Utc)).ToString("o"),
-                },
-                governmentDocument = new jsonclass.GovernmentDocument
-                {
-                    typeId = 2,
-                    name = "Passport",
-                    description = "Passport",
-                    number = "q1223",
-                },
-                jobDetails = new jsonclass.JobDetails
-                {
-                    typeId = 37,
-                    name = "Agent",
-                    description = "Agent",
-                    jobStartDate = "2022-09-16T19:27:33.591Z",
-                    jobEndDate = "2022-12-06T19:27:33.591Z",
-                },
-            };
-            var stringInquiry = JsonConvert.SerializeObject(inquiry);
-            HttpClient api = await GetToken();
-            var httpContent = new StringContent(stringInquiry, Encoding.UTF8, "application/json");
-            var httpResponse = await api.PostAsync("/api/v1/Inquire", httpContent);
-
-            httpResponse.EnsureSuccessStatusCode();
-            var responseContent = await httpResponse.Content.ReadAsStringAsync();
-            var inquiryId1 = JObject.Parse(responseContent)["inquireId"].ToObject<int>();
-
-            return View("OfferList",new InquiryString { inquiryId = inquiryId1});
+            return View();
         }
         [Authorize]
         public async Task<IActionResult> HistoryOfInquiries()
@@ -178,6 +121,15 @@ namespace BankApp.Controllers
             inquiry.SubmisionDate = dt.ToString("yyyy-MM-dd");
 
             _loggedInquiryRepository.Add(inquiry);
+            
+            HttpClient api = await GetToken();
+            var stringInquiry = JsonConvert.SerializeObject(inquiry);
+            var httpContent = new StringContent(stringInquiry, Encoding.UTF8, "application/json");
+            var httpResponse = await api.PostAsync("/api/v1/Inquire", httpContent);
+
+            httpResponse.EnsureSuccessStatusCode();
+            var responseContent = await httpResponse.Content.ReadAsStringAsync();
+            var inquiryId = JObject.Parse(responseContent)["inquireId"].ToObject<int>();
 
             await _emailSender.SendEmailAsync(user.Email, "Confirmation of submitting inquiry",
                 "<h3>Thanks for submitting your form!</h3>" +
@@ -192,7 +144,7 @@ namespace BankApp.Controllers
                 "</p><p>Income level: " + user.ClientIncomeLevel +
                 "</p>");
 
-            return View("OfferList",inquiry);
+            return View("OfferList", new InquiryString { inquiryId = inquiryId });
         }
 
         [HttpPost]
@@ -210,20 +162,7 @@ namespace BankApp.Controllers
             httpResponse.EnsureSuccessStatusCode();
             
             var responseContent = await httpResponse.Content.ReadAsStringAsync();
-            var inquireId = (JObject.Parse(responseContent)["inquireId"]).ToObject<int>();
-
-            while (true)
-            {
-                var r = await api.GetAsync("/api/v1/Inquire" + $"/{inquireId}");
-                var rContent = await r.Content.ReadAsStringAsync();
-                var status = JObject.Parse(rContent)["statusDescription"].ToString();
-                if (status == "OfferPrepared") break;
-                Thread.Sleep(1000);
-            }
-
-            var result = await api.GetAsync("/api/v1/Inquire" + $"/{inquireId}");
-            var resultContent = await result.Content.ReadAsStringAsync();
-            var offerId = JObject.Parse(resultContent)["offerId"]?.ToObject<int>();
+            var inquiryId = (JObject.Parse(responseContent)["inquireId"]).ToObject<int>();
 
             await _emailSender.SendEmailAsync(inquiry.Email, "Confirmation of submitting inquiry",
                              "<h3>Thanks for submitting your form!</h3>" +
@@ -237,53 +176,13 @@ namespace BankApp.Controllers
                              "</p><p>Job type: " + inquiry.ClientJobType +
                              "</p><p>Income level: " + inquiry.ClientIncomeLevel +
                              "</p>");
-            return View("OfferList");
+
+            return View("OfferList", new InquiryString { inquiryId = inquiryId });
         }
 
         public IActionResult InquiryNotRegistered()
         {
             return View(new NotRegisteredInquiryModel());
-        }
-
-        public async Task<IActionResult> OfferList()
-        {
-            var inquiry = new jsonclass.Loan
-            {
-                value = 15000,
-                installmentsNumber = 20,
-                personalData = new jsonclass.PersonalData
-                {
-                    firstName = "Ac",
-                    lastName = "Ba",
-                    birthDate = (new DateTime(1970, 8, 15, 13, 45, 30,
-                                    DateTimeKind.Utc)).ToString("o"),
-                },
-                governmentDocument = new jsonclass.GovernmentDocument
-                {
-                    typeId = 2,
-                    name = "Passport",
-                    description = "Passport",
-                    number = "q1223",
-                },
-                jobDetails = new jsonclass.JobDetails
-                {
-                    typeId = 37,
-                    name = "Agent",
-                    description = "Agent",
-                    jobStartDate = "2022-09-16T19:27:33.591Z",
-                    jobEndDate = "2022-12-06T19:27:33.591Z",
-                },
-            };
-            var stringInquiry = JsonConvert.SerializeObject(inquiry);
-            HttpClient api = await GetToken();
-            var httpContent = new StringContent(stringInquiry, Encoding.UTF8, "application/json");
-            var httpResponse = await api.PostAsync("/api/v1/Inquire", httpContent);
-
-            httpResponse.EnsureSuccessStatusCode();
-            var responseContent = await httpResponse.Content.ReadAsStringAsync();
-            var inquireId1 = JObject.Parse(responseContent)["inquireId"].ToObject<int>();
-
-            return View(new InquiryString { inquiryId = inquireId1 });
         }
 
         [HttpGet]
@@ -305,7 +204,6 @@ namespace BankApp.Controllers
 
             var resultOffer = await api.GetAsync("/api/v1/Offer" + $"/{offerId}");
             var rOfferContent = await resultOffer.Content.ReadAsStringAsync();
-            //var js = rOfferContent.ToJson();
             return rOfferContent;
         }
     }
