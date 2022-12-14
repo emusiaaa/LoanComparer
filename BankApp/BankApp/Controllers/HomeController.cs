@@ -158,6 +158,19 @@ namespace BankApp.Controllers
             var inquireId = (JObject.Parse(responseContent)["inquireId"]).ToObject<int>();
             //
 
+            while (true)
+            {
+                var r = await api.GetAsync("/api/v1/Inquire" + $"/{inquireId}");
+                var rContent = await r.Content.ReadAsStringAsync();
+                var status = JObject.Parse(rContent)["statusDescription"].ToString();
+                if (status == "OfferPrepared") break;
+                Thread.Sleep(1000);
+            }
+
+            var result = await api.GetAsync("/api/v1/Inquire" + $"/{inquireId}");
+            var resultContent = await result.Content.ReadAsStringAsync();
+            var offerId = JObject.Parse(resultContent)["offerId"]?.ToObject<int>();
+
             await _emailSender.SendEmailAsync(user.Email, "Confirmation of submitting inquiry",
                 "<h3>Thanks for submitting your form!</h3>" +
                 "<p>Here's a little summary: " +
@@ -219,6 +232,19 @@ namespace BankApp.Controllers
 
             var responseContent = await httpResponse.Content.ReadAsStringAsync();
             var inquireId = (JObject.Parse(responseContent)["inquireId"]).ToObject<int>();
+
+            while (true)
+            {
+                var r = await api.GetAsync("/api/v1/Inquire" + $"/{inquireId}");
+                var rContent = await r.Content.ReadAsStringAsync();
+                var status = JObject.Parse(rContent)["statusDescription"].ToString();
+                if (status == "OfferPrepared") break;
+                Thread.Sleep(1000);
+            }
+
+            var result = await api.GetAsync("/api/v1/Inquire" + $"/{inquireId}");
+            var resultContent = await result.Content.ReadAsStringAsync();
+            var offerId = JObject.Parse(resultContent)["offerId"]?.ToObject<int>();
 
             await _emailSender.SendEmailAsync(inquiry.Email, "Confirmation of submitting inquiry",
                              "<h3>Thanks for submitting your form!</h3>" +
