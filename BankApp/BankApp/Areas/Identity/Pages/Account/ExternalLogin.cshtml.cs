@@ -201,12 +201,12 @@ namespace BankApp.Areas.Identity.Pages.Account
                 user.ClientGovernmentIDNumber = Input.ClientGovernmentIDNumber;
                 user.ClientGovernmentIDType = Input.ClientGovernmentIDType;
                 user.UserLastName = Input.UserLastName;
-                user.UserBirthDay = Input.UserBirthDay;
+                user.UserBirthDay = DateTimeOffset.Parse(Input.UserBirthDay).UtcDateTime.ToString("o");
                 user.ClientIncomeLevel = Input.ClientIncomeLevel;
                 user.ClientJobType = Input.ClientJobType;
                 user.UserFirstName = Input.UserFirstName;
-                user.ClientJobEndDay = DateTime.Now.ToString("o");
-                user.ClientJobStartDay = Input.ClientJobStartDay;
+                user.ClientJobEndDay = DateTime.UtcNow.ToString("o");
+                user.ClientJobStartDay = DateTimeOffset.Parse(Input.ClientJobStartDay).UtcDateTime.ToString("o");
                 user.IsBankEmployee = false;
                 user.EmployeesBankName = null;
 

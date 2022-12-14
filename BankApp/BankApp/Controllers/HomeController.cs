@@ -180,6 +180,9 @@ namespace BankApp.Controllers
             DateTime dt = DateTime.UtcNow;
             inquiry.SubmissionDate = dt.ToString("o");
             inquiry.ClientJobEndDay = dt.ToString("o");
+            inquiry.UserBirthDay = DateTimeOffset.Parse(inquiry.UserBirthDay).UtcDateTime.ToString("o");
+            inquiry.ClientJobStartDay = DateTimeOffset.Parse(inquiry.ClientJobStartDay).UtcDateTime.ToString("o");
+
             _notRegisteredInquiryRepository.Add(inquiry);
 
             HttpClient api = await GetToken();
@@ -191,8 +194,7 @@ namespace BankApp.Controllers
                 {
                     firstName = inquiry.UserFirstName,
                     lastName = inquiry.UserLastName,
-                    birthDate = DateTimeOffset.Parse(inquiry.UserBirthDay).UtcDateTime.ToString("o"),
-                    // birthDate = inquiry.UserBirthDay,
+                    birthDate = inquiry.UserBirthDay,
                 },
                 governmentDocument = new jsonclass.GovernmentDocument
                 {
@@ -206,8 +208,8 @@ namespace BankApp.Controllers
                     typeId = BankApp.Models.JobTypes.JobTypesDictionary[inquiry.ClientJobType],
                     name = inquiry.ClientJobType,
                     description = inquiry.ClientJobType,
-                    jobStartDate = DateTimeOffset.Parse(inquiry.ClientJobStartDay).UtcDateTime.ToString("o"),
-                    jobEndDate = DateTimeOffset.Parse(inquiry.ClientJobEndDay).UtcDateTime.ToString("o"),
+                    jobStartDate = inquiry.ClientJobStartDay,
+                    jobEndDate = inquiry.ClientJobEndDay,
                 },
             };
             var stringInquiry = JsonConvert.SerializeObject(inquiryJson);
