@@ -3,7 +3,7 @@
     ViewData["Title"] = "Inquiries";
 }
 <!DOCTYPE html>
- <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"></script>
 
 <script>
     function myFunction() {
@@ -11,10 +11,62 @@
         document.getElementById("days").textContent = x;
     }
     let data;
+    let filteredData;
+    let sortString = "";
 
+    
 </script>
+
 <script>
-       
+    function Filter() {
+        let i = data.filter((el) => el.userFirstName == "Agat");
+        console.log(i);
+        return data.filter((el) => el.userFirstName == "Agat");
+    }
+    function Show(inquiries) {
+        $("#mainTable").empty();
+        $.each(inquiries, function (i, v) {
+            var row = "<tr>";
+
+            row += "<td>" + v.submissionDate + "</td>";
+            row += "<td>" + v.loanValue + "</td>";
+            row += "<td>" + v.installmentsCount + "</td>";
+            row += "<td>" + v.userFirstName + "</td>";
+            row += "<td>" + v.userLastName + "</td>";
+            row += "<td>" + v.email + "</td>";
+
+            row += "</tr>";
+            // console.log(row);
+            $("#mainTable").append($(row));
+        });
+    }
+    function SortBy(sortOrder) {
+        sortString = sortOrder;
+    }
+    function Sort(sorted) {
+        if (sortString == "loan_desc") {
+            return sorted.sort((a, b) => a.loanValue < b.loanValue)
+        }
+        if (sortString == "loan_asc") {
+            return sorted.sort((a, b) => a.loanValue > b.loanValue)
+        }
+        if (sortString == "date_desc") {
+            return sorted.sort((a, b) => new Date(b.submissionDate).getTime() - new Date(a.submissionDate).getTime())
+        }
+        else {
+            return sorted.sort((a, b) => new Date(a.submissionDate).getTime() - new Date(b.submissionDate).getTime())
+        }
+    }
+    function ShowAfter() {
+        //let filtered = Filter();
+        //filtered = Sort(filtered);
+        let filtered = Sort(data);
+        Show(filtered);
+    }
+</script>
+
+<script>
+
     $(function () {
 
         $('#loaddata').click(function () {
@@ -25,11 +77,13 @@
                 contentType: false,
                 processData: false
             })).then(function (result) {
-                if (result) {                   
-                    data= result;
+                if (result) {
+                    data = result;
+                    filteredData = result;
+
                     //$.each(result, function (i, v){
                     //    var row = "<tr>";
-                        
+
                     //    row += "<td>" + v.submissionDate + "</td>";
                     //    row += "<td>" + v.loanValue + "</td>";
                     //    row += "<td>" + v.installmentsCount + "</td>";
@@ -43,7 +97,7 @@
                     //});
 
                     Show(data);
-                    
+
                 }
             }).catch(function (e) {
                 console.log(e);
@@ -51,60 +105,40 @@
         });
 
     });
-  
-</script>
-<script>
-      function Filter(){
-          let i = data.filter((el) => el.userFirstName == "Agat");
-          console.log(i);
-          return data.filter((el) => el.userFirstName == "Agat");
-      }
-      function Show(inquiries){
-        $("#mainTable").empty();
-        $.each(inquiries, function (i, v) {
-            var row = "<tr>";
 
-            row += "<td>" + v.submissionDate + "</td>";
-            row += "<td>" + v.loanValue + "</td>";
-            row += "<td>" + v.installmentsCount + "</td>";
-            row += "<td>" + v.userFirstName + "</td>";
-            row += "<td>" + v.userLastName + "</td>";
-            row += "<td>" + v.email + "</td>";
-
-            row += "</tr>";
-           // console.log(row);
-            $("#mainTable").append($(row));
-        });
-      }
-      function ShowAfter(){
-          let filtered = Filter();
-          Show(filtered);
-      }
 </script>
+
 
 <div class="nav-item dropdown left">
     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">Dropdown</a>
     <div class="dropdown-menu" data-bs-popper="static">
-        <a class="dropdown-item" asp-action="Filter" asp-route-sortOrder="@ViewData["DateAscSort"]">DATE, NEW TO OLD</a>
-        <a class="dropdown-item" asp-action="AllBankInquiries" asp-route-sortOrder="@ViewData["DateDescSort"]">DATE, OLD TO NEW</a>
-        <a class="dropdown-item" asp-action="AllBankInquiries" asp-route-sortOrder="@ViewData["LoanAscSort"]">LOAN, LOW TO HIGH</a>
-        <a class="dropdown-item" asp-action="AllBankInquiries" asp-route-sortOrder="@ViewData["LoanDescSort"]">LOAN, HIGH TO LOW</a>
+        <label class="dropdown-item" onclick="SortBy('')">DATE, NEW TO OLD</label>
+        <label class="dropdown-item" onclick="SortBy('date_desc')">DATE, OLD TO NEW</label>
+        <label class="dropdown-item" onclick="SortBy('loan_asc')">LOAN, LOW TO HIGH</label>
+        <label class="dropdown-item" onclick="SortBy('loan_desc')">LOAN, HIGH TO LOW</label>
     </div>
 </div>
 <input type="button" value="Load Data" id="loaddata" />
 <input type="button" value="filetr" id="Filter" onclick="ShowAfter()" />
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" value="" id="nameInputCheckbox">
+    <label class="form-check-label" for="flexCheckDefault">
+        Default checkbox
+    </label>
+    <input type="text" id="nameInput" disabled />
+</div>
 <form asp-action="AllBankInquiries" method="get">
     <div class="form-actions no-color">
         <p>
             Find by name: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
-           <input type="range" class="form-range" id="dateRange" name="dateRange" min="1" max="100" value="@ViewData["DateFilter"]" oninput="myFunction()">
+            <input type="range" class="form-range" id="dateRange" name="dateRange" min="1" max="100" value="@ViewData["DateFilter"]" oninput="myFunction()">
             <label for="dateRange" class="form-label">Show the last <label id="days">  @ViewData["DateFilter"]  </label> days</label>
             <input type="submit" value="Search" />
             <a asp-action="AllBankInquiries">Back to Full List</a>
         </p>
-         </div>
-    
-    
+    </div>
+
+
 </form>
 
 <table class="table table-hover">
@@ -119,7 +153,6 @@
         </tr>
     </thead>
     <tbody id="mainTable">
-   
     </tbody>
 </table>
 
