@@ -276,5 +276,9 @@ namespace BankApp.Controllers
             var rOfferContent = await resultOffer.Content.ReadAsStringAsync();
             return rOfferContent;
         }
+        public IActionResult OfferDetails()
+        {
+            return View();
+        }
     }
 }
