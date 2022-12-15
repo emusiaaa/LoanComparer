@@ -6,7 +6,7 @@ namespace BankApp.Repositories
     {
         public InquiryModel Get(int inquiryID);
 
-        public void Add(InquiryModel client);
+        public int Add(InquiryModel client);
 
         public void Update(int clientID, InquiryModel client);
 

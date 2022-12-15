@@ -12,7 +12,7 @@ namespace BankApp.Repositories
             _context = context;
         }
 
-        public void Add(int inquiryIdInOurDb, bool isNrInquiry, string bankName, int offerIdInOurDb, string clientId)
+        public void Add(int inquiryIdInOurDb, bool isNrInquiry, string bankName, long offerIdInOurDb, string? clientId)
         {
             OffersSummaryModel offersSummary = new OffersSummaryModel();
             offersSummary.OfferIdInOurDb = offerIdInOurDb;

@@ -14,7 +14,7 @@ namespace BankApp.Repositories
 
         public OfferModel GetAllOffersForAClientForAGivenInquiryForAGivenBank(int offerIdInBank, string bankName);
 
-        public void Add(Dictionary<string, dynamic> jsonOffer);
+        public long Add(Dictionary<string, dynamic> jsonOffer);
 
         public void Delete(int offerID);
     }

@@ -13,26 +13,32 @@ namespace BankApp.Repositories
             _context = context;
         }
 
-        public void Add(Dictionary<string, dynamic> jsonOffer)
+        public long Add(Dictionary<string, dynamic> jsonOffer)
         {
             OfferModel offer = new OfferModel();
 
-            offer.OfferIdInBank = jsonOffer["id"];
-            offer.Percentage = jsonOffer["percentage"];
-            offer.MonthlyInstallment = jsonOffer["monthlyInstallment"];
-            offer.RequestedValue = jsonOffer["requestedValue"];
-            offer.RequestedPeriodInMonth = jsonOffer["requestedPeriodInMonth"];
-            offer.StatusId = jsonOffer["statusId"];
-            offer.StatusDescription = jsonOffer["statusDescription"];
-            offer.InquireId = jsonOffer["inquireId"];
-            offer.CreateDate = jsonOffer["createDate"];
-            offer.UpdateDate = jsonOffer["updateDate"];
-            offer.ApprovedBy = jsonOffer["approvedBy"];
-            offer.DocumentLink = jsonOffer["documentLink"];
-            offer.DocumentLinkValidDate = jsonOffer["documentLinkValidDate"];
+            var x = jsonOffer["createDate"];
+            var y = jsonOffer["updateDate"];
+            var z = jsonOffer["documentLinkValidDate"];
+
+            offer.OfferIdInBank = (int)jsonOffer["id"];
+            offer.Percentage = (double)jsonOffer["percentage"];
+            offer.MonthlyInstallment = (double)jsonOffer["monthlyInstallment"];
+            offer.RequestedValue = (double)jsonOffer["requestedValue"];
+            offer.RequestedPeriodInMonth = (int)jsonOffer["requestedPeriodInMonth"];
+            offer.StatusId = (int)jsonOffer["statusId"];
+            offer.StatusDescription = (string)jsonOffer["statusDescription"];
+            offer.InquireId = (int)jsonOffer["inquireId"];
+            offer.CreateDate = new DateTime((int)x.Year, (int)x.Month, (int)x.Day, (int)x.Hour, (int)x.Minute, (int)x.Second, DateTimeKind.Utc).ToString("o"); 
+            offer.UpdateDate = new DateTime((int)y.Year, (int)y.Month, (int)y.Day, (int)y.Hour, (int)y.Minute, (int)y.Second, DateTimeKind.Utc).ToString("o");
+            offer.ApprovedBy = (int?)jsonOffer["approvedBy"];
+            offer.DocumentLink = (string)jsonOffer["documentLink"];
+            offer.DocumentLinkValidDate = new DateTime((int)z.Year, (int)z.Month, (int)z.Day, (int)z.Hour, (int)z.Minute, (int)z.Second, DateTimeKind.Utc).ToString("o"); ;
 
             var res = _context.Offers.Add(offer); // może da się stąd wyciągnąć id stworzonej oferty i zwrócić z Add żeby OffersSummary miało??
             _context.SaveChanges();
+
+            return offer.Id;
         }
 
         public void Delete(int offersID)
