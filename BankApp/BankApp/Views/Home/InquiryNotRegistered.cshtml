@@ -4,30 +4,52 @@
 <form method="post" asp-action="InquiryNotRegistered">
     <label asp-for="LoanValue">Insert loan value</label>
     <input type="number" asp-for="LoanValue" value="" required /><br />
+    <br />
 
     <label asp-for="InstallmentsCount">Insert number of installments</label>
     <input type="number" asp-for="InstallmentsCount" required /><br />
+    <br />
 
     <label asp-for="UserFirstName">First name:</label>
     <input asp-for="UserFirstName" required /><br />
+    <br />
 
     <label asp-for="UserLastName">Last name:</label>
     <input asp-for="UserLastName" required /><br />
+    <br />
+
+    <label asp-for="UserBirthDay">Birth date:</label>
+    <input type="datetime-local" asp-for="UserBirthDay" required /><br />
+    <br />
 
     <label asp-for="ClientGovernmentIDType">Government ID Type:</label>
-    <input asp-for="ClientGovernmentIDType" required /><br />
+    @Html.DropDownListFor(
+    m=>m.ClientGovernmentIDType,
+    new SelectList(BankApp.Models.DocumentTypes.DocumentTypesDictionary.Keys),"Select Government ID Type", new {required = (string)null}) <br />
+    <br/>
 
     <label asp-for="ClientGovernmentIDNumber">Government ID Number:</label>
-    <input asp-for="ClientGovernmentIDNumber" required /><br />
+    <input asp-for="ClientGovernmentIDNumber" required /> <br />
+    <br />
 
     <label asp-for="ClientJobType">Job type:</label>
-    <input asp-for="ClientJobType" required /><br />
+    @Html.DropDownListFor(
+    m=>m.ClientJobType,
+    new SelectList(BankApp.Models.JobTypes.JobTypesDictionary.Keys),"Select Job Type", new {required = (string)null}) <br />
+    <br />
+
+    <label asp-for="ClientJobStartDay">Job start date:</label>
+    <input type="datetime-local" asp-for="ClientJobStartDay" required /> <br />
+    <br />
 
     <label asp-for="ClientIncomeLevel">Income level:</label>
-    <input asp-for="ClientIncomeLevel" required /><br />
+    <input type="number" asp-for="ClientIncomeLevel" required /> <br />
+    <br />
 
     <label asp-for="Email">Email:</label>
-    <input type=email asp-for="Email" /><br required />
+    <input type=email asp-for="Email" /> <br />
+    <br required />
+
     <span asp-validation-for="Email" class="text-danger"></span>
 
     <input type="submit" value="Submit inquiry" />

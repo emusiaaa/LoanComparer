@@ -4,6 +4,7 @@ using BankApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BankApp.Migrations
 {
     [DbContext(typeof(LoansComparerDBContext))]
-    partial class LoansComparerDBContextModelSnapshot : ModelSnapshot
+    [Migration("20221214111252_test")]
+    partial class test
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -217,89 +220,6 @@ namespace BankApp.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("NotRegisteredInquiries");
-                });
-
-            modelBuilder.Entity("BankApp.Models.OfferModel", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<int?>("ApprovedBy")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CreateDate")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DocumentLink")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DocumentLinkValidDate")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("InquireId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("MonthlyInstallment")
-                        .HasColumnType("float");
-
-                    b.Property<double>("Percentage")
-                        .HasColumnType("float");
-
-                    b.Property<int>("RequestedPeriodInMonth")
-                        .HasColumnType("int");
-
-                    b.Property<double>("RequestedValue")
-                        .HasColumnType("float");
-
-                    b.Property<string>("StatusDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("StatusId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UpdateDate")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Offers");
-                });
-
-            modelBuilder.Entity("BankApp.Models.OffersSummaryModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("BankName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("InquiryIdInOurDb")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsNRInquiry")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("OfferIdInOurDb")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OffersSummary");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

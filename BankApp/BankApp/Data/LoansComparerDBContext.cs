@@ -16,5 +16,7 @@ namespace BankApp.Data
         public DbSet<ClientModel> Clients { get; set; }
         public DbSet<NotRegisteredInquiryModel> NotRegisteredInquiries { get; set; }
         public DbSet<InquiryModel> LoggedInquiries { get; set; }
+        public DbSet<OffersSummaryModel> OffersSummary { get; set; }
+        public DbSet<OfferModel> Offers { get; set; }
     }
 }

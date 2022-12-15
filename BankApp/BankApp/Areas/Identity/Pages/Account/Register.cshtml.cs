@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Policy;
@@ -76,6 +77,8 @@ namespace BankApp.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
+            /// 
+
             [Required]
             [Display(Name = "First Name")]
             public string UserFirstName { get; set; }
@@ -83,6 +86,10 @@ namespace BankApp.Areas.Identity.Pages.Account
             [Required]
             [Display(Name = "Last Name")]
             public string UserLastName { get; set; }
+
+            [Required]
+            [DisplayName("Birth date")]
+            public string UserBirthDay { get; set; }
 
             [Required]
             [Display(Name = "Job Type")]
@@ -99,6 +106,15 @@ namespace BankApp.Areas.Identity.Pages.Account
             [Required]
             [Display(Name = "Government ID Number")]
             public string ClientGovernmentIDNumber { get; set; }
+
+            [Required]
+            [DisplayName("Job start date")]
+            public string ClientJobStartDay { get; set; }
+
+            [DisplayName("Job end date")]
+            public string ClientJobEndDay { get; set; }
+
+            public bool IsBankEmployee { get; set; }
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -147,9 +163,14 @@ namespace BankApp.Areas.Identity.Pages.Account
                 user.ClientGovernmentIDNumber = Input.ClientGovernmentIDNumber;
                 user.ClientGovernmentIDType = Input.ClientGovernmentIDType;
                 user.UserLastName = Input.UserLastName;
+                user.UserBirthDay = DateTimeOffset.Parse(Input.UserBirthDay).UtcDateTime.ToString("o");
                 user.ClientIncomeLevel = Input.ClientIncomeLevel;
                 user.ClientJobType = Input.ClientJobType;
                 user.UserFirstName = Input.UserFirstName;
+                user.ClientJobEndDay = DateTime.UtcNow.ToString("o");
+                user.ClientJobStartDay = DateTimeOffset.Parse(Input.ClientJobStartDay).UtcDateTime.ToString("o");
+                user.IsBankEmployee = false;
+                user.EmployeesBankName = null;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -216,3 +237,4 @@ namespace BankApp.Areas.Identity.Pages.Account
         }
     }
 }
+
