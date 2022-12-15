@@ -19,6 +19,8 @@ using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
 using NuGet.Common;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using NuGet.Protocol;
 
 namespace BankApp.Controllers
 {
@@ -64,7 +66,6 @@ namespace BankApp.Controllers
             var accessToken = (string)JToken.Parse(responseBody)["access_token"];
             client.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", accessToken);
-
             return client;
         }
 
@@ -73,9 +74,8 @@ namespace BankApp.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public async Task<IActionResult> Privacy()
         {
-            _ = GetToken();
             return View();
         }
         [Authorize]
@@ -120,7 +120,7 @@ namespace BankApp.Controllers
             DateTime dt = DateTime.UtcNow;
             inquiry.SubmisionDate = dt.ToString("o");
             _loggedInquiryRepository.Add(inquiry);
-
+            
             HttpClient api = await GetToken();
             var inquiryJson = new jsonclass.Loan
             {
@@ -155,21 +155,7 @@ namespace BankApp.Controllers
             httpResponse.EnsureSuccessStatusCode();
 
             var responseContent = await httpResponse.Content.ReadAsStringAsync();
-            var inquireId = (JObject.Parse(responseContent)["inquireId"]).ToObject<int>();
-            //
-
-            while (true)
-            {
-                var r = await api.GetAsync("/api/v1/Inquire" + $"/{inquireId}");
-                var rContent = await r.Content.ReadAsStringAsync();
-                var status = JObject.Parse(rContent)["statusDescription"].ToString();
-                if (status == "OfferPrepared") break;
-                Thread.Sleep(1000);
-            }
-
-            var result = await api.GetAsync("/api/v1/Inquire" + $"/{inquireId}");
-            var resultContent = await result.Content.ReadAsStringAsync();
-            var offerId = JObject.Parse(resultContent)["offerId"]?.ToObject<int>();
+            var inquiryId = JObject.Parse(responseContent)["inquireId"].ToObject<int>();
 
             await _emailSender.SendEmailAsync(user.Email, "Confirmation of submitting inquiry",
                 "<h3>Thanks for submitting your form!</h3>" +
@@ -184,7 +170,7 @@ namespace BankApp.Controllers
                 "</p><p>Income level: " + user.ClientIncomeLevel +
                 "</p>");
 
-            return View("NotRegisteredInquirySubmitted");
+            return View("OfferList", new InquiryString { inquiryId = inquiryId });
         }
 
         [HttpPost]
@@ -231,20 +217,7 @@ namespace BankApp.Controllers
             httpResponse.EnsureSuccessStatusCode();
 
             var responseContent = await httpResponse.Content.ReadAsStringAsync();
-            var inquireId = (JObject.Parse(responseContent)["inquireId"]).ToObject<int>();
-
-            while (true)
-            {
-                var r = await api.GetAsync("/api/v1/Inquire" + $"/{inquireId}");
-                var rContent = await r.Content.ReadAsStringAsync();
-                var status = JObject.Parse(rContent)["statusDescription"].ToString();
-                if (status == "OfferPrepared") break;
-                Thread.Sleep(1000);
-            }
-
-            var result = await api.GetAsync("/api/v1/Inquire" + $"/{inquireId}");
-            var resultContent = await result.Content.ReadAsStringAsync();
-            var offerId = JObject.Parse(resultContent)["offerId"]?.ToObject<int>();
+            var inquiryId = (JObject.Parse(responseContent)["inquireId"]).ToObject<int>();
 
             await _emailSender.SendEmailAsync(inquiry.Email, "Confirmation of submitting inquiry",
                              "<h3>Thanks for submitting your form!</h3>" +
@@ -258,12 +231,35 @@ namespace BankApp.Controllers
                              "</p><p>Job type: " + inquiry.ClientJobType +
                              "</p><p>Income level: " + inquiry.ClientIncomeLevel +
                              "</p>");
-            return View("NotRegisteredInquirySubmitted");
+
+            return View("OfferList", new InquiryString { inquiryId = inquiryId });
         }
 
         public IActionResult InquiryNotRegistered()
         {
             return View(new NotRegisteredInquiryModel());
+        }
+
+        [HttpGet]
+        public async Task<string?> WaitForOffer(int inquiryId)
+        {
+            HttpClient api = await GetToken();
+            while (true)
+            {
+                var r = await api.GetAsync("/api/v1/Inquire" + $"/{inquiryId}");
+                var rContent = await r.Content.ReadAsStringAsync();
+                var status = JObject.Parse(rContent)["statusDescription"].ToString();
+                if (status == "OfferPrepared") break;
+                Thread.Sleep(1000);
+            }
+
+            var result = await api.GetAsync("/api/v1/Inquire" + $"/{inquiryId}");
+            var resultContent = await result.Content.ReadAsStringAsync();
+            var offerId = JObject.Parse(resultContent)["offerId"]?.ToObject<int>();
+
+            var resultOffer = await api.GetAsync("/api/v1/Offer" + $"/{offerId}");
+            var rOfferContent = await resultOffer.Content.ReadAsStringAsync();
+            return rOfferContent;
         }
     }
 }
