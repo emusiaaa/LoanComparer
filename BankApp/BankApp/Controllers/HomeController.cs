@@ -243,10 +243,10 @@ namespace BankApp.Controllers
             }
 
             var resultContent = await _MiNIClient.GetInquiryAsync(inquiryId);
-            var offerId = JObject.Parse(resultContent)["offerId"]?.ToObject<int>();
+            var offerId = JObject.Parse(resultContent)["offerId"].ToObject<int>();
 
             
-        var rOfferContent = await _MiNIClient.GetOfferAsync(offerId);
+            var rOfferContent = await _MiNIClient.GetOfferAsync(offerId);
 
 
         var values = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(rOfferContent);
