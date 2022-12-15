@@ -38,7 +38,7 @@ namespace BankApp.Data
 
             var offer = new MockOffers();
             offer.id = randomSeed.Next(100);
-            offer.percentage = randomSeed.Next(100) / 100.0;
+            offer.percentage = randomSeed.Next(30) / 100.0;
             offer.requestedValue = randomSeed.Next(10000);
             offer.requestedPeriodInMonth = randomSeed.Next(24);
             offer.monthlyInstallment = offer.requestedValue * (1.0 + offer.percentage) / offer.requestedPeriodInMonth;
