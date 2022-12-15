@@ -1,0 +1,30 @@
+﻿@model IEnumerable<OfferModel>
+@{
+    ViewData["Title"] = "Offers";
+}
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Monthly Installment</th>
+            <th scope="col">Percentage</th>
+            <th scope="col">Create Date</th>
+            <th scope="col">Requested Period In Months</th>
+            <th scope="col">Requested Value</th>
+            <th scope="col">Status Description</th>      
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var inquiry in Model)
+        {
+                <tr class="table-info">
+                    <td>@inquiry.MonthlyInstallment</td>
+                    <td>@inquiry.Percentage</td>
+                    <td>@inquiry.CreateDate</td>
+                    <td>@inquiry.RequestedPeriodInMonth</td>
+                    <td>@inquiry.RequestedValue</td>
+                    <td>@inquiry.StatusDescription</td>
+                </tr>
+        }
+    </tbody>
+</table>

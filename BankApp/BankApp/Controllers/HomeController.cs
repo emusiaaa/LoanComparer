@@ -73,8 +73,20 @@ namespace BankApp.Controllers
         }
 
         [Authorize]
+        public async Task<IActionResult> AllBankOffersRequests()
+        {
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            if (user.IsBankEmployee)
+            {
+                var model = _offerRepository.GetAllOffersForBankEmployee(user.Id, user.EmployeesBankName);
+                return View(model);
+            }
+            return View();
+        }
+
+        [Authorize]
         public IActionResult AllBankInquiries()
-        {       
+        {
             return View();
         }
         public async Task<IActionResult> Filter(string searchString, int dateRange)
