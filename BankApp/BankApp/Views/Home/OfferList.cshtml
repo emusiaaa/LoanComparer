@@ -1,18 +1,28 @@
 ﻿@model InquiryString
-
+<h1 id="numberOfOffers">Offers 0/3</h1>
 <div id="loading-div-background">
     <div id="loading-div" class="ui-corner-all">
         <div id="loadingbar"><i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i></div>
         <h2 style="color:gray;font-weight:normal;">Please wait....</h2>
     </div>
 </div>
-
 <table>
-    <h1 id="header" style="display:none">Hi!</h1>
-    <tbody id="tablebody">
+    <h1 id="header1" style="display:none">Offer 1</h1>
+    <tbody id="tablebody1">
+    </tbody>
+</table>
+<table>
+    <h1 id="header2" style="display:none">Offer 2</h1>
+    <tbody id="tablebody2">
     </tbody>
 </table>
 
+<script>
+    let offers = 0;
+    function updateTitle(){
+        document.getElementById("numberOfOffers").textContent = "Offers " + offers + "/3";
+    }
+</script>
 <script src="https://kit.fontawesome.com/ebd704dc7e.js" crossorigin="anonymous"></script>
 <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"></script>
 <script>
@@ -22,20 +32,44 @@
         Promise.resolve($.ajax({
             type: "GET",
             url: "/Home/WaitForOffer?inquiryId=" + @Model.inquiryId.ToString(),
-            //dataType: "json"
-            
+            dataType: "json"
+
         })).then(function (result) {
             if (result) {
-                var offer = $.parseJSON(result);
-                
-                $('#loading-div-background').hide();
-                $("#header").show()
+                if(++offers === 2){
+                        $('#loading-div-background').hide();
+                }
+                updateTitle();
+                $("#header2").show()
                 var row = "";
-                $.each(offer, function (index, item) {
+                $.each(result, function (index, item) {
                     row += "<tr><td>" + index
-                            + "</td><td>" + item + "</td></tr> ";
+                        + "</td><td>" + item + "</td></tr> ";
                 });
-                $("#tablebody").html(row);
+                $("#tablebody2").html(row);
+            }
+        }).catch(function (e) {
+            console.log(e);
+        });
+        Promise.resolve($.ajax({
+            type: "GET",
+            url: "/Home/BestAPIWaitForOffer",
+            dataType: "json"
+
+        })).then(function (result) {
+            if (result) {
+
+                if (++offers === 2){
+                    $('#loading-div-background').hide();
+                }
+                updateTitle();
+                $("#header1").show()
+                var row = "";
+                $.each(result, function (index, item) {
+                    row += "<tr><td>" + index
+                        + "</td><td>" + item + "</td></tr> ";
+                });
+                $("#tablebody1").html(row);
             }
         }).catch(function (e) {
             console.log(e);
