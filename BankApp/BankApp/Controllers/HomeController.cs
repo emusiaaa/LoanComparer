@@ -121,76 +121,19 @@ namespace BankApp.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> AllBankInquiries(string sortOrder, string searchString, int dateRange)
-        {
-            ViewData["DateAscSort"] = "";
-            ViewData["DateDescSort"] = "date_desc";
-            ViewData["LoanAscSort"] = "loan_asc";
-            ViewData["LoanDescSort"] = "loan_desc";
-            ViewData["CurrentFilter"] = searchString;
-            ViewData["DateFilter"] = dateRange;
-
-            IEnumerable<AllInquiryViewModel> model1, model2;
-            var user = await _userManager.FindByNameAsync(User.Identity.Name);
-
-            if (String.IsNullOrEmpty(searchString) && dateRange==0)
-            {
-                model1 = _loggedInquiryRepository.ToAllInquiryModel();
-                model2 = _notRegisteredInquiryRepository.ToAllInquiryModel();
-            }
-            else
-            {
-                model1 = _loggedInquiryRepository.ToAllInquiryModelFilteredByName(searchString, dateRange);
-                model2 = _notRegisteredInquiryRepository.ToAllInquiryModelFilteredByName(searchString, dateRange);
-            }
-
-            var model = model1.Concat(model2);
-
-            switch (sortOrder)
-            {
-                case "date_desc":
-                    model = model
-                        .OrderByDescending(d => d.SubmissionDate)
-                        .ToList();
-                    break;
-                case "loan_desc":
-                    model = model
-                        .OrderByDescending(d => d.LoanValue)
-                        .ToList();
-                    break;
-                case "loan_asc":
-                    model = model
-                        .OrderBy(d => d.LoanValue)
-                        .ToList();
-                    break;
-                default:
-                    model = model
-                        .OrderBy(d => d.SubmissionDate)
-                        .ToList();
-                    break;
-            }
-            return View(model);
+        public IActionResult AllBankInquiries()
+        {       
+            return View();
         }
         public async Task<IActionResult> Filter(string searchString, int dateRange)
         {
             IEnumerable<AllInquiryViewModel> model1, model2;
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
-            ViewData["CurrentFilter"] = searchString;
-            ViewData["DateFilter"] = dateRange;
-            //if (String.IsNullOrEmpty(searchString) && dateRange == 0)
-            //{
             model1 = _loggedInquiryRepository.ToAllInquiryModel();
-                model2 = _notRegisteredInquiryRepository.ToAllInquiryModel();
-            //}
-            //else
-            //{
-            //    model1 = _loggedInquiryRepository.ToAllInquiryModelFilteredByName(searchString, dateRange);
-            //    model2 = _notRegisteredInquiryRepository.ToAllInquiryModelFilteredByName(searchString, dateRange);
-            //}
-
+            model2 = _notRegisteredInquiryRepository.ToAllInquiryModel();         
             var model = model1.Concat(model2);
-            var j = Json(model);
+
             return Json(model) ;
         }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
