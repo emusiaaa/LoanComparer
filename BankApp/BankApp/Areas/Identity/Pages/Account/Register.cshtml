@@ -13,37 +13,55 @@
             <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-floating">
-                <input asp-for="Input.UserFirstName" class="form-control" autocomplete="username" aria-required="true" />
+                <input type="text" asp-for="Input.UserFirstName" class="form-control" autocomplete="username" aria-required="true" />
                 <label asp-for="Input.UserFirstName"></label>
                 <span asp-validation-for="Input.UserFirstName" class="text-danger"></span>
             </div>
             <div class="form-floating">
-                <input asp-for="Input.UserLastName" class="form-control" autocomplete="username" aria-required="true" />
+                <input type="text" asp-for="Input.UserLastName" class="form-control" autocomplete="username" aria-required="true" />
                 <label asp-for="Input.UserLastName"></label>
                 <span asp-validation-for="Input.UserLastName" class="text-danger"></span>
             </div>
             <div class="form-floating">
-                <input asp-for="Input.ClientJobType" class="form-control" autocomplete="username" aria-required="true" />
-                <label asp-for="Input.ClientJobType"></label>
+                <input type="datetime-local" asp-for="Input.UserBirthDay" class="form-control" autocomplete="username" aria-required="true" />
+                <label asp-for="Input.UserBirthDay"></label>
+                <span asp-validation-for="Input.UserBirthDay" class="text-danger"></span>
+            </div>
+            <br />
+            <div class="form-floating">
+                @Html.DropDownListFor(
+                m=>m.Input.ClientJobType,
+                new SelectList(BankApp.Models.JobTypes.JobTypesDictionary.Keys),"Select Job Type", new {required = (string)null})
+                <br />
                 <span asp-validation-for="Input.ClientJobType" class="text-danger"></span>
             </div>
+            <br />
             <div class="form-floating">
-                <input asp-for="Input.ClientIncomeLevel" class="form-control" autocomplete="username" aria-required="true" />
+                <input type="number" asp-for="Input.ClientIncomeLevel" class="form-control" autocomplete="username" aria-required="true" />
                 <label asp-for="Input.ClientIncomeLevel"></label>
                 <span asp-validation-for="Input.ClientIncomeLevel" class="text-danger"></span>
             </div>
+            <br/>
             <div class="form-floating">
-                <input asp-for="Input.ClientGovernmentIDType" class="form-control" autocomplete="username" aria-required="true" />
-                <label asp-for="Input.ClientGovernmentIDType"></label>
+                @Html.DropDownListFor(
+                m=>m.Input.ClientGovernmentIDType,
+                new SelectList(BankApp.Models.DocumentTypes.DocumentTypesDictionary.Keys),"Select Government ID Type", new {required = (string)null})
+                <br />
                 <span asp-validation-for="Input.ClientGovernmentIDType" class="text-danger"></span>
             </div>
+            <br />
             <div class="form-floating">
-                <input asp-for="Input.ClientGovernmentIDNumber" class="form-control" autocomplete="username" aria-required="true" />
+                <input type="text" asp-for="Input.ClientGovernmentIDNumber" class="form-control" autocomplete="username" aria-required="true" />
                 <label asp-for="Input.ClientGovernmentIDNumber"></label>
                 <span asp-validation-for="Input.ClientGovernmentIDNumber" class="text-danger"></span>
             </div>
             <div class="form-floating">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
+                <input type="datetime-local" asp-for="Input.ClientJobStartDay" class="form-control" autocomplete="username" aria-required="true" />
+                <label asp-for="Input.ClientJobStartDay"></label>
+                <span asp-validation-for="Input.ClientJobStartDay" class="text-danger"></span>
+            </div>
+            <div class="form-floating">
+                <input type="email" asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
                 <label asp-for="Input.Email"></label>
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
@@ -69,8 +87,10 @@
                 {
                     <div>
                         <p>
-                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
-                            about setting up this ASP.NET application to support logging in via external services</a>.
+                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">
+                                article
+                                about setting up this ASP.NET application to support logging in via external services
+                            </a>.
                         </p>
                     </div>
                 }

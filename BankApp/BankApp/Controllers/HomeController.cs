@@ -117,17 +117,43 @@ namespace BankApp.Controllers
         {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             inquiry.ClientId = user.Id;
-            DateTime dt = DateTime.Now;
-            inquiry.SubmisionDate = dt.ToString("yyyy-MM-dd");
-
+            DateTime dt = DateTime.UtcNow;
+            inquiry.SubmisionDate = dt.ToString("o");
             _loggedInquiryRepository.Add(inquiry);
             
             HttpClient api = await GetToken();
-            var stringInquiry = JsonConvert.SerializeObject(inquiry);
+            var inquiryJson = new jsonclass.Loan
+            {
+                value = (int)inquiry.LoanValue,
+                installmentsNumber = inquiry.InstallmentsCount,
+                personalData = new jsonclass.PersonalData
+                {
+                    firstName = user.UserFirstName,
+                    lastName = user.UserLastName,
+                    birthDate = DateTimeOffset.Parse(user.UserBirthDay).UtcDateTime.ToString("o"),
+                    // birthDate = inquiry.UserBirthDay,
+                },
+                governmentDocument = new jsonclass.GovernmentDocument
+                {
+                    typeId = BankApp.Models.DocumentTypes.DocumentTypesDictionary[user.ClientGovernmentIDType],
+                    name = user.ClientGovernmentIDType,
+                    description = user.ClientGovernmentIDType,
+                    number = user.ClientGovernmentIDNumber
+                },
+                jobDetails = new jsonclass.JobDetails
+                {
+                    typeId = BankApp.Models.JobTypes.JobTypesDictionary[user.ClientJobType],
+                    name = user.ClientJobType,
+                    description = user.ClientJobType,
+                    jobStartDate = DateTimeOffset.Parse(user.ClientJobStartDay).UtcDateTime.ToString("o"),
+                    jobEndDate = DateTimeOffset.Parse(user.ClientJobEndDay).UtcDateTime.ToString("o"),
+                },
+            };
+            var stringInquiry = JsonConvert.SerializeObject(inquiryJson);
             var httpContent = new StringContent(stringInquiry, Encoding.UTF8, "application/json");
             var httpResponse = await api.PostAsync("/api/v1/Inquire", httpContent);
-
             httpResponse.EnsureSuccessStatusCode();
+
             var responseContent = await httpResponse.Content.ReadAsStringAsync();
             var inquiryId = JObject.Parse(responseContent)["inquireId"].ToObject<int>();
 
@@ -150,17 +176,46 @@ namespace BankApp.Controllers
         [HttpPost]
         public async Task<ViewResult> InquiryNotRegistered(NotRegisteredInquiryModel inquiry)
         {
-            DateTime dt = DateTime.Now;
-            inquiry.SubmissionDate = dt.ToString("yyyy-MM-dd");
+            DateTime dt = DateTime.UtcNow;
+            inquiry.SubmissionDate = dt.ToString("o");
+            inquiry.ClientJobEndDay = dt.ToString("o");
+            inquiry.UserBirthDay = DateTimeOffset.Parse(inquiry.UserBirthDay).UtcDateTime.ToString("o");
+            inquiry.ClientJobStartDay = DateTimeOffset.Parse(inquiry.ClientJobStartDay).UtcDateTime.ToString("o");
+
             _notRegisteredInquiryRepository.Add(inquiry);
 
             HttpClient api = await GetToken();
-          
-            var stringInquiry = JsonConvert.SerializeObject(inquiry);
+            var inquiryJson = new jsonclass.Loan
+            {
+                value = (int)inquiry.LoanValue,
+                installmentsNumber = inquiry.InstallmentsCount,
+                personalData = new jsonclass.PersonalData
+                {
+                    firstName = inquiry.UserFirstName,
+                    lastName = inquiry.UserLastName,
+                    birthDate = inquiry.UserBirthDay,
+                },
+                governmentDocument = new jsonclass.GovernmentDocument
+                {
+                    typeId = BankApp.Models.DocumentTypes.DocumentTypesDictionary[inquiry.ClientGovernmentIDType],
+                    name = inquiry.ClientGovernmentIDType,
+                    description = inquiry.ClientGovernmentIDType,
+                    number = inquiry.ClientGovernmentIDNumber
+                },
+                jobDetails = new jsonclass.JobDetails
+                {
+                    typeId = BankApp.Models.JobTypes.JobTypesDictionary[inquiry.ClientJobType],
+                    name = inquiry.ClientJobType,
+                    description = inquiry.ClientJobType,
+                    jobStartDate = inquiry.ClientJobStartDay,
+                    jobEndDate = inquiry.ClientJobEndDay,
+                },
+            };
+            var stringInquiry = JsonConvert.SerializeObject(inquiryJson);
             var httpContent = new StringContent(stringInquiry, Encoding.UTF8, "application/json");
             var httpResponse = await api.PostAsync("/api/v1/Inquire", httpContent);
             httpResponse.EnsureSuccessStatusCode();
-            
+
             var responseContent = await httpResponse.Content.ReadAsStringAsync();
             var inquiryId = (JObject.Parse(responseContent)["inquireId"]).ToObject<int>();
 
