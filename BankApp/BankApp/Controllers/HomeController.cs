@@ -47,29 +47,6 @@ namespace BankApp.Controllers
             _emailSender = emailSender;
             _MiNIClient = MiNIClient;
         }
-        //public async Task<HttpClient> GetToken()
-        //{
-        //    var client = _clientFactory.CreateClient("API");
-        //    var clientId = "team4c";
-        //    var clientSecret = "7D84D860-87AC-46AE-B955-68DC7D8C48E3";
-
-        //    var p = new List<KeyValuePair<string, string>>();
-        //    p.Add(new KeyValuePair<string, string>("grant_type", "client_credentials"));
-        //    p.Add(new KeyValuePair<string, string>("client_id", HttpUtility.UrlEncode(clientId)));
-        //    p.Add(new KeyValuePair<string, string>("client_secret", HttpUtility.UrlEncode(clientSecret)));
-
-        //    var request = new HttpRequestMessage(HttpMethod.Post, "https://indentitymanager.snet.com.pl/connect/token");
-        //    request.Content = new FormUrlEncodedContent(p);
-        //    request.Headers.Clear();
-
-        //    HttpResponseMessage response = await client.SendAsync(request);
-        //    var responseBody = await response.Content.ReadAsStringAsync();
-        //    // response would be a JSON, just extract token from it
-        //    var accessToken = (string)JToken.Parse(responseBody)["access_token"];
-        //    client.DefaultRequestHeaders.Authorization =
-        //    new AuthenticationHeaderValue("Bearer", accessToken);
-        //    return client;
-        //}
 
         public IActionResult Index()
         {
@@ -159,18 +136,18 @@ namespace BankApp.Controllers
             var responseContent = await _MiNIClient.PostInquiryAsync(inquiryJson);
             var inquiryId = JObject.Parse(responseContent)["inquireId"].ToObject<int>();
 
-            //await _emailSender.SendEmailAsync(user.Email, "Confirmation of submitting inquiry",
-            //    "<h3>Thanks for submitting your form!</h3>" +
-            //    "<p>Here's a little summary: " +
-            //    "</p><p>Loan value: " + inquiry.LoanValue +
-            //    "</p>" +
-            //    "<p>Number of installments: " + inquiry.InstallmentsCount +
-            //    "</p><p>Name: " + user.UserFirstName + " " + user.UserLastName +
-            //    "</p><p>Government ID Type: " + user.ClientGovernmentIDType +
-            //    "</p><p>Government ID Number: " + user.ClientGovernmentIDNumber +
-            //    "</p><p>Job type: " + user.ClientJobType +
-            //    "</p><p>Income level: " + user.ClientIncomeLevel +
-            //    "</p>");
+            await _emailSender.SendEmailAsync(user.Email, "Confirmation of submitting inquiry",
+                "<h3>Thanks for submitting your form!</h3>" +
+                "<p>Here's a little summary: " +
+                "</p><p>Loan value: " + inquiry.LoanValue +
+                "</p>" +
+                "<p>Number of installments: " + inquiry.InstallmentsCount +
+                "</p><p>Name: " + user.UserFirstName + " " + user.UserLastName +
+                "</p><p>Government ID Type: " + user.ClientGovernmentIDType +
+                "</p><p>Government ID Number: " + user.ClientGovernmentIDNumber +
+                "</p><p>Job type: " + user.ClientJobType +
+                "</p><p>Income level: " + user.ClientIncomeLevel +
+                "</p>");
 
             return View("OfferList", new InquiryString { inquiryId = inquiryId });
         }
@@ -220,18 +197,18 @@ namespace BankApp.Controllers
             var responseContent = await _MiNIClient.PostInquiryAsync(inquiryJson);
             var inquiryId = (JObject.Parse(responseContent)["inquireId"]).ToObject<int>();
 
-            //await _emailSender.SendEmailAsync(inquiry.Email, "Confirmation of submitting inquiry",
-            //                 "<h3>Thanks for submitting your form!</h3>" +
-            //                 "<p>Here's a little summary: " +
-            //                 "</p><p>Loan value: " + inquiry.LoanValue +
-            //                 "</p>" +
-            //                 "<p>Number of installments: " + inquiry.InstallmentsCount +
-            //                 "</p><p>Name: " + inquiry.UserFirstName + " " + inquiry.UserLastName +
-            //                 "</p><p>Government ID Type: " + inquiry.ClientGovernmentIDType +
-            //                 "</p><p>Government ID Number: " + inquiry.ClientGovernmentIDNumber +
-            //                 "</p><p>Job type: " + inquiry.ClientJobType +
-            //                 "</p><p>Income level: " + inquiry.ClientIncomeLevel +
-            //                 "</p>");
+            await _emailSender.SendEmailAsync(inquiry.Email, "Confirmation of submitting inquiry",
+                             "<h3>Thanks for submitting your form!</h3>" +
+                             "<p>Here's a little summary: " +
+                             "</p><p>Loan value: " + inquiry.LoanValue +
+                             "</p>" +
+                             "<p>Number of installments: " + inquiry.InstallmentsCount +
+                             "</p><p>Name: " + inquiry.UserFirstName + " " + inquiry.UserLastName +
+                             "</p><p>Government ID Type: " + inquiry.ClientGovernmentIDType +
+                             "</p><p>Government ID Number: " + inquiry.ClientGovernmentIDNumber +
+                             "</p><p>Job type: " + inquiry.ClientJobType +
+                             "</p><p>Income level: " + inquiry.ClientIncomeLevel +
+                             "</p>");
 
             return View("OfferList", new InquiryString { inquiryId = inquiryId });
         }
