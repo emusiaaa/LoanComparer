@@ -8,21 +8,102 @@
 <script>
     function myFunction() {
         var x = document.getElementById("dateRange").value;
-        document.getElementById("days").textContent = x;
+        document.getElementById("days").textContent = "Show the last " + x + " days";
     }
     let data;
-    let filteredData;
-    let sortString = "";
+    //let filteredData;
+    //let sortString = "";
 
-    
+    function ableDateRange () {
+
+        if (document.getElementById("dateCheckBox").checked){
+            document.getElementById("dateRange").disabled = false;
+            myFunction();
+        }
+        else{
+            document.getElementById("dateRange").disabled = true;
+            document.getElementById("days").textContent = "Filter by submission date";
+        }
+    }
+    function ableName () {
+        if (document.getElementById("nameCheckBox").checked) {
+            document.getElementById("SearchString").disabled = false;
+        }
+        else {
+            document.getElementById("SearchString").disabled = true;
+        }
+    }
+    function validateForm() {
+        if (document.getElementById("dateCheckBox").checked) {
+            localStorage.setItem('dateFilter', document.getElementById("dateRange").value);
+        }
+        if (document.getElementById("nameCheckBox").checked) {
+            localStorage.setItem('nameFilter', document.getElementById("SearchString").value);
+        }
+        return true;
+    }
+    window.onload = function () {
+        console.log(localStorage['mykey']);
+        Promise.resolve($.ajax({
+            type: "GET",
+            url: '/Home/Filter',
+            contentType: false,
+            processData: false
+        })).then(function (result) {
+            if (result) {
+                data = result;
+                filteredData = result;
+                let inquiries = Filter();
+                inquiries = Sort(inquiries);
+                Show(inquiries);
+                localStorage.setItem('dateFilter', 0);
+                localStorage.setItem('nameFilter', "");
+            }
+        }).catch(function (e) {
+            console.log(e);
+        });
+    }
 </script>
 
 <script>
+
     function Filter() {
-        let i = data.filter((el) => el.userFirstName == "Agat");
-        console.log(i);
-        return data.filter((el) => el.userFirstName == "Agat");
+        //let i = data.filter((el) => el.userFirstName == "Agat");
+        //console.log(i);
+        //return data.filter((el) => el.userFirstName == "Agat");
+        let filtered = data;
+        if (localStorage['nameFilter'] != undefined && localStorage['nameFilter']!= "") {
+            filtered = filtered.filter((el) => el.userFirstName == localStorage['nameFilter'] || el.userLastName == localStorage['nameFilter']);
+        }
+        if (localStorage['dateFilter'] != 0) {
+            var date = new Date();
+            date.setDate(date.getDate() - localStorage['dateFilter']);
+            //console.log(date);
+            
+            filtered = filtered.filter((el) => {
+                //console.log(new Date(el.submissionDate));
+                return new Date(el.submissionDate) - date > 0});
+        }
+        filteredData = filtered;
+        return filtered;
     }
+
+    function Sort(sorted) {
+        if (localStorage['sortString'] == "loan_desc") {
+            //console.log(localStorage["nameFilter"]);
+            return sorted.sort((a, b) => a.loanValue < b.loanValue)
+        }
+        if (localStorage['sortString'] == "loan_asc") {
+            return sorted.sort((a, b) => a.loanValue > b.loanValue)
+        }
+        if (localStorage['sortString'] == "date_desc") {
+            return sorted.sort((a, b) => new Date(b.submissionDate).getTime() - new Date(a.submissionDate).getTime())
+        }
+        else {
+            return sorted.sort((a, b) => new Date(a.submissionDate).getTime() - new Date(b.submissionDate).getTime())
+        }
+    }
+
     function Show(inquiries) {
         $("#mainTable").empty();
         $.each(inquiries, function (i, v) {
@@ -36,78 +117,32 @@
             row += "<td>" + v.email + "</td>";
 
             row += "</tr>";
-            // console.log(row);
+
             $("#mainTable").append($(row));
         });
     }
+
     function SortBy(sortOrder) {
-        sortString = sortOrder;
+        localStorage.setItem('sortString', sortOrder);
+        //let inquiries = Filter();
+        inquiries = Sort(filteredData);
+        Show(inquiries);
     }
-    function Sort(sorted) {
-        if (sortString == "loan_desc") {
-            return sorted.sort((a, b) => a.loanValue < b.loanValue)
-        }
-        if (sortString == "loan_asc") {
-            return sorted.sort((a, b) => a.loanValue > b.loanValue)
-        }
-        if (sortString == "date_desc") {
-            return sorted.sort((a, b) => new Date(b.submissionDate).getTime() - new Date(a.submissionDate).getTime())
-        }
-        else {
-            return sorted.sort((a, b) => new Date(a.submissionDate).getTime() - new Date(b.submissionDate).getTime())
-        }
-    }
-    function ShowAfter() {
-        //let filtered = Filter();
-        //filtered = Sort(filtered);
-        let filtered = Sort(data);
-        Show(filtered);
-    }
+    
 </script>
 
-<script>
 
-    $(function () {
-
-        $('#loaddata').click(function () {
-
-            Promise.resolve($.ajax({
-                type: "GET",
-                url: '/Home/Filter',
-                contentType: false,
-                processData: false
-            })).then(function (result) {
-                if (result) {
-                    data = result;
-                    filteredData = result;
-
-                    //$.each(result, function (i, v){
-                    //    var row = "<tr>";
-
-                    //    row += "<td>" + v.submissionDate + "</td>";
-                    //    row += "<td>" + v.loanValue + "</td>";
-                    //    row += "<td>" + v.installmentsCount + "</td>";
-                    //    row += "<td>" + v.userFirstName + "</td>";
-                    //    row += "<td>" + v.userLastName + "</td>";
-                    //    row += "<td>" + v.email + "</td>";
-
-                    //    row+= "</tr>";
-                    //    console.log(row);
-                    //    $("#mainTable").append($(row));
-                    //});
-
-                    Show(data);
-
-                }
-            }).catch(function (e) {
-                console.log(e);
-            });
-        });
-
-    });
-
-</script>
-
+<form onsubmit="return validateForm()">
+    <div class="form-actions no-color">
+        <p>
+            <input type="checkbox" id="nameCheckBox" onclick="ableName()" />Find by name: <input type="text" id="SearchString" name="SearchString" disabled />
+            <input type="range" class="form-range" id="dateRange" name="dateRange" min="1" max="100" value="30" oninput="myFunction()" disabled>
+            <input type="checkbox" id="dateCheckBox" onclick="ableDateRange()" /><label for="dateCheckBox" class="form-label" id="days">Filter by submission date</label>
+            <input type="submit" value="Search" />
+           @* <a asp-action="AllBankInquiries">Back to Full List</a>*@
+        </p>
+    </div>
+</form>
 
 <div class="nav-item dropdown left">
     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">Dropdown</a>
@@ -118,28 +153,6 @@
         <label class="dropdown-item" onclick="SortBy('loan_desc')">LOAN, HIGH TO LOW</label>
     </div>
 </div>
-<input type="button" value="Load Data" id="loaddata" />
-<input type="button" value="filetr" id="Filter" onclick="ShowAfter()" />
-<div class="form-check">
-    <input class="form-check-input" type="checkbox" value="" id="nameInputCheckbox">
-    <label class="form-check-label" for="flexCheckDefault">
-        Default checkbox
-    </label>
-    <input type="text" id="nameInput" disabled />
-</div>
-<form asp-action="AllBankInquiries" method="get">
-    <div class="form-actions no-color">
-        <p>
-            Find by name: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
-            <input type="range" class="form-range" id="dateRange" name="dateRange" min="1" max="100" value="@ViewData["DateFilter"]" oninput="myFunction()">
-            <label for="dateRange" class="form-label">Show the last <label id="days">  @ViewData["DateFilter"]  </label> days</label>
-            <input type="submit" value="Search" />
-            <a asp-action="AllBankInquiries">Back to Full List</a>
-        </p>
-    </div>
-
-
-</form>
 
 <table class="table table-hover">
     <thead>

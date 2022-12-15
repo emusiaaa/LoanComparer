@@ -171,14 +171,16 @@ namespace BankApp.Controllers
             }
             return View(model);
         }
-        public async Task<IActionResult> Filter()
+        public async Task<IActionResult> Filter(string searchString, int dateRange)
         {
             IEnumerable<AllInquiryViewModel> model1, model2;
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
+            ViewData["CurrentFilter"] = searchString;
+            ViewData["DateFilter"] = dateRange;
             //if (String.IsNullOrEmpty(searchString) && dateRange == 0)
             //{
-                model1 = _loggedInquiryRepository.ToAllInquiryModel();
+            model1 = _loggedInquiryRepository.ToAllInquiryModel();
                 model2 = _notRegisteredInquiryRepository.ToAllInquiryModel();
             //}
             //else
