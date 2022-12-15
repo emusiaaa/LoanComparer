@@ -48,5 +48,49 @@ namespace BankApp.Repositories
             var res = _context.NotRegisteredInquiries.ToList();
             return res;
         }
+        public IEnumerable<AllInquiryViewModel> ToAllInquiryModel()
+        {
+            var res = _context.NotRegisteredInquiries
+                //.Where(s => s.ClientId == bankEmployeeID)
+                .Select(i => new AllInquiryViewModel
+                {
+                    SubmissionDate = i.SubmissionDate,
+                    InstallmentsCount = i.InstallmentsCount,
+                    LoanValue = i.LoanValue,
+                    UserFirstName = i.UserFirstName,
+                    UserLastName = i.UserLastName,
+                    ClientGovernmentIDNumber = i.ClientGovernmentIDNumber,
+                    ClientGovernmentIDType = i.ClientGovernmentIDType,
+                    ClientJobType = i.ClientJobType,
+                    ClientIncomeLevel = i.ClientIncomeLevel,
+                    Email = i.Email
+                })
+                .ToList();
+            return res;
+        }
+        public IEnumerable<AllInquiryViewModel> ToAllInquiryModelFilteredByName(string filter, int dateRange)
+        {
+            if (filter == null) filter = "";
+            var res = _context.NotRegisteredInquiries
+                .Where(
+                dateRange == 0 ? 
+                (i => i.UserFirstName.Contains(filter) || i.UserLastName.Contains(filter)) 
+                : (i => (i.UserFirstName.Contains(filter) || i.UserLastName.Contains(filter)) && (DateTime)(object)i.SubmissionDate >= DateTime.Now.AddDays(-dateRange)))
+                .Select(i => new AllInquiryViewModel
+                {
+                    SubmissionDate = i.SubmissionDate,
+                    InstallmentsCount = i.InstallmentsCount,
+                    LoanValue = i.LoanValue,
+                    UserFirstName = i.UserFirstName,
+                    UserLastName = i.UserLastName,
+                    ClientGovernmentIDNumber = i.ClientGovernmentIDNumber,
+                    ClientGovernmentIDType = i.ClientGovernmentIDType,
+                    ClientJobType = i.ClientJobType,
+                    ClientIncomeLevel = i.ClientIncomeLevel,
+                    Email = i.Email
+                })
+                .ToList();
+            return res;
+        }
     }
 }

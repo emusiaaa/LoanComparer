@@ -18,6 +18,7 @@ using Newtonsoft.Json;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
+using System.Text.Json;
 using NuGet.Common;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using NuGet.Protocol;
@@ -87,16 +88,21 @@ namespace BankApp.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> AllBankInquiries()
-        {
-            var user = await _userManager.FindByNameAsync(User.Identity.Name);
-            
-            AllInquiryViewModel inquiryModel = new AllInquiryViewModel();
-            inquiryModel.LoggedInquiriesFullData = _loggedInquiryRepository.GetAllForBankEmployee(user.Id);
-            inquiryModel.NotRegisteredInquiries = _notRegisteredInquiryRepository.GetAllForBankEmployee(user.Id);
-            return View(inquiryModel);
+        public IActionResult AllBankInquiries()
+        {       
+            return View();
         }
+        public async Task<IActionResult> Filter(string searchString, int dateRange)
+        {
+            IEnumerable<AllInquiryViewModel> model1, model2;
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
+            model1 = _loggedInquiryRepository.ToAllInquiryModel();
+            model2 = _notRegisteredInquiryRepository.ToAllInquiryModel();         
+            var model = model1.Concat(model2);
+
+            return Json(model) ;
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

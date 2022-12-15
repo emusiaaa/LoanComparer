@@ -1,7 +1,151 @@
-﻿@model AllInquiryViewModel
+﻿@model IEnumerable<AllInquiryViewModel>
 @{
     ViewData["Title"] = "Inquiries";
 }
+<!DOCTYPE html>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"></script>
+
+<script>
+    let data;
+    let filteredData;
+
+    function updateDaysLabel() {
+        var x = document.getElementById("dateRange").value;
+        document.getElementById("days").textContent = "Show the last " + x + " days";
+    }
+    
+    function ableDateRange () {
+
+        if (document.getElementById("dateCheckBox").checked){
+            document.getElementById("dateRange").disabled = false;
+            updateDaysLabel();
+        }
+        else{
+            document.getElementById("dateRange").disabled = true;
+            document.getElementById("days").textContent = "Filter by submission date";
+        }
+    }
+    function ableName () {
+        if (document.getElementById("nameCheckBox").checked) {
+            document.getElementById("SearchString").disabled = false;
+        }
+        else {
+            document.getElementById("SearchString").disabled = true;
+        }
+    }
+
+    function validateForm() {
+        if (document.getElementById("dateCheckBox").checked) {
+            localStorage.setItem('dateFilter', document.getElementById("dateRange").value);
+        }
+        if (document.getElementById("nameCheckBox").checked) {
+            localStorage.setItem('nameFilter', document.getElementById("SearchString").value);
+        }
+        return true;
+    }
+
+    window.onload = function () {
+        console.log(localStorage['mykey']);
+        Promise.resolve($.ajax({
+            type: "GET",
+            url: '/Home/Filter',
+            contentType: false,
+            processData: false
+        })).then(function (result) {
+            if (result) {
+                data = result;
+                filteredData = result;
+                let inquiries = Filter();
+                inquiries = Sort(inquiries);
+                Show(inquiries);
+                localStorage.setItem('dateFilter', 0);
+                localStorage.setItem('nameFilter', "");
+            }
+        }).catch(function (e) {
+            console.log(e);
+        });
+    }
+</script>
+
+<script>
+
+    function Filter() {
+        let filtered = data;
+        if (localStorage['nameFilter'] != undefined && localStorage['nameFilter']!= "") {
+            filtered = filtered.filter((el) => el.userFirstName == localStorage['nameFilter'] || el.userLastName == localStorage['nameFilter']);
+        }
+        if (localStorage['dateFilter'] != 0) {
+            var date = new Date();
+            date.setDate(date.getDate() - localStorage['dateFilter']);
+
+            filtered = filtered.filter((el) => new Date(el.submissionDate) - date > 0);
+        }
+        filteredData = filtered;
+        return filtered;
+    }
+
+    function Sort(sorted) {
+        if (localStorage['sortString'] == "loan_desc") {
+            return sorted.sort((a, b) => a.loanValue < b.loanValue)
+        }
+        if (localStorage['sortString'] == "loan_asc") {
+            return sorted.sort((a, b) => a.loanValue > b.loanValue)
+        }
+        if (localStorage['sortString'] == "date_desc") {
+            return sorted.sort((a, b) => new Date(b.submissionDate).getTime() - new Date(a.submissionDate).getTime())
+        }
+        else {
+            return sorted.sort((a, b) => new Date(a.submissionDate).getTime() - new Date(b.submissionDate).getTime())
+        }
+    }
+
+    function Show(inquiries) {
+        $("#mainTable").empty();
+        $.each(inquiries, function (i, v) {
+            var row = "<tr>";
+
+            row += "<td>" + v.submissionDate + "</td>";
+            row += "<td>" + v.loanValue + "</td>";
+            row += "<td>" + v.installmentsCount + "</td>";
+            row += "<td>" + v.userFirstName + "</td>";
+            row += "<td>" + v.userLastName + "</td>";
+            row += "<td>" + v.email + "</td>";
+
+            row += "</tr>";
+
+            $("#mainTable").append($(row));
+        });
+    }
+
+    function SortBy(sortOrder) {
+        localStorage.setItem('sortString', sortOrder);
+        inquiries = Sort(filteredData);
+        Show(inquiries);
+    }
+    
+</script>
+
+
+<form onsubmit="return validateForm()">
+    <div class="form-actions no-color">
+        <p>
+            <input type="checkbox" id="nameCheckBox" onclick="ableName()" />Find by name: <input type="text" id="SearchString" name="SearchString" disabled />
+            <input type="range" class="form-range" id="dateRange" name="dateRange" min="1" max="100" value="30" oninput="updateDaysLabel()" disabled>
+            <input type="checkbox" id="dateCheckBox" onclick="ableDateRange()" /><label for="dateCheckBox" class="form-label" id="days">Filter by submission date</label>
+            <input type="submit" value="Search" />
+        </p>
+    </div>
+</form>
+
+<div class="nav-item dropdown right">
+    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">Dropdown</a>
+    <div class="dropdown-menu" data-bs-popper="static">
+        <label class="dropdown-item" onclick="SortBy('')">DATE, NEW TO OLD</label>
+        <label class="dropdown-item" onclick="SortBy('date_desc')">DATE, OLD TO NEW</label>
+        <label class="dropdown-item" onclick="SortBy('loan_asc')">LOAN, LOW TO HIGH</label>
+        <label class="dropdown-item" onclick="SortBy('loan_desc')">LOAN, HIGH TO LOW</label>
+    </div>
+</div>
 
 <table class="table table-hover">
     <thead>
@@ -11,31 +155,11 @@
             <th scope="col">Number Of installments</th>
             <th scope="col">Client's last name</th>
             <th scope="col">Client's first name</th>
-            <th scope="col">CLient's email</th>
+            <th scope="col">Client's email</th>
         </tr>
     </thead>
-    <tbody>
-        @foreach (var inquiry in Model.LoggedInquiriesFullData)
-        {
-            <tr class="table-info">
-                <td>@inquiry.SubmissionDate</td>
-                <td>@inquiry.LoanValue</td>
-                <td>@inquiry.InstallmentsCount</td>
-                <td>@inquiry.UserLastName</td>
-                <td>@inquiry.UserFirstName</td>
-                <td>@inquiry.Email</td>
-            </tr>
-        }
-        @foreach (var inquiry in Model.NotRegisteredInquiries)
-        {
-            <tr class="table-info">
-                <td>@inquiry.SubmissionDate</td>
-                <td>@inquiry.LoanValue</td>
-                <td>@inquiry.InstallmentsCount</td>
-                <td>@inquiry.UserLastName</td>
-                <td>@inquiry.UserFirstName</td>
-                <td>@inquiry.Email</td>
-            </tr>
-        }
+    <tbody id="mainTable">
     </tbody>
 </table>
+
+</!html>
