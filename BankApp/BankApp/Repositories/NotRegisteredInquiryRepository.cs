@@ -14,10 +14,11 @@ namespace BankApp.Repositories
 
         public NotRegisteredInquiryModel Get(int inquiryID) => _context.NotRegisteredInquiries.SingleOrDefault(x => x.Id ==inquiryID);
 
-        public void Add(NotRegisteredInquiryModel inquiry)
+        public int Add(NotRegisteredInquiryModel inquiry)
         {
             _context.NotRegisteredInquiries.Add(inquiry);
             _context.SaveChanges();
+            return inquiry.Id;
         }
 
         public void Update(int inquiryID, NotRegisteredInquiryModel inquiry)

@@ -20,10 +20,9 @@ namespace BankApp.Models
         public string BankName { get; set; }
 
         [Required]
-        public int OfferIdInOurDb { get; set; }
+        public long OfferIdInOurDb { get; set; }
 
-        [Required]
-        public string ClientId { get; set; }
+        public string? ClientId { get; set; }
     }
 
 }

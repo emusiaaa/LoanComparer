@@ -6,7 +6,7 @@ namespace BankApp.Repositories
     {
         public NotRegisteredInquiryModel Get(int inquiryID);
 
-        public void Add(NotRegisteredInquiryModel notRegisteredInquiry);
+        public int Add(NotRegisteredInquiryModel notRegisteredInquiry);
 
         public void Update(int inquiryID, NotRegisteredInquiryModel notRegisteredInquiry);
         public IEnumerable<NotRegisteredInquiryModel> GetAllForBankEmployee(string bankEmployeeID);
