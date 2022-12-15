@@ -31,12 +31,15 @@ namespace BankApp.Controllers
         private readonly IClientRepository _clientRepository;
         private readonly ILoggedInquiryRepository _loggedInquiryRepository;
         private readonly INotRegisteredInquiryRepository _notRegisteredInquiryRepository;
+        private readonly IOffersSummaryRepository _offersSummaryRepository;
+        private readonly IOfferRepository _offerRepository;
         private readonly UserManager<ClientModel> _userManager;
         private readonly IEmailSender _emailSender;
         private readonly System.Net.Http.IHttpClientFactory _clientFactory;
 
         public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository, UserManager<ClientModel> userManager,
-            INotRegisteredInquiryRepository notRegisteredInquiryRepository, IEmailSender emailSender, ILoggedInquiryRepository loggedInquiryRepository, IHttpClientFactory httpClientFactory)
+            INotRegisteredInquiryRepository notRegisteredInquiryRepository, IEmailSender emailSender, ILoggedInquiryRepository loggedInquiryRepository, 
+            IHttpClientFactory httpClientFactory, IOffersSummaryRepository offersSummaryRepository, IOfferRepository offerRepository)
         {
             _logger = logger;
             _clientRepository = clientRepository;
@@ -45,6 +48,8 @@ namespace BankApp.Controllers
             _notRegisteredInquiryRepository = notRegisteredInquiryRepository;
             _emailSender = emailSender;
             _clientFactory = httpClientFactory;
+            _offersSummaryRepository = offersSummaryRepository;
+            _offerRepository = offerRepository;
         }
         public async Task<HttpClient> GetToken()
         {
@@ -77,6 +82,7 @@ namespace BankApp.Controllers
 
         public IActionResult Privacy()
         {
+            // var list = _offersSummaryRepository.GetAllOffersForAClientAllInquiries("1957dec4-3d3b-4a83-84b7-3ddeadbe2d06");
             return View();
         }
         [Authorize]

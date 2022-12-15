@@ -23,7 +23,7 @@ namespace BankApp.Models
         public int OfferIdInOurDb { get; set; }
 
         [Required]
-        public int ClientId { get; set; }
+        public string ClientId { get; set; }
     }
 
 }

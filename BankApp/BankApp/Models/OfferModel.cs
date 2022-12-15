@@ -21,6 +21,8 @@ namespace BankApp.Models
         [Required]
         public string StatusDescription { get; set; }
         [Required]
+        public int OfferIdInBank { get; set; }
+        [Required]
         public int InquireId { get; set; }
         [Required]
         public string CreateDate { get; set; }
