@@ -31,7 +31,7 @@ namespace BankApp.Repositories
             offer.DocumentLink = jsonOffer["documentLink"];
             offer.DocumentLinkValidDate = jsonOffer["documentLinkValidDate"];
 
-            _context.Offers.Add(offer);
+            var res = _context.Offers.Add(offer); // może da się stąd wyciągnąć id stworzonej oferty i zwrócić z Add żeby OffersSummary miało??
             _context.SaveChanges();
         }
 
