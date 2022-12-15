@@ -74,7 +74,7 @@ namespace BankApp.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Privacy()
+        public IActionResult Privacy()
         {
             return View();
         }
@@ -172,7 +172,10 @@ namespace BankApp.Controllers
 
             return View("OfferList", new InquiryString { inquiryId = inquiryId });
         }
+        //public async Task<IActionResult> SendInquiry(InquiryModel inquiry)
+        //{
 
+        //}
         [HttpPost]
         public async Task<ViewResult> InquiryNotRegistered(NotRegisteredInquiryModel inquiry)
         {
@@ -232,12 +235,18 @@ namespace BankApp.Controllers
                              "</p><p>Income level: " + inquiry.ClientIncomeLevel +
                              "</p>");
 
-            return View("OfferList", new InquiryString { inquiryId = inquiryId });
+            return View("OfferList", new InquiryString { inquiryId = 42 });
         }
 
         public IActionResult InquiryNotRegistered()
         {
             return View(new NotRegisteredInquiryModel());
+        }
+
+        [HttpGet]
+        public async Task<string?> BestAPIWaitForOffer()
+        {
+            return MockOffers.GenerateMockOffer();
         }
 
         [HttpGet]
