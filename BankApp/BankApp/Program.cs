@@ -13,15 +13,37 @@ using System.Web;
 using Microsoft.AspNetCore.Http.Extensions;
 using System.Security.Policy;
 using System;
+using BankApp.Client;
+using IdentityModel.Client;
+using System.Net.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var DBconnectionString = builder.Configuration.GetConnectionString("LoansComparer");
-builder.Services.AddHttpClient("API", httpClient =>
+builder.Services.AddScoped<IMiNIApiCaller, MiNIApiCaller>();
+
+//var idso = builder.Configuration.GetSection("IdentityServer").Get<IdServerOptions>();
+builder.Services.AddAccessTokenManagement(options =>
 {
-    httpClient.BaseAddress = new Uri("https://mini.loanbank.api.snet.com.pl/swagger/index.html");
-    //httpClient.DefaultRequestHeaders.Authorization = 
-});
+    options.Client.Clients.Add("identityserver", new ClientCredentialsTokenRequest
+    {
+        Address = "https://indentitymanager.snet.com.pl/connect/token",
+        ClientId = "team4c",
+        ClientSecret = "7D84D860-87AC-46AE-B955-68DC7D8C48E3"
+    });
+}).ConfigureBackchannelHttpClient();
+//var fao = builder.Configuration.GetSection("FileApi").Get<FileApiOptions>();
+
+builder.Services.AddHttpClient<IMiNIApiCaller, MiNIApiCaller>(client =>
+{
+    client.BaseAddress = new Uri("https://mini.loanbank.api.snet.com.pl/swagger/index.html");
+})
+    .AddClientAccessTokenHandler("identityserver");
+//builder.Services.AddHttpClient("API",httpClient =>
+//{
+//    httpClient.BaseAddress = new Uri("https://mini.loanbank.api.snet.com.pl/swagger/index.html");
+//    //httpClient.DefaultRequestHeaders.Authorization = 
+//});
 
 builder.Services.AddDbContext<LoansComparerDBContext>(options =>
     options.UseSqlServer(DBconnectionString));
