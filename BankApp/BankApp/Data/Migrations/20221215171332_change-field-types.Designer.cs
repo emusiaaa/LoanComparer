@@ -4,6 +4,7 @@ using BankApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BankApp.Migrations
 {
     [DbContext(typeof(LoansComparerDBContext))]
-    partial class LoansComparerDBContextModelSnapshot : ModelSnapshot
+    [Migration("20221215171332_change-field-types")]
+    partial class changefieldtypes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -245,14 +248,8 @@ namespace BankApp.Migrations
                     b.Property<int>("InquireId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsOfferAccepted")
-                        .HasColumnType("bit");
-
                     b.Property<double>("MonthlyInstallment")
                         .HasColumnType("float");
-
-                    b.Property<int>("OfferIdInBank")
-                        .HasColumnType("int");
 
                     b.Property<double>("Percentage")
                         .HasColumnType("float");
@@ -292,6 +289,7 @@ namespace BankApp.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ClientId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("InquiryIdInOurDb")
@@ -300,8 +298,8 @@ namespace BankApp.Migrations
                     b.Property<bool>("IsNRInquiry")
                         .HasColumnType("bit");
 
-                    b.Property<long>("OfferIdInOurDb")
-                        .HasColumnType("bigint");
+                    b.Property<int>("OfferIdInOurDb")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

@@ -21,6 +21,8 @@ namespace BankApp.Models
         [Required]
         public string StatusDescription { get; set; }
         [Required]
+        public int OfferIdInBank { get; set; }
+        [Required]
         public int InquireId { get; set; }
         [Required]
         public string CreateDate { get; set; }
@@ -31,6 +33,9 @@ namespace BankApp.Models
         public string DocumentLink { get; set; }
         [Required]
         public string DocumentLinkValidDate { get; set; }
+
+        [Required]
+        public bool IsOfferAccepted { get; set; }
     }
 
 }

@@ -23,6 +23,7 @@ using NuGet.Common;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using NuGet.Protocol;
 using BankApp.Client;
+using Humanizer.Localisation.TimeToClockNotation;
 
 namespace BankApp.Controllers
 {
@@ -32,12 +33,15 @@ namespace BankApp.Controllers
         private readonly IClientRepository _clientRepository;
         private readonly ILoggedInquiryRepository _loggedInquiryRepository;
         private readonly INotRegisteredInquiryRepository _notRegisteredInquiryRepository;
+        private readonly IOffersSummaryRepository _offersSummaryRepository;
+        private readonly IOfferRepository _offerRepository;
         private readonly UserManager<ClientModel> _userManager;
         private readonly IEmailSender _emailSender;
         private readonly IMiNIApiCaller _MiNIClient;
 
         public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository, UserManager<ClientModel> userManager,
-            INotRegisteredInquiryRepository notRegisteredInquiryRepository, IEmailSender emailSender, ILoggedInquiryRepository loggedInquiryRepository, IMiNIApiCaller MiNIClient)
+            INotRegisteredInquiryRepository notRegisteredInquiryRepository, IEmailSender emailSender, ILoggedInquiryRepository loggedInquiryRepository, 
+             IOffersSummaryRepository offersSummaryRepository, IOfferRepository offerRepository, IMiNIApiCaller MiNIClient)
         {
             _logger = logger;
             _clientRepository = clientRepository;
@@ -45,6 +49,8 @@ namespace BankApp.Controllers
             _userManager = userManager;
             _notRegisteredInquiryRepository = notRegisteredInquiryRepository;
             _emailSender = emailSender;
+            _offersSummaryRepository = offersSummaryRepository;
+            _offerRepository = offerRepository;
             _MiNIClient = MiNIClient;
         }
 
@@ -55,6 +61,7 @@ namespace BankApp.Controllers
 
         public IActionResult Privacy()
         {
+            // var list = _offersSummaryRepository.GetAllOffersForAClientAllInquiries("1957dec4-3d3b-4a83-84b7-3ddeadbe2d06");
             return View();
         }
         [Authorize]
@@ -103,7 +110,7 @@ namespace BankApp.Controllers
             inquiry.ClientId = user.Id;
             DateTime dt = DateTime.UtcNow;
             inquiry.SubmisionDate = dt.ToString("o");
-            _loggedInquiryRepository.Add(inquiry);
+            int inqIdInOurDb = _loggedInquiryRepository.Add(inquiry);
             
             var inquiryJson = new jsonclass.Loan
             {
@@ -149,7 +156,7 @@ namespace BankApp.Controllers
                 "</p><p>Income level: " + user.ClientIncomeLevel +
                 "</p>");
 
-            return View("OfferList", new InquiryString { inquiryId = inquiryId });
+            return View("OfferList", new InquiryString { inquiryId = inquiryId, inquiryIdInOurDb = inqIdInOurDb });
         }
         //public async Task<IActionResult> SendInquiry(InquiryModel inquiry)
         //{
@@ -164,9 +171,9 @@ namespace BankApp.Controllers
             inquiry.UserBirthDay = DateTimeOffset.Parse(inquiry.UserBirthDay).UtcDateTime.ToString("o");
             inquiry.ClientJobStartDay = DateTimeOffset.Parse(inquiry.ClientJobStartDay).UtcDateTime.ToString("o");
 
-            _notRegisteredInquiryRepository.Add(inquiry);
+            int inqIdInOurDb = _notRegisteredInquiryRepository.Add(inquiry);
 
-           // HttpClient api = await GetToken();
+           
             var inquiryJson = new jsonclass.Loan
             {
                 value = (int)inquiry.LoanValue,
@@ -210,7 +217,7 @@ namespace BankApp.Controllers
                              "</p><p>Income level: " + inquiry.ClientIncomeLevel +
                              "</p>");
 
-            return View("OfferList", new InquiryString { inquiryId = inquiryId });
+            return View("OfferList", new InquiryString { inquiryId = inquiryId, inquiryIdInOurDb =  inqIdInOurDb});
         }
 
         public IActionResult InquiryNotRegistered()
@@ -225,7 +232,7 @@ namespace BankApp.Controllers
         }
 
         [HttpGet]
-        public async Task<string?> WaitForOffer(int inquiryId)
+        public async Task<string?> WaitForOffer(int inquiryId, int inquiryIdInOurDb)
         {
             while (true)
             {
@@ -239,8 +246,26 @@ namespace BankApp.Controllers
             var offerId = JObject.Parse(resultContent)["offerId"]?.ToObject<int>();
 
             
-            var offerContent = await _MiNIClient.GetOfferAsync(inquiryId);
-            return offerContent;
+        var rOfferContent = await _MiNIClient.GetOfferAsync(offerId);
+
+
+        var values = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(rOfferContent);
+            //var test = Json(resultContent);
+            long offersId = _offerRepository.Add(values);
+
+            bool isNRInquiry = User.Identity.Name is null ? true : false;
+            string? clientID = null;
+            if(!isNRInquiry)
+            {
+                var user = await _userManager.FindByNameAsync(User.Identity.Name);
+                clientID = user.Id;
+            }
+            string bankName = "projectAPI";
+
+            _offersSummaryRepository.Add(inquiryIdInOurDb, isNRInquiry, bankName, offersId, clientID);
+
+            return rOfferContent;
+
         }
     }
 }

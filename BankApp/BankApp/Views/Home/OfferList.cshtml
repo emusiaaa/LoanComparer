@@ -31,7 +31,7 @@
 
         Promise.resolve($.ajax({
             type: "GET",
-            url: "/Home/WaitForOffer?inquiryId=" + @Model.inquiryId.ToString(),
+            url: "/Home/WaitForOffer?inquiryId=" + @Model.inquiryId.ToString() + "&inquiryIdInOurDb=" + @Model.inquiryIdInOurDb.ToString(),
             dataType: "json"
 
         })).then(function (result) {
