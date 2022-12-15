@@ -5,6 +5,7 @@
     ClientModel client = await UserManager.FindByNameAsync(User.Identity.Name);
 }
 
+
 <form style="width:395px">
     <h2>Verify Your data</h2><br/>
     <label style="width:200px">First Name:</label>
@@ -22,5 +23,5 @@
     <label style="width:200px">Email:</label>
     <input value="@client.Email" style="margin:0 0 20px 0;" disabled /><br />
     <input style="width:100px" type="submit" value="Modify" asp-area="Identity" asp-page="/Account/Manage/Index" />
-    <input style="width:100px;float:right;" type="submit" value="Correct" asp-controller="Home" asp-action="LoggedInquiry" />
+    <input style="width:100px;float:right;" type="submit" value="Correct" asp-controller="Home" asp-action="LoggedInquiry"/>
 </form>
