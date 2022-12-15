@@ -33,6 +33,9 @@ namespace BankApp.Models
         public string DocumentLink { get; set; }
         [Required]
         public string DocumentLinkValidDate { get; set; }
+
+        [Required]
+        public bool IsOfferAccepted { get; set; }
     }
 
 }
