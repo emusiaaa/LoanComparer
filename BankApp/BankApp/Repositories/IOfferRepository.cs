@@ -10,7 +10,9 @@ namespace BankApp.Repositories
 
         public IEnumerable<OfferModel> GetAllOffersForBankEmployee(string bankEmployeeID, string bankName);
 
-        public void Add(OfferModel offer);
+        public IEnumerable<OfferModel> GetAllOffersForAClientForAGivenInquiryForAGivenBank(string clientID, int inquiryID, string bankName);
+
+        public void Add(Dictionary<string, dynamic> jsonOffer);
 
         public void Delete(int offerID);
     }

@@ -4,7 +4,7 @@ namespace BankApp.Repositories
 {
     public interface IOffersSummaryRepository
     {
-        public void Add(OffersSummaryModel offersSummary);
+        public void Add(int inquiryIdInOurDb, bool isNrInquiry, string bankName, int offerIdInOurDb, string clientId);
 
         public void Update(int offersSummaryID, OffersSummaryModel offersSummary);
 

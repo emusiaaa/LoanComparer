@@ -12,8 +12,14 @@ namespace BankApp.Repositories
             _context = context;
         }
 
-        public void Add(OffersSummaryModel offersSummary)
+        public void Add(int inquiryIdInOurDb, bool isNrInquiry, string bankName, int offerIdInOurDb, string clientId)
         {
+            OffersSummaryModel offersSummary = new OffersSummaryModel();
+            offersSummary.OfferIdInOurDb = offerIdInOurDb;
+            offersSummary.ClientId = clientId;
+            offersSummary.BankName = bankName; 
+            offersSummary.IsNRInquiry= isNrInquiry;
+            offersSummary.InquiryIdInOurDb = inquiryIdInOurDb;
             _context.OffersSummary.Add(offersSummary);
             _context.SaveChanges();
         }

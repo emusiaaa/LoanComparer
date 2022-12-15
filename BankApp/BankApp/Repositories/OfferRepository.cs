@@ -1,5 +1,6 @@
 ﻿using BankApp.Data;
 using BankApp.Models;
+using System.Text.Json.Nodes;
 
 namespace BankApp.Repositories
 {
@@ -12,8 +13,24 @@ namespace BankApp.Repositories
             _context = context;
         }
 
-        public void Add(OfferModel offer)
+        public void Add(Dictionary<string, dynamic> jsonOffer)
         {
+            OfferModel offer = new OfferModel();
+
+            offer.OfferIdInBank = jsonOffer["id"];
+            offer.Percentage = jsonOffer["percentage"];
+            offer.MonthlyInstallment = jsonOffer["monthlyInstallment"];
+            offer.RequestedValue = jsonOffer["requestedValue"];
+            offer.RequestedPeriodInMonth = jsonOffer["requestedPeriodInMonth"];
+            offer.StatusId = jsonOffer["statusId"];
+            offer.StatusDescription = jsonOffer["statusDescription"];
+            offer.InquireId = jsonOffer["inquireId"];
+            offer.CreateDate = jsonOffer["createDate"];
+            offer.UpdateDate = jsonOffer["updateDate"];
+            offer.ApprovedBy = jsonOffer["approvedBy"];
+            offer.DocumentLink = jsonOffer["documentLink"];
+            offer.DocumentLinkValidDate = jsonOffer["documentLinkValidDate"];
+
             _context.Offers.Add(offer);
             _context.SaveChanges();
         }
@@ -45,6 +62,18 @@ namespace BankApp.Repositories
                         on offerSummary.OfferIdInOurDb equals offer.Id
                         where (offerSummary.ClientId == clientID
                         && offerSummary.InquiryIdInOurDb == inquiryID)
+                        select offer;
+            return query.ToList();
+        }
+
+        public IEnumerable<OfferModel> GetAllOffersForAClientForAGivenInquiryForAGivenBank(string clientID, int inquiryID, string bankName)
+        {
+            var query = from offerSummary in _context.OffersSummary
+                        join offer in _context.Offers
+                        on offerSummary.OfferIdInOurDb equals offer.Id
+                        where (offerSummary.ClientId == clientID
+                        && offerSummary.InquiryIdInOurDb == inquiryID
+                        && offerSummary.BankName == bankName)
                         select offer;
             return query.ToList();
         }
