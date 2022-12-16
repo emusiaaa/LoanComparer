@@ -75,12 +75,6 @@ namespace BankApp.Controllers
         [Authorize]
         public async Task<IActionResult> AllBankOffersRequests()
         {
-            var user = await _userManager.FindByNameAsync(User.Identity.Name);
-            if (user.IsBankEmployee)
-            {
-                var model = _offerRepository.GetAllOffersForBankEmployee(user.Id, user.EmployeesBankName);
-                return View(model);
-            }
             return View();
         }
 
@@ -100,6 +94,19 @@ namespace BankApp.Controllers
 
             return Json(model) ;
         }
+
+        public async Task<IActionResult> FilterOffersRequests(string searchString, int dateRange)
+        {
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            if (user.IsBankEmployee)
+            {
+                var model = _offerRepository.GetAllOffersForBankEmployee(user.Id, user.EmployeesBankName);
+                return Json(model);
+            }
+
+            return null;
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

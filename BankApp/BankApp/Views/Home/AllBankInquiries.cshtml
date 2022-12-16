@@ -92,10 +92,10 @@
             return sorted.sort((a, b) => a.loanValue > b.loanValue)
         }
         if (localStorage['sortString'] == "date_desc") {
-            return sorted.sort((a, b) => new Date(b.submissionDate).getTime() - new Date(a.submissionDate).getTime())
+            return sorted.sort((a, b) => new Date(a.submissionDate).getTime() - new Date(b.submissionDate).getTime())
         }
         else {
-            return sorted.sort((a, b) => new Date(a.submissionDate).getTime() - new Date(b.submissionDate).getTime())
+            return sorted.sort((a, b) => new Date(b.submissionDate).getTime() - new Date(a.submissionDate).getTime())
         }
     }
 
