@@ -4,5 +4,10 @@
     {
         public int? inquiryId { get; set; }
         public int? inquiryIdInOurDb { get; set; }
+        public string? urlAddress { get; set; }
+    }
+    public class OfferString
+    {
+        public string? offerString { get; set; }
     }
 }

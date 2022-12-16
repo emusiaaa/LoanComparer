@@ -249,7 +249,7 @@ namespace BankApp.Controllers
             var rOfferContent = await _MiNIClient.GetOfferAsync(offerId);
 
 
-        var values = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(rOfferContent);
+            var values = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(rOfferContent);
             //var test = Json(resultContent);
             long offersId = _offerRepository.Add(values);
 
@@ -266,6 +266,26 @@ namespace BankApp.Controllers
 
             return rOfferContent;
 
+        }
+        [HttpPost]
+        public async Task<string> GetLink(string id)
+        {
+            // ViewData["id"] = id;
+            var offerDetails = await _MiNIClient.GetOfferDetailsAsync(id);
+            return "/Home/OfferDetails?sum="+ offerDetails;
+        }
+
+        public IActionResult OfferDetails(string sum)
+        {
+            return View("OfferDetails",new OfferString { offerString=sum});
+        }
+        public string Show()
+        {
+            return "/Home/ShowOffer";
+        }
+        public IActionResult ShowOffer()
+        {
+            return View();
         }
     }
 }
