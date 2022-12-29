@@ -267,11 +267,8 @@ namespace BankApp.Controllers
             return rOfferContent;
 
         }
-        //[HttpPost]
-        //public async Task<string> GetLink(long id)
         public string GetLink(long id, string bankName)
         {
-            //var offerDetails = await _MiNIClient.GetOfferDetailsAsync(id);
             return "/Home/OfferDetails?id="+ id.ToString() + "&bankName=" + bankName;
         }
 
@@ -279,6 +276,7 @@ namespace BankApp.Controllers
         {
             var offerDetails = _offerRepository.GetTheOfferDetails(Int32.Parse(id), bankName);
             offerDetails.document = await _MiNIClient.GetOfferDetailsAsync(offerDetails.offerModel.DocumentLink);
+            ViewBag.document = offerDetails.document;
             return View("OfferDetails", offerDetails);
         }
         public string Show(string id, string bankName)

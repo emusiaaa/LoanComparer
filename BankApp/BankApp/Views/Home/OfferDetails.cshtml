@@ -1,7 +1,22 @@
 ﻿@model OfferDetailsModel
-
+<script>
+    function pobieranie(filename, text) {
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
+    function pobieraniePliku() {
+        let text = "@ViewBag.document";
+        var filename = "Agreement.txt";
+        pobieranie(filename, text);
+    }
+</script>
 <h1>Twoja oferta</h1>
-<text>@Model.document </text>
+<input type="button" id="dwn-btn" value="Download Agreement" onclick="pobieraniePliku()" />
 <h1>@Model.offerModel.CreateDate</h1>
 <h1>@Model.offerModel.DocumentLink</h1>
 <h1>@Model.offerModel.OfferIdInBank</h1>
