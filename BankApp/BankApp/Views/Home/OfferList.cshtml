@@ -22,7 +22,7 @@
 <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"></script>
 <script>
     let offers = 0;
-    let urlAddress = "";
+    let offerID;
     function updateTitle() {
         document.getElementById("numberOfOffers").textContent = "Offers " + offers + "/3";
     }
@@ -33,7 +33,7 @@
             })
     }
     function offer2() {
-        $.post("/Home/GetLink", { id: urlAddress })
+        $.get("/Home/GetLink", { id: offerID, bankName: "projectAPI" })
             .done(function (data) {
                 window.location.href = data;
             })
@@ -58,6 +58,7 @@
                 updateTitle();
                 $("#header1").show()
                 $("#button1").show()
+                console.log(result);
                 var row = "";
                 $.each(result, function (index, item) {
                     row += "<tr><td>" + index
@@ -79,8 +80,9 @@
                         $('#loading-div-background').hide();
                 }
                 updateTitle();
-                urlAddress = result.documentLink;
-               
+                offerID = result.id;
+                console.log("offer id w naszym banku");
+                console.log(result.id);
                 $("#header2").show()
                 $("#button2").show()
                 var row = "";

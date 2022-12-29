@@ -1,5 +1,6 @@
 ﻿using BankApp.Data;
 using BankApp.Models;
+using System.Drawing;
 using System.Text.Json.Nodes;
 
 namespace BankApp.Repositories
@@ -96,7 +97,20 @@ namespace BankApp.Repositories
                         select offer;
             return query.FirstOrDefault();
         }
-
+        //metoda podobna do tej wyżej tylko zwraca inny model
+        public OfferDetailsModel GetTheOfferDetails(int offerId, string bankName)
+        {
+            OfferDetailsModel model = new OfferDetailsModel();
+            var query = from offerSummary in _context.OffersSummary
+                        join offer in _context.Offers
+                        on offerSummary.OfferIdInOurDb equals offer.Id
+                        where (
+                        offer.OfferIdInBank == offerId
+                        && offerSummary.BankName == bankName)
+                        select offer;
+            model.offerModel = query.FirstOrDefault();
+            return model;
+        }
         public IEnumerable<OfferModel> GetAllOffersForBankEmployee(string bankEmployeeID, string bankName)
         {
             var query = from offerSummary in _context.OffersSummary

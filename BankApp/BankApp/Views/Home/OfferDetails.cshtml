@@ -1,7 +1,10 @@
-﻿@model OfferString
+﻿@model OfferDetailsModel
 
 <h1>Twoja oferta</h1>
-<text>@Model.offerString </text>
+<text>@Model.document </text>
+<h1>@Model.offerModel.CreateDate</h1>
+<h1>@Model.offerModel.DocumentLink</h1>
+<h1>@Model.offerModel.OfferIdInBank</h1>
 <div>
 <input type="file"/>
 </div>

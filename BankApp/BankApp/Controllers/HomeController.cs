@@ -267,19 +267,21 @@ namespace BankApp.Controllers
             return rOfferContent;
 
         }
-        [HttpPost]
-        public async Task<string> GetLink(string id)
+        //[HttpPost]
+        //public async Task<string> GetLink(long id)
+        public string GetLink(long id, string bankName)
         {
-            // ViewData["id"] = id;
-            var offerDetails = await _MiNIClient.GetOfferDetailsAsync(id);
-            return "/Home/OfferDetails?sum="+ offerDetails;
+            //var offerDetails = await _MiNIClient.GetOfferDetailsAsync(id);
+            return "/Home/OfferDetails?id="+ id.ToString() + "&bankName=" + bankName;
         }
 
-        public IActionResult OfferDetails(string sum)
+        public async Task<IActionResult> OfferDetails(string id, string bankName)
         {
-            return View("OfferDetails",new OfferString { offerString=sum});
+            var offerDetails = _offerRepository.GetTheOfferDetails(Int32.Parse(id), bankName);
+            offerDetails.document = await _MiNIClient.GetOfferDetailsAsync(offerDetails.offerModel.DocumentLink);
+            return View("OfferDetails", offerDetails);
         }
-        public string Show()
+        public string Show(string id, string bankName)
         {
             return "/Home/ShowOffer";
         }
