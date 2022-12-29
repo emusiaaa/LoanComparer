@@ -274,9 +274,9 @@ namespace BankApp.Controllers
 
         public async Task<IActionResult> OfferDetails(string id, string bankName)
         {
-            var offerDetails = _offerRepository.GetTheOfferDetails(Int32.Parse(id), bankName);
-            offerDetails.document = await _MiNIClient.GetOfferDetailsAsync(offerDetails.offerModel.DocumentLink);
-            ViewBag.document = offerDetails.document;
+            var offerDetails = _offerRepository.GetAllOffersForAClientForAGivenInquiryForAGivenBank(Int32.Parse(id), bankName);
+            //offerDetails.document = await _MiNIClient.GetOfferDetailsAsync(offerDetails.offerModel.DocumentLink);
+            ViewBag.document = await _MiNIClient.GetOfferDetailsAsync(offerDetails.DocumentLink);
             return View("OfferDetails", offerDetails);
         }
         public string Show(string id, string bankName)
