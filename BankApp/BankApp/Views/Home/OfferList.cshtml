@@ -32,7 +32,7 @@
 
         Promise.resolve($.ajax({
             type: "GET",
-            url: "/Home/GetOffers?inquiryIdInOurDb=" + @Model.inquiryIdInOurDb.ToString(),
+            url: "/Home/GetOffers?inquiryIdInOurDb=" + @Model.inquiryId.ToString(),
             dataType: "json"
 
         })).then(function (result) {

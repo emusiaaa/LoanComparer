@@ -65,7 +65,8 @@ namespace BankApp.Controllers
         public IActionResult Privacy()
         {
             // var list = _offersSummaryRepository.GetAllOffersForAClientAllInquiries("1957dec4-3d3b-4a83-84b7-3ddeadbe2d06");
-            return View();
+            //return View();
+            return RedirectToAction("OfferList", new InquiryString { inquiryId = 90 });
         }
         [Authorize]
         public async Task<IActionResult> HistoryOfInquiries()
@@ -180,7 +181,7 @@ namespace BankApp.Controllers
 
             _offerServer.SaveOfferForLogged(_MiNIClient, inquiryId, inqIdInOurDb,user);
 
-            return View("OfferList", new InquiryString { inquiryId = inquiryId, inquiryIdInOurDb = inqIdInOurDb });
+            return View("OfferList", new InquiryString { inquiryId = inqIdInOurDb });
         }
         //public async Task<IActionResult> SendInquiry(InquiryModel inquiry)
         //{
@@ -243,7 +244,7 @@ namespace BankApp.Controllers
 
             _offerServer.SaveOfferForNotLogged(_MiNIClient,inquiryId, inqIdInOurDb);
 
-            return RedirectToActionPermanent("OfferList", new InquiryString { inquiryIdInOurDb = inqIdInOurDb });
+            return RedirectToActionPermanent("OfferList", new InquiryString { inquiryId = inqIdInOurDb });
         }
 
         public IActionResult OfferList(InquiryString model)
