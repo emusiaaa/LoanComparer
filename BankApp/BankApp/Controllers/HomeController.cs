@@ -24,6 +24,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using NuGet.Protocol;
 using BankApp.Client;
 using Humanizer.Localisation.TimeToClockNotation;
+using cloudscribe.Pagination.Models;
 
 namespace BankApp.Controllers
 {
@@ -65,13 +66,20 @@ namespace BankApp.Controllers
             return View();
         }
         [Authorize]
-        public async Task<IActionResult> HistoryOfInquiries()
+        public async Task<IActionResult> HistoryOfInquiries(int pageNumber=1, int pageSize=15)
         {
+            int excludeRecords = (pageSize * pageNumber) - pageSize;
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             var model = _loggedInquiryRepository.GetAll(user.Id);
-            return View(model);
+            var result = new PagedResult<InquiryModel>
+            {
+                Data = model.Skip(excludeRecords).Take(pageSize).ToList(),
+                TotalItems = model.Count(),
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+            };
+            return View(result);
         }
-
         [Authorize]
         public async Task<IActionResult> AllBankOffersRequests()
         {

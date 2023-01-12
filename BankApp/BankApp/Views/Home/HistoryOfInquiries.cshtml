@@ -1,24 +1,37 @@
 ﻿@{
     ViewData["Title"] = "Inquiries";
 }
-@model IEnumerable<BankApp.Models.InquiryModel>
-
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <th scope="col">Date</th>
-            <th scope="col">Loan Value</th>
-            <th scope="col">Number Of installments</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var inquiry in Model)
-        {
-            <tr class="table-info">
-                <td>@inquiry.SubmisionDate</td>
-                <td>@inquiry.LoanValue</td>
-                <td>@inquiry.InstallmentsCount</td>
+@model cloudscribe.Pagination.Models.PagedResult<BankApp.Models.InquiryModel>
+<div>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Loan Value</th>
+                <th scope="col">Number Of installments</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var inquiry in Model.Data)
+            {
+                <tr class="table-info">
+                    <td>@inquiry.SubmisionDate</td>
+                    <td>@inquiry.LoanValue</td>
+                    <td>@inquiry.InstallmentsCount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <cs-pager 
+    cs-paging-pagenumber=Model.PageNumber 
+    cs-paging-totalitems=Model.TotalItems 
+    cs-paging-pagesize=Model.PageSize
+    cs-pagenumber-param="pageNumber" 
+    asp-controller="Home" 
+    asp-action="HistoryOfInquiries"
+              cs-pager-li-current-class="page-item active"
+              cs-pager-li-other-class="page-item"
+              cs-pager-li-non-active-class="page-item disabled"
+              cs-pager-link-current-class="page-link"
+              cs-pager-link-other-class="page-link"></cs-pager>
+</div>
