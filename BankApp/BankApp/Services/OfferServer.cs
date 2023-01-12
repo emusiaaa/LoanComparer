@@ -1,17 +1,22 @@
 ﻿using BankApp.Client;
 using BankApp.Models;
 using BankApp.Repositories;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
-namespace BankApp
+namespace BankApp.Services
 {
-    static public class Functions
+    public class OfferServer: IOfferServer
     {
-        static async public void SaveOfferForLogged(IMiNIApiCaller client, IOfferRepository _offerRepository, 
-            IOffersSummaryRepository _offersSummaryRepository, int inquiryId, int inquiryIdInOurDb, ClientModel user)
+        private readonly IOffersSummaryRepository _offersSummaryRepository;
+        private readonly IOfferRepository _offerRepository;
+        public OfferServer(IOffersSummaryRepository offersSummaryRepository, IOfferRepository offerRepository)
+        {
+            _offersSummaryRepository = offersSummaryRepository;
+            _offerRepository = offerRepository;
+        }
+    
+        async public void SaveOfferForLogged(IMiNIApiCaller client, int inquiryId, int inquiryIdInOurDb, ClientModel user)
         {
             while (true)
             {
@@ -33,10 +38,9 @@ namespace BankApp
             string clientID = user.Id;
             string bankName = "projectAPI";
 
-            _offersSummaryRepository.Add(inquiryIdInOurDb,false, bankName, offersId, clientID);
+            _offersSummaryRepository.Add(inquiryIdInOurDb, false, bankName, offersId, clientID);
         }
-        static async public void SaveOfferForNotLogged(IMiNIApiCaller client, IOfferRepository _offerRepository,
-            IOffersSummaryRepository _offersSummaryRepository, int inquiryId, int inquiryIdInOurDb)
+        async public void SaveOfferForNotLogged(IMiNIApiCaller client, int inquiryId, int inquiryIdInOurDb)
         {
             while (true)
             {

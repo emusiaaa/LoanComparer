@@ -67,6 +67,12 @@ builder.Services.AddAuthentication().AddGoogle(googleOptions =>
 
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.AddTransient<IOfferServer, OfferServer>()
+    //.AddDbContext<LoansComparerDBContext>(options =>
+    //options.UseSqlServer(DBconnectionString))
+    .AddTransient<IOfferRepository, OfferRepository>()
+    .AddTransient<IOffersSummaryRepository, OffersSummaryRepository>();
+
 builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
 var app = builder.Build();

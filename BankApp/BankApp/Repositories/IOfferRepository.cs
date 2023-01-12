@@ -17,5 +17,7 @@ namespace BankApp.Repositories
         public long Add(Dictionary<string, dynamic> jsonOffer);
 
         public void Delete(int offerID);
+
+        public IEnumerable<OfferModel> GetAllOffersForClientInquiry(int inquiryId);
     }
 }

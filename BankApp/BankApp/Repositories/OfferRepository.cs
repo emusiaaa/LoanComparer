@@ -52,6 +52,15 @@ namespace BankApp.Repositories
             }
         }
 
+        public IEnumerable<OfferModel> GetAllOffersForClientInquiry(int inquiryId)
+        {
+            var query = from offerSummary in _context.OffersSummary
+                        join offer in _context.Offers
+                        on offerSummary.OfferIdInOurDb equals offer.Id
+                        where offerSummary.InquiryIdInOurDb == inquiryId
+                        select offer;
+            return query.ToList();
+        }
         public IEnumerable<OfferModel> GetAllOffersForAClientAllInquiries(string clientID)
         {
             var query = from offerSummary in _context.OffersSummary
