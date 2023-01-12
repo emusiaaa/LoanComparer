@@ -323,5 +323,11 @@ namespace BankApp.Controllers
         {
             return "/Home/AcceptDeclineOffer?id=" + offerId.ToString();
         }
+        [Authorize]
+        public IActionResult MakeDecision(int offerID, bool decision, string employeeID)
+        {
+            _offerRepository.UpdateIsApprovedByEmployee(offerID, decision, employeeID);
+            return View("AllBankOffersRequests");
+        }
     }
 }
