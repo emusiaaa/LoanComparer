@@ -314,5 +314,14 @@ namespace BankApp.Controllers
         {
             return View();
         }
+        public async Task<IActionResult> AcceptDeclineOffer(string id)
+        {
+            var offer = _offerRepository.GetOfferForBankEmployee(Int32.Parse(id));
+            return View(offer);
+        }
+        public string RedirectToAcceptDeclineOffer(string offerId)
+        {
+            return "/Home/AcceptDeclineOffer?id=" + offerId.ToString();
+        }
     }
 }

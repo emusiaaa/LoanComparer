@@ -107,5 +107,9 @@ namespace BankApp.Repositories
                         select offer;
             return query.ToList();
         }
+        public OfferModel GetOfferForBankEmployee(int offerIdInOurDb)
+        {
+            return _context.Offers.Where(o => o.Id == offerIdInOurDb).FirstOrDefault();
+        }
     }
 }

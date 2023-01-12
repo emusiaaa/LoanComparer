@@ -13,6 +13,7 @@ namespace BankApp.Repositories
         public OfferModel GetAllOffersForAClientForAGivenInquiryForAGivenBank(string clientID, int inquiryID, string bankName);
 
         public OfferModel GetAllOffersForAClientForAGivenInquiryForAGivenBank(int offerIdInBank, string bankName);
+        public OfferModel GetOfferForBankEmployee(int offerIdInOurDb);
 
         public long Add(Dictionary<string, dynamic> jsonOffer);
 

@@ -98,7 +98,12 @@
             return sorted.sort((a, b) => new Date(b.createDate).getTime() - new Date(a.createDate).getTime())
         }
     }
-
+    function showOffer(id) {
+        $.get("/Home/RedirectToAcceptDeclineOffer", { offerId:id})
+            .done(function (data) {
+                window.location.href = data;
+            })
+    }
     function Show(inquiries) {
         $("#mainTable").empty();
         $.each(inquiries, function (i, v) {
@@ -110,7 +115,7 @@
             row += "<td>" + v.monthlyInstallment + "</td>";
             row += "<td>" + v.statusDescription + "</td>";
             row += "<td>" + v.requestedPeriodInMonth + "</td>";
-
+            row += "<td><button onclick=\"return showOffer(this.value)\" value=\"" + v.id +  "\">View</button></td>";
             row += "</tr>";
 
             $("#mainTable").append($(row));
@@ -156,6 +161,7 @@
             <th scope="col">Monthly Installment</th>
             <th scope="col">Status Description</th>
             <th scope="col">Requested Period In Months</th>
+            <th scope="col">Details</th>
         </tr>
     </thead>
     <tbody id="mainTable">
