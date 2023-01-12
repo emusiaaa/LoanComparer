@@ -31,4 +31,8 @@
     <PackageReference Include="System.Text.Json" Version="7.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Employee\" />
+  </ItemGroup>
+
 </Project>
