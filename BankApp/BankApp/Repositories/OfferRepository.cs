@@ -1,5 +1,6 @@
 ﻿using BankApp.Data;
 using BankApp.Models;
+using System.Drawing;
 using System.Text.Json.Nodes;
 
 namespace BankApp.Repositories
@@ -96,7 +97,6 @@ namespace BankApp.Repositories
                         select offer;
             return query.FirstOrDefault();
         }
-
         public IEnumerable<OfferModel> GetAllOffersForBankEmployee(string bankEmployeeID, string bankName)
         {
             var query = from offerSummary in _context.OffersSummary

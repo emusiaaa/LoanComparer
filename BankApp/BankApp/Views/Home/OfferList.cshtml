@@ -11,24 +11,64 @@
     <tbody id="tablebody1">
     </tbody>
 </table>
+<button id="button1" style="display:none" onclick="return offer1()">Wybierz</button>
 <table>
     <h1 id="header2" style="display:none">Offer 2</h1>
     <tbody id="tablebody2">
     </tbody>
 </table>
-
-<script>
-    let offers = 0;
-    function updateTitle(){
-        document.getElementById("numberOfOffers").textContent = "Offers " + offers + "/3";
-    }
-</script>
+<button id="button2" style="display:none" onclick="return offer2()">Wybierz</button>
 <script src="https://kit.fontawesome.com/ebd704dc7e.js" crossorigin="anonymous"></script>
 <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"></script>
+<script>
+    let offers = 0;
+    let offerID;
+    function updateTitle() {
+        document.getElementById("numberOfOffers").textContent = "Offers " + offers + "/3";
+    }
+    function offer1() {
+        $.get("/Home/Show")
+            .done(function (data) {
+                window.location.href = data;
+            })
+    }
+    function offer2() {
+        $.get("/Home/GetLink", { id: offerID, bankName: "projectAPI" })
+            .done(function (data) {
+                window.location.href = data;
+            })
+    }
+
+</script>
 <script>
     $(function () {
         $('#loading-div-background').show();
 
+        Promise.resolve($.ajax({
+            type: "GET",
+            url: "/Home/BestAPIWaitForOffer",
+            dataType: "json"
+
+        })).then(function (result) {
+            if (result) {
+
+                if (++offers === 2) {
+                    $('#loading-div-background').hide();
+                }
+                updateTitle();
+                $("#header1").show()
+                $("#button1").show()
+                console.log(result);
+                var row = "";
+                $.each(result, function (index, item) {
+                    row += "<tr><td>" + index
+                        + "</td><td>" + item + "</td></tr> ";
+                });
+                $("#tablebody1").html(row);
+            }
+        }).catch(function (e) {
+            console.log(e);
+        });
         Promise.resolve($.ajax({
             type: "GET",
             url: "/Home/WaitForOffer?inquiryId=" + @Model.inquiryId.ToString() + "&inquiryIdInOurDb=" + @Model.inquiryIdInOurDb.ToString(),
@@ -40,7 +80,11 @@
                         $('#loading-div-background').hide();
                 }
                 updateTitle();
+                offerID = result.id;
+                console.log("offer id w naszym banku");
+                console.log(result.id);
                 $("#header2").show()
+                $("#button2").show()
                 var row = "";
                 $.each(result, function (index, item) {
                     row += "<tr><td>" + index
@@ -51,28 +95,6 @@
         }).catch(function (e) {
             console.log(e);
         });
-        Promise.resolve($.ajax({
-            type: "GET",
-            url: "/Home/BestAPIWaitForOffer",
-            dataType: "json"
-
-        })).then(function (result) {
-            if (result) {
-
-                if (++offers === 2){
-                    $('#loading-div-background').hide();
-                }
-                updateTitle();
-                $("#header1").show()
-                var row = "";
-                $.each(result, function (index, item) {
-                    row += "<tr><td>" + index
-                        + "</td><td>" + item + "</td></tr> ";
-                });
-                $("#tablebody1").html(row);
-            }
-        }).catch(function (e) {
-            console.log(e);
-        });
+        
     });
 </script>
