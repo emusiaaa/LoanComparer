@@ -74,7 +74,24 @@ namespace BankApp.Repositories
                         select offer;
             return query.ToList();
         }
-
+        public IEnumerable<OfferModel> GetAllOffersForAGivenInquiry(int inquiryID)
+        {
+            var query = from offerSummary in _context.OffersSummary
+                        join offer in _context.Offers
+                        on offerSummary.OfferIdInOurDb equals offer.Id
+                        where (offerSummary.InquiryIdInOurDb == inquiryID)
+                        select offer;
+            return query.ToList();
+        }
+        public IEnumerable<OfferModel> GetAllOffersForAGivenNRInquiry(int inquiryID)
+        {
+            var query = from offerSummary in _context.OffersSummary
+                        join offer in _context.Offers
+                        on offerSummary.OfferIdInOurDb equals offer.Id
+                        where (offerSummary.InquiryIdInOurDb == inquiryID && offerSummary.IsNRInquiry==true)
+                        select offer;
+            return query.ToList();
+        }
         public OfferModel GetAllOffersForAClientForAGivenInquiryForAGivenBank(string clientID, int inquiryID, string bankName)
         {
             var query = from offerSummary in _context.OffersSummary
@@ -121,6 +138,21 @@ namespace BankApp.Repositories
                 result.ApprovedBy = employeeID;
             }
             _context.SaveChanges();
+        }
+        public OfferModel UpdateIsOfferAccepted(int offerID)
+        {
+            var result = _context.Offers.SingleOrDefault(x => x.Id == offerID);
+            if (result != null)
+            {
+                result.IsOfferAccepted = true;
+            }
+            _context.SaveChanges();
+            return result;
+        }
+        public string GetOfferBank(int offerId)
+        {
+            var c = _context.OffersSummary.Where(o => o.OfferIdInOurDb == offerId).FirstOrDefault();
+            return c.BankName;
         }
     }
 }
