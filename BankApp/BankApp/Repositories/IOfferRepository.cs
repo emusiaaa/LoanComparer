@@ -18,5 +18,6 @@ namespace BankApp.Repositories
         public long Add(Dictionary<string, dynamic> jsonOffer);
 
         public void Delete(int offerID);
+        public void UpdateIsApprovedByEmployee(int offerID, bool decision, string employeeID);
     }
 }

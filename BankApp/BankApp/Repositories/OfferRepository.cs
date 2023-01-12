@@ -1,5 +1,6 @@
 ﻿using BankApp.Data;
 using BankApp.Models;
+using System;
 using System.Drawing;
 using System.Text.Json.Nodes;
 
@@ -110,6 +111,16 @@ namespace BankApp.Repositories
         public OfferModel GetOfferForBankEmployee(int offerIdInOurDb)
         {
             return _context.Offers.Where(o => o.Id == offerIdInOurDb).FirstOrDefault();
+        }
+        public void UpdateIsApprovedByEmployee(int offerID, bool decision, string employeeID)
+        {
+            var result = _context.Offers.SingleOrDefault(x => x.Id == offerID);
+            if (result != null)
+            {
+                result.IsApprovedByEmployee = decision;
+                result.ApprovedBy = employeeID;
+            }
+            _context.SaveChanges();
         }
     }
 }

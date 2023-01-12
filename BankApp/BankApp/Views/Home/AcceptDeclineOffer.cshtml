@@ -1,5 +1,17 @@
 ﻿@model OfferModel
-
-<h1> @Model.MonthlyInstallment</h1>
-<h1> @Model.StatusDescription</h1>
-<h1> @Model.Percentage</h1>
+@if(Model.IsApprovedByEmployee == null){
+    <h1> @Model.MonthlyInstallment</h1>
+    <h1> @Model.StatusDescription</h1>
+    <h1> @Model.Percentage</h1>
+    <h1> @Model.IsApprovedByEmployee</h1>
+    <a asp-controller="Home" asp-action="MakeDecision" asp-route-offerID="@Model.Id" asp-route-decision="true" asp-route-employeeID="hehe">Accept</a>
+    <a asp-controller="Home" asp-action="MakeDecision" asp-route-offerID="@Model.Id" asp-route-decision="false" asp-route-employeeID="hehe">Decline</a>
+}
+else{
+    if ((bool)Model.IsApprovedByEmployee){
+        <h1>You accepted the offer</h1>
+    }
+    else{
+        <h1>You declined the offer</h1>
+    }
+}
