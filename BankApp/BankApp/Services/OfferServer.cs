@@ -41,7 +41,7 @@ namespace BankApp.Services
             //var test = Json(resultContent);
             using (var scope = _serviceProvider.CreateScope())
             {
-                var _offerRepository = scope.ServiceProvider.GetRequiredService<OfferRepository>();
+                var _offerRepository = scope.ServiceProvider.GetRequiredService<IOfferRepository>();
                 // do something with context
                 offersId = _offerRepository.Add(values);
             }
@@ -53,7 +53,7 @@ namespace BankApp.Services
             {
                 var _offersSummaryRepository = scope.ServiceProvider.GetRequiredService<IOffersSummaryRepository>();
                 // do something with context
-                _offersSummaryRepository.Add(inquiryIdInOurDb, false, bankName, offersId, null);
+                _offersSummaryRepository.Add(inquiryIdInOurDb, false, bankName, offersId, clientID);
             }
 
             //_offersSummaryRepository.Add(inquiryIdInOurDb, false, bankName, offersId, clientID);
@@ -88,7 +88,7 @@ namespace BankApp.Services
             {
                 var _offersSummaryRepository = scope.ServiceProvider.GetRequiredService<IOffersSummaryRepository>();
                 // do something with context
-                _offersSummaryRepository.Add(inquiryIdInOurDb, false, bankName, offersId, null);
+                _offersSummaryRepository.Add(inquiryIdInOurDb, true, bankName, offersId, null);
             }
             // _offersSummaryRepository.Add(inquiryIdInOurDb, false, bankName, offersId, null);
         }
