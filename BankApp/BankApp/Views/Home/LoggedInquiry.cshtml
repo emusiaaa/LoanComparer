@@ -1,7 +1,7 @@
 ﻿@model InquiryModel
 
 <div class="submit-progress hidden">
-    <i class="fa fa-2x fa-spinner fa-spin"></i>
+    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
     <label>Please wait while Saving Data...</label>
 </div>
 
@@ -11,10 +11,9 @@
     <input type="number" asp-for="LoanValue" value="" required/><br/>
     <label style="width:200px">Number of installments</label>
     <input type="number" asp-for="InstallmentsCount" value="" style="margin:0 0 20px 0;" required /><br />
-    <input style="float:right;" type="submit" value="Submit inquiry"
-           onclick="return DisplayProgressMessage(this,'Saving...')" />
+    <input class="submitButton" style="float:right;" type="submit" value="Submit inquiry"/>
 </form>
-<script src="https://kit.fontawesome.com/ebd704dc7e.js" crossorigin="anonymous"></script>
+
 <style>
     .submit-progress-bg {
         background-color: lightgray;
@@ -79,4 +78,14 @@
             return true;
         }
     </script>
+    <script>
+        $("#submitButton").click(function (event) {
+            var isValid = $('form').valid();
+            if (isValid) {
+                // Animate loader
+                DisplayProgressMessage($('form'), 'Saving...');
+            }
+        });
+    </script>
+    <script src="https://kit.fontawesome.com/ebd704dc7e.js" crossorigin="anonymous"></script>
     }
