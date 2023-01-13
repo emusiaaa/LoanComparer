@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Configuration;
 using System.Runtime.InteropServices;
 
 namespace BankApp.Models
@@ -16,18 +17,22 @@ namespace BankApp.Models
         public int Id { get; set; }
 
         [Required]
-        public string SubmissionDate { get; set; } 
+        public string SubmissionDate { get; set; } = DateTime.UtcNow.ToString("o");
 
+        [Range(0, int.MaxValue, ErrorMessage = "Please enter valid int Number")]
         [Required]
         public int InstallmentsCount { get; set; }
 
+        [Range(0, float.MaxValue, ErrorMessage = "Please enter valid float Number")]
         [Required]
         public float LoanValue { get; set; }
 
+        [RegularExpression(@"^[A-Z]+[a-zA-Z\s]*$")]
         [Required]
         [DisplayName("First Name")]
         public string UserFirstName { get; set; }
 
+        [RegularExpression(@"^[A-Z]+[a-zA-Z\s]*$")]
         [Required]
         [DisplayName("Last Name")]
         public string UserLastName { get; set; }
@@ -62,7 +67,7 @@ namespace BankApp.Models
         public string ClientJobStartDay { get; set; }
 
         [DisplayName("Job end date")]
-        public string ClientJobEndDay { get; set; }
+        public string ClientJobEndDay { get; set; } = DateTime.UtcNow.ToString("o");
 
     }
 }

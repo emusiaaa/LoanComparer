@@ -96,6 +96,7 @@ namespace BankApp.Areas.Identity.Pages.Account
             public string ClientJobType { get; set; }
 
             [Required]
+            [Range(0, float.MaxValue, ErrorMessage = "Please enter valid float Number")]
             [Display(Name = "Income Level")]
             public string ClientIncomeLevel { get; set; }
 

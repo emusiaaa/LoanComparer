@@ -132,11 +132,18 @@ namespace BankApp.Controllers
 
         [Authorize, HttpPost]
         public async Task<IActionResult> LoggedInquiry(InquiryModel inquiry)
-        {
+        {           
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             inquiry.ClientId = user.Id;
             DateTime dt = DateTime.UtcNow;
             inquiry.SubmisionDate = dt.ToString("o");
+            var errors = ModelState.Values.SelectMany(v => v.Errors);
+            var er = errors.Count();
+            //if (!ModelState.IsValid)
+            if (er>1)
+            {
+                return View();
+            }
             int inqIdInOurDb = _loggedInquiryRepository.Add(inquiry);
             
             var inquiryJson = new jsonclass.Loan
@@ -192,6 +199,12 @@ namespace BankApp.Controllers
         [HttpPost]
         public async Task<ViewResult> InquiryNotRegistered(NotRegisteredInquiryModel inquiry)
         {
+            var errors = ModelState.Values.SelectMany(v => v.Errors);
+            var er = errors.Count();
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
             DateTime dt = DateTime.UtcNow;
             inquiry.SubmissionDate = dt.ToString("o");
             inquiry.ClientJobEndDay = dt.ToString("o");
