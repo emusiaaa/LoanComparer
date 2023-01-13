@@ -8,10 +8,10 @@
 <form method="post" asp-action="LoggedInquiry" style="width:395px">
     <h2>Enter Your loan details</h2><br />
     <label style="width:200px">Loan value</label>
-    <input type="number" asp-for="LoanValue" value="" required/><br/>
+    <input type="number" asp-for="LoanValue" required/><br/>
     <span asp-validation-for="LoanValue" class="text-danger"></span>
     <label style="width:200px">Number of installments</label>
-    <input type="number" asp-for="InstallmentsCount" value="" style="margin:0 0 20px 0;" required />
+    <input type="number" asp-for="InstallmentsCount" style="margin:0 0 20px 0;" required />
     <span asp-validation-for="InstallmentsCount" class="text-danger"></span>
     <br />
     <input style="float:right;" type="submit" value="Submit inquiry"/>
