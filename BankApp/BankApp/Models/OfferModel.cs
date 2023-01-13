@@ -28,7 +28,8 @@ namespace BankApp.Models
         public string CreateDate { get; set; }
         [Required]
         public string UpdateDate { get; set; }
-        public int? ApprovedBy { get; set; }
+        public string? ApprovedBy { get; set; }
+        public bool? IsApprovedByEmployee { get; set; }
         [Required]
         public string DocumentLink { get; set; }
         [Required]

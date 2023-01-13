@@ -57,6 +57,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<ClientModel>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<LoansComparerDBContext>();
 builder.Services.AddControllersWithViews();
+builder.Services.AddCloudscribePagination();
 
 
 builder.Services.AddAuthentication().AddGoogle(googleOptions =>

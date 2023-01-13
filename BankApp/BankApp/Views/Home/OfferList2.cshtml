@@ -1,0 +1,149 @@
+﻿@model IEnumerable<OfferModel>
+
+<style>
+    .offers-container {
+        display: flex;
+    }
+
+    .offer-container {
+        flex: auto;
+        margin: 10px 100px;
+    }
+</style>
+<script>
+    function viewDetails(id, idBank){
+        $.get("/Home/GetBankName", { offerID: id, offerIDinBank : idBank})
+            .done(function (data) {
+                window.location.href = data;
+            })
+    }
+</script>
+
+<div class="offers-container">
+    @{
+        int i = 1;
+        bool isAccepted = false;
+        OfferModel accepted = new OfferModel();
+    }
+    @foreach (var offer in Model)
+    {
+        if(offer.IsOfferAccepted){
+            isAccepted = true;
+            accepted = offer;
+        }
+    }
+    @if(isAccepted){
+        <div class="offer-container">
+            <h1>Choosen offer</h1>
+            <span>Status:</span>
+            @if(accepted.IsApprovedByEmployee==null){
+                <span>Offer waits to be accepted by the bank</span>
+            }
+            else{
+                if((bool)accepted.IsApprovedByEmployee){
+                    <span>Offer is accepted by the bank!</span>
+                }
+                else{
+                    <span> Sorry your offer was declined by the bank :(</span>
+                }
+            }
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Document link</td>
+                        <td>@accepted.DocumentLink</td>
+                    </tr>
+                    <tr>
+                        <td>Status</td>
+                        <td>@accepted.StatusDescription</td>
+                    </tr>
+                    <tr>
+                        <td>Percentage</td>
+                        <td>@accepted.Percentage</td>
+                    </tr>
+                    <tr>
+                        <td>Monthly installment</td>
+                        <td>@accepted.MonthlyInstallment</td>
+                    </tr>
+                    <tr>
+                        <td>Requested period of months</td>
+                        <td>@accepted.RequestedPeriodInMonth</td>
+                    </tr>
+                    <tr>
+                        <td>How much you'll spend</td>
+                        @{
+                            double howmuch = accepted.MonthlyInstallment * accepted.RequestedPeriodInMonth;
+                        }
+                        <td>@howmuch</td>
+                    </tr>
+                    <tr>
+                        <td>Requested value</td>
+                        <td>@accepted.RequestedValue</td>
+                    </tr>
+                </tbody>
+            </table>           
+        </div>
+    }
+    else{
+        @foreach (var offer in Model)
+        {
+            <div class="offer-container">
+                <h1>Offer no. @i</h1>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Document link</td>
+                            <td>@offer.DocumentLink</td>
+                        </tr>
+                        <tr>
+                            <td>Status</td>
+                            <td>@offer.StatusDescription</td>
+                        </tr>
+                        <tr>
+                            <td>Percentage</td>
+                            <td>@offer.Percentage</td>
+                        </tr>
+                        <tr>
+                            <td>Monthly installment</td>
+                            <td>@offer.MonthlyInstallment</td>
+                        </tr>
+                         <tr>
+                            <td>Requested period of months</td>
+                            <td>@offer.RequestedPeriodInMonth</td>
+                        </tr>
+                         <tr>
+                            <td>How much you'll spend</td>
+                            @{
+                                double howmuch = offer.MonthlyInstallment * offer.RequestedPeriodInMonth;
+                            }
+                            <td>@howmuch</td>
+                        </tr>
+                        <tr>
+                            <td>Requested value</td>
+                            <td>@accepted.RequestedValue</td>
+                        </tr>
+                        <tr>
+                            <td>My descision</td>
+                            <td>@offer.IsOfferAccepted</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button onclick="return viewDetails(@offer.Id, @offer.OfferIdInBank)">Details</button>
+            </div>
+            i++;
+        }
+    }
+    
+</div>

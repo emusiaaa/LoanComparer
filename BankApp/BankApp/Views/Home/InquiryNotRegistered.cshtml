@@ -7,58 +7,67 @@
 
 <form method="post" asp-action="InquiryNotRegistered">
     <label asp-for="LoanValue">Insert loan value</label>
-    <input type="number" asp-for="LoanValue" value="" required /><br />
+    <input type="number" asp-for="LoanValue" required /><br />
+    <span asp-validation-for="LoanValue" class="text-danger"></span>
     <br />
 
     <label asp-for="InstallmentsCount">Insert number of installments</label>
-    <input type="number" asp-for="InstallmentsCount" required /><br />
+    <input type="number" asp-for="InstallmentsCount" required />
+    <span asp-validation-for="InstallmentsCount" class="text-danger"></span><br />
     <br />
 
     <label asp-for="UserFirstName">First name:</label>
     <input asp-for="UserFirstName" required /><br />
+    <span asp-validation-for="UserFirstName" class="text-danger"></span>
     <br />
 
     <label asp-for="UserLastName">Last name:</label>
     <input asp-for="UserLastName" required /><br />
+    <span asp-validation-for="UserLastName" class="text-danger"></span>
     <br />
 
     <label asp-for="UserBirthDay">Birth date:</label>
     <input type="datetime-local" asp-for="UserBirthDay" required /><br />
+    <span asp-validation-for="UserBirthDay" class="text-danger"></span>
     <br />
 
     <label asp-for="ClientGovernmentIDType">Government ID Type:</label>
     @Html.DropDownListFor(
     m=>m.ClientGovernmentIDType,
     new SelectList(BankApp.Models.DocumentTypes.DocumentTypesDictionary.Keys),"Select Government ID Type", new {required = (string)null}) <br />
+    <span asp-validation-for="ClientGovernmentIDType" class="text-danger"></span>
     <br/>
 
     <label asp-for="ClientGovernmentIDNumber">Government ID Number:</label>
     <input asp-for="ClientGovernmentIDNumber" required /> <br />
+    <span asp-validation-for="ClientGovernmentIDNumber" class="text-danger"></span>
     <br />
 
     <label asp-for="ClientJobType">Job type:</label>
     @Html.DropDownListFor(
     m=>m.ClientJobType,
     new SelectList(BankApp.Models.JobTypes.JobTypesDictionary.Keys),"Select Job Type", new {required = (string)null}) <br />
+    <span asp-validation-for="ClientJobType" class="text-danger"></span>
     <br />
 
     <label asp-for="ClientJobStartDay">Job start date:</label>
     <input type="datetime-local" asp-for="ClientJobStartDay" required /> <br />
+    <span asp-validation-for="ClientJobStartDay" class="text-danger"></span>
     <br />
 
     <label asp-for="ClientIncomeLevel">Income level:</label>
     <input type="number" asp-for="ClientIncomeLevel" required /> <br />
+    <span asp-validation-for="ClientIncomeLevel" class="text-danger"></span>
     <br />
 
     <label asp-for="Email">Email:</label>
-    <input type=email asp-for="Email" /> <br />
+    <input type=email asp-for="Email" /><br />
+    <span asp-validation-for="Email" class="text-danger"></span>
+    
     <br required />
 
-    <span asp-validation-for="Email" class="text-danger"></span>
-
-    <input id="submitButton" type="submit" value="Submit inquiry"/>
+    <input type="submit" value="Submit inquiry" />
 </form>
-
 
 <style>
     .submit-progress-bg {
@@ -103,35 +112,3 @@
         display: none;
     }
 </style>
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-    <script type="text/javascript">
-        function DisplayProgressMessage(ctl, msg) {
-            //if use the submit button, you can use event.preventDefault to prevent the default submit form behavior.
-            event.preventDefault();
-            // Turn off the "Save" button and change text
-            $(ctl).prop("disabled", true).val(msg);
-            // Gray out background on page
-            $("body").addClass("submit-progress-bg");
-            // Wrap in setTimeout so the UI can update the spinners
-            $(".submit-progress").removeClass("hidden");
-            //submit the form.
-            setTimeout(function () {
-                $("form").submit();
-            }, 1);
-            return true;
-        }
-    </script>
-    <script>
-        $("#submitButton").click(function (event) {
-            var isValid = $('form').valid();
-            if (isValid) {
-                // Animate loader
-                DisplayProgressMessage($('form'), 'Saving...');
-            }
-        });
-    </script>
-    <script src="https://kit.fontawesome.com/ebd704dc7e.js" crossorigin="anonymous"></script>
-}

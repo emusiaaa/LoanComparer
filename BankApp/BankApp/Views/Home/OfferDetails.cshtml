@@ -1,0 +1,23 @@
+﻿@model OfferModel
+<script>
+    function downloadAgreement() {
+        let text = "@ViewBag.document";
+        var filename = "Agreement.txt";
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
+</script>
+<h1>Twoja oferta</h1>
+<input type="button" id="dwn-btn" value="Download Agreement" onclick="downloadAgreement()" />
+<h1>@Model.CreateDate</h1>
+<h1>@Model.DocumentLink</h1>
+<h1>@Model.OfferIdInBank</h1>
+<div>
+<input type="file"/>
+<a asp-controller="Home" asp-action="AcceptOffer" asp-route-offerID="@Model.Id">Accept Offer</a>
+</div>

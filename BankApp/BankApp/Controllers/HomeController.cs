@@ -24,6 +24,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using NuGet.Protocol;
 using BankApp.Client;
 using Humanizer.Localisation.TimeToClockNotation;
+using cloudscribe.Pagination.Models;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -72,13 +73,20 @@ namespace BankApp.Controllers
             return View();
         }
         [Authorize]
-        public async Task<IActionResult> HistoryOfInquiries()
+        public async Task<IActionResult> HistoryOfInquiries(int pageNumber=1, int pageSize=15)
         {
+            int excludeRecords = (pageSize * pageNumber) - pageSize;
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             var model = _loggedInquiryRepository.GetAll(user.Id);
-            return View(model);
+            var result = new PagedResult<InquiryModel>
+            {
+                Data = model.Skip(excludeRecords).Take(pageSize).ToList(),
+                TotalItems = model.Count(),
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+            };
+            return View(result);
         }
-
         [Authorize]
         public async Task<IActionResult> AllBankOffersRequests()
         {
@@ -131,11 +139,18 @@ namespace BankApp.Controllers
 
         [Authorize, HttpPost]
         public async Task<IActionResult> LoggedInquiry(InquiryModel inquiry)
-        {
+        {           
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             inquiry.ClientId = user.Id;
             //DateTime dt = DateTime.UtcNow;
             //inquiry.SubmisionDate = dt.ToString("o");
+            var errors = ModelState.Values.SelectMany(v => v.Errors);
+            var er = errors.Count();
+            //if (!ModelState.IsValid)
+            if (er>1)
+            {
+                return View();
+            }
             int inqIdInOurDb = _loggedInquiryRepository.Add(inquiry);
 
             var inquiryJson = _inquiryServer.CreateInquiry(inquiry, user);
@@ -158,7 +173,8 @@ namespace BankApp.Controllers
 
              _offerServer.SaveOfferForLogged(_MiNIClient, inquiryId, inqIdInOurDb,user);
 
-            return View("OfferList", new InquiryString { inquiryId = inqIdInOurDb });
+            //return View("OfferList", new InquiryString { inquiryId = inqIdInOurDb });
+            return RedirectToActionPermanent("HistoryOfInquiries");
         }
         //public async Task<IActionResult> SendInquiry(InquiryModel inquiry)
         //{
@@ -167,6 +183,18 @@ namespace BankApp.Controllers
         [HttpPost]
         public async Task<IActionResult> InquiryNotRegistered(NotRegisteredInquiryModel inquiry)
         {
+            var errors = ModelState.Values.SelectMany(v => v.Errors);
+            var er = errors.Count();
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+            DateTime dt = DateTime.UtcNow;
+            inquiry.SubmissionDate = dt.ToString("o");
+            inquiry.ClientJobEndDay = dt.ToString("o");
+            inquiry.UserBirthDay = DateTimeOffset.Parse(inquiry.UserBirthDay).UtcDateTime.ToString("o");
+            inquiry.ClientJobStartDay = DateTimeOffset.Parse(inquiry.ClientJobStartDay).UtcDateTime.ToString("o");
+
             var inquiryJson = _inquiryServer.CreateNRInquiry(inquiry);
             int inqIdInOurDb = _notRegisteredInquiryRepository.Add(inquiry);
 
@@ -184,11 +212,13 @@ namespace BankApp.Controllers
                              "</p><p>Government ID Number: " + inquiry.ClientGovernmentIDNumber +
                              "</p><p>Job type: " + inquiry.ClientJobType +
                              "</p><p>Income level: " + inquiry.ClientIncomeLevel +
+                             "</p><p>Link to check the status of  inquiry: <a href=\"https://localhost:7280/Home/OfferList2?inquiryID=" + inquiry.Id+ "&isNR=true\">"  + "here</a>"+
                              "</p>");
 
             _offerServer.SaveOfferForNotLogged(_MiNIClient,inquiryId, inqIdInOurDb);
 
-            return RedirectToActionPermanent("OfferList", new InquiryString { inquiryId = inqIdInOurDb });
+            //return RedirectToActionPermanent("OfferList", new InquiryString { inquiryId = inqIdInOurDb });
+            return RedirectToActionPermanent("HistoryOfInquiries");
         }
 
         public IActionResult OfferList(InquiryString model)
@@ -206,14 +236,65 @@ namespace BankApp.Controllers
             return MockOffers.GenerateMockOffer();
         }
 
-        [HttpGet]
-        public async Task<string?> GetOffers(int inquiryIdInOurDb)
+        
+        public string GetLink(long id, string bankName)
         {
-            var offers = _offerRepository.GetAllOffersForClientInquiry(inquiryIdInOurDb);
-            var json = JsonSerializer.Serialize(offers);
+            return "/Home/OfferDetails?id="+ id.ToString() + "&bankName=" + bankName;
+        }
 
-            return json;
-
+        public async Task<IActionResult> OfferDetails(string id, string bankName)
+        {
+            var offerDetails = _offerRepository.GetAllOffersForAClientForAGivenInquiryForAGivenBank(Int32.Parse(id), bankName);
+            //offerDetails.document = await _MiNIClient.GetOfferDetailsAsync(offerDetails.offerModel.DocumentLink);
+            ViewBag.document = await _MiNIClient.GetOfferDetailsAsync(offerDetails.DocumentLink);
+            return View("OfferDetails", offerDetails);
+        }
+        public string Show(string id, string bankName)
+        {
+            return "/Home/ShowOffer";
+        }
+        public IActionResult ShowOffer()
+        {
+            return View();
+        }
+        public async Task<IActionResult> AcceptDeclineOffer(string id)
+        {
+            var offer = _offerRepository.GetOfferForBankEmployee(Int32.Parse(id));
+            return View(offer);
+        }
+        public string RedirectToAcceptDeclineOffer(string offerId)
+        {
+            return "/Home/AcceptDeclineOffer?id=" + offerId.ToString();
+        }
+        [Authorize]
+        public IActionResult MakeDecision(int offerID, bool decision, string employeeID)
+        {
+            _offerRepository.UpdateIsApprovedByEmployee(offerID, decision, employeeID);
+            _MiNIClient.CompleteOfferAsync(offerID);
+            return View("AllBankOffersRequests");
+        }
+        public IActionResult OfferList2(int inquiryID, bool isNR)
+        {           
+            if (isNR)
+            {
+                var model = _offerRepository.GetAllOffersForAGivenNRInquiry(inquiryID);
+                return View(model);
+            }
+            else
+            {
+                var model = _offerRepository.GetAllOffersForAGivenInquiry(inquiryID);
+                return View(model);
+            }                       
+        }
+        public string GetBankName(int offerID, int offerIDinBank)
+        {
+            var bankName = _offerRepository.GetOfferBank(offerID);
+            return "/Home/OfferDetails?id=" + offerIDinBank.ToString() + "&bankName=" + bankName;
+        }
+        public IActionResult AcceptOffer(int offerID)
+        {
+            var r = _offerRepository.UpdateIsOfferAccepted(offerID);
+            return View("Index");
         }
     }
 }
