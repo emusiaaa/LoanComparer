@@ -25,6 +25,8 @@ using NuGet.Protocol;
 using BankApp.Client;
 using Humanizer.Localisation.TimeToClockNotation;
 using cloudscribe.Pagination.Models;
+using JsonSerializer = System.Text.Json.JsonSerializer;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace BankApp.Controllers
 {
@@ -38,11 +40,14 @@ namespace BankApp.Controllers
         private readonly IOfferRepository _offerRepository;
         private readonly UserManager<ClientModel> _userManager;
         private readonly IEmailSender _emailSender;
+        private readonly IOfferServer _offerServer;
+        private readonly InquiryServer _inquiryServer;
         private readonly IMiNIApiCaller _MiNIClient;
+       
 
         public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository, UserManager<ClientModel> userManager,
             INotRegisteredInquiryRepository notRegisteredInquiryRepository, IEmailSender emailSender, ILoggedInquiryRepository loggedInquiryRepository, 
-             IOffersSummaryRepository offersSummaryRepository, IOfferRepository offerRepository, IMiNIApiCaller MiNIClient)
+             IOffersSummaryRepository offersSummaryRepository, IOfferRepository offerRepository, IOfferServer offerServer, InquiryServer inquiryServer, IMiNIApiCaller MiNIClient)
         {
             _logger = logger;
             _clientRepository = clientRepository;
@@ -53,6 +58,8 @@ namespace BankApp.Controllers
             _offersSummaryRepository = offersSummaryRepository;
             _offerRepository = offerRepository;
             _MiNIClient = MiNIClient;
+            _offerServer = offerServer;
+            _inquiryServer = inquiryServer;
         }
 
         public IActionResult Index()
@@ -135,8 +142,8 @@ namespace BankApp.Controllers
         {           
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             inquiry.ClientId = user.Id;
-            DateTime dt = DateTime.UtcNow;
-            inquiry.SubmisionDate = dt.ToString("o");
+            //DateTime dt = DateTime.UtcNow;
+            //inquiry.SubmisionDate = dt.ToString("o");
             var errors = ModelState.Values.SelectMany(v => v.Errors);
             var er = errors.Count();
             //if (!ModelState.IsValid)
@@ -145,39 +152,13 @@ namespace BankApp.Controllers
                 return View();
             }
             int inqIdInOurDb = _loggedInquiryRepository.Add(inquiry);
-            
-            var inquiryJson = new jsonclass.Loan
-            {
-                value = (int)inquiry.LoanValue,
-                installmentsNumber = inquiry.InstallmentsCount,
-                personalData = new jsonclass.PersonalData
-                {
-                    firstName = user.UserFirstName,
-                    lastName = user.UserLastName,
-                    birthDate = DateTimeOffset.Parse(user.UserBirthDay).UtcDateTime.ToString("o"),
-                    // birthDate = inquiry.UserBirthDay,
-                },
-                governmentDocument = new jsonclass.GovernmentDocument
-                {
-                    typeId = BankApp.Models.DocumentTypes.DocumentTypesDictionary[user.ClientGovernmentIDType],
-                    name = user.ClientGovernmentIDType,
-                    description = user.ClientGovernmentIDType,
-                    number = user.ClientGovernmentIDNumber
-                },
-                jobDetails = new jsonclass.JobDetails
-                {
-                    typeId = BankApp.Models.JobTypes.JobTypesDictionary[user.ClientJobType],
-                    name = user.ClientJobType,
-                    description = user.ClientJobType,
-                    jobStartDate = DateTimeOffset.Parse(user.ClientJobStartDay).UtcDateTime.ToString("o"),
-                    jobEndDate = DateTimeOffset.Parse(user.ClientJobEndDay).UtcDateTime.ToString("o"),
-                },
-            };
-          
+
+            var inquiryJson = _inquiryServer.CreateInquiry(inquiry, user);
+
             var responseContent = await _MiNIClient.PostInquiryAsync(inquiryJson);
             var inquiryId = JObject.Parse(responseContent)["inquireId"].ToObject<int>();
 
-            await _emailSender.SendEmailAsync(user.Email, "Confirmation of submitting inquiry",
+            _ = _emailSender.SendEmailAsync(user.Email, "Confirmation of submitting inquiry",
                 "<h3>Thanks for submitting your form!</h3>" +
                 "<p>Here's a little summary: " +
                 "</p><p>Loan value: " + inquiry.LoanValue +
@@ -190,14 +171,17 @@ namespace BankApp.Controllers
                 "</p><p>Income level: " + user.ClientIncomeLevel +
                 "</p>");
 
-            return View("OfferList", new InquiryString { inquiryId = inquiryId, inquiryIdInOurDb = inqIdInOurDb });
+             _offerServer.SaveOfferForLogged(_MiNIClient, inquiryId, inqIdInOurDb,user);
+
+            //return View("OfferList", new InquiryString { inquiryId = inqIdInOurDb });
+            return RedirectToActionPermanent("HistoryOfInquiries");
         }
         //public async Task<IActionResult> SendInquiry(InquiryModel inquiry)
         //{
 
         //}
         [HttpPost]
-        public async Task<ViewResult> InquiryNotRegistered(NotRegisteredInquiryModel inquiry)
+        public async Task<IActionResult> InquiryNotRegistered(NotRegisteredInquiryModel inquiry)
         {
             var errors = ModelState.Values.SelectMany(v => v.Errors);
             var er = errors.Count();
@@ -211,40 +195,13 @@ namespace BankApp.Controllers
             inquiry.UserBirthDay = DateTimeOffset.Parse(inquiry.UserBirthDay).UtcDateTime.ToString("o");
             inquiry.ClientJobStartDay = DateTimeOffset.Parse(inquiry.ClientJobStartDay).UtcDateTime.ToString("o");
 
+            var inquiryJson = _inquiryServer.CreateNRInquiry(inquiry);
             int inqIdInOurDb = _notRegisteredInquiryRepository.Add(inquiry);
-
-           
-            var inquiryJson = new jsonclass.Loan
-            {
-                value = (int)inquiry.LoanValue,
-                installmentsNumber = inquiry.InstallmentsCount,
-                personalData = new jsonclass.PersonalData
-                {
-                    firstName = inquiry.UserFirstName,
-                    lastName = inquiry.UserLastName,
-                    birthDate = inquiry.UserBirthDay,
-                },
-                governmentDocument = new jsonclass.GovernmentDocument
-                {
-                    typeId = BankApp.Models.DocumentTypes.DocumentTypesDictionary[inquiry.ClientGovernmentIDType],
-                    name = inquiry.ClientGovernmentIDType,
-                    description = inquiry.ClientGovernmentIDType,
-                    number = inquiry.ClientGovernmentIDNumber
-                },
-                jobDetails = new jsonclass.JobDetails
-                {
-                    typeId = BankApp.Models.JobTypes.JobTypesDictionary[inquiry.ClientJobType],
-                    name = inquiry.ClientJobType,
-                    description = inquiry.ClientJobType,
-                    jobStartDate = inquiry.ClientJobStartDay,
-                    jobEndDate = inquiry.ClientJobEndDay,
-                },
-            };
 
             var responseContent = await _MiNIClient.PostInquiryAsync(inquiryJson);
             var inquiryId = (JObject.Parse(responseContent)["inquireId"]).ToObject<int>();
 
-            await _emailSender.SendEmailAsync(inquiry.Email, "Confirmation of submitting inquiry",
+            _ = _emailSender.SendEmailAsync(inquiry.Email, "Confirmation of submitting inquiry",
                              "<h3>Thanks for submitting your form!</h3>" +
                              "<p>Here's a little summary: " +
                              "</p><p>Loan value: " + inquiry.LoanValue +
@@ -258,9 +215,16 @@ namespace BankApp.Controllers
                              "</p><p>Link to check the status of  inquiry: <a href=\"https://localhost:7280/Home/OfferList2?inquiryID=" + inquiry.Id+ "&isNR=true\">"  + "here</a>"+
                              "</p>");
 
-            return View("OfferList", new InquiryString { inquiryId = inquiryId, inquiryIdInOurDb =  inqIdInOurDb});
+            _offerServer.SaveOfferForNotLogged(_MiNIClient,inquiryId, inqIdInOurDb);
+
+            //return RedirectToActionPermanent("OfferList", new InquiryString { inquiryId = inqIdInOurDb });
+            return RedirectToActionPermanent("HistoryOfInquiries");
         }
 
+        public IActionResult OfferList(InquiryString model)
+        {
+            return View(model);
+        }
         public IActionResult InquiryNotRegistered()
         {
             return View(new NotRegisteredInquiryModel());
@@ -272,42 +236,7 @@ namespace BankApp.Controllers
             return MockOffers.GenerateMockOffer();
         }
 
-        [HttpGet]
-        public async Task<string?> WaitForOffer(int inquiryId, int inquiryIdInOurDb)
-        {
-            while (true)
-            {
-                var inquiryContent = await _MiNIClient.GetInquiryAsync(inquiryId);
-                var status = JObject.Parse(inquiryContent)["statusDescription"].ToString();
-                if (status == "OfferPrepared") break;
-                Thread.Sleep(1000);
-            }
-
-            var resultContent = await _MiNIClient.GetInquiryAsync(inquiryId);
-            var offerId = JObject.Parse(resultContent)["offerId"].ToObject<int>();
-
-            
-            var rOfferContent = await _MiNIClient.GetOfferAsync(offerId);
-
-
-            var values = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(rOfferContent);
-            //var test = Json(resultContent);
-            long offersId = _offerRepository.Add(values);
-
-            bool isNRInquiry = User.Identity.Name is null ? true : false;
-            string? clientID = null;
-            if(!isNRInquiry)
-            {
-                var user = await _userManager.FindByNameAsync(User.Identity.Name);
-                clientID = user.Id;
-            }
-            string bankName = "projectAPI";
-
-            _offersSummaryRepository.Add(inquiryIdInOurDb, isNRInquiry, bankName, offersId, clientID);
-
-            return rOfferContent;
-
-        }
+        
         public string GetLink(long id, string bankName)
         {
             return "/Home/OfferDetails?id="+ id.ToString() + "&bankName=" + bankName;

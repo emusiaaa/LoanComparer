@@ -47,11 +47,11 @@ builder.Services.AddHttpClient<IMiNIApiCaller, MiNIApiCaller>(client =>
 
 builder.Services.AddDbContext<LoansComparerDBContext>(options =>
     options.UseSqlServer(DBconnectionString));
-builder.Services.AddTransient<IClientRepository, ClientRepository>();
-builder.Services.AddTransient<INotRegisteredInquiryRepository, NotRegisteredInquiryRepository>();
-builder.Services.AddTransient<ILoggedInquiryRepository, LoggedInquiryRepository>();
-builder.Services.AddTransient<IOffersSummaryRepository, OffersSummaryRepository>();
-builder.Services.AddTransient<IOfferRepository, OfferRepository>();
+builder.Services.AddScoped<IClientRepository, ClientRepository>();
+builder.Services.AddScoped<INotRegisteredInquiryRepository, NotRegisteredInquiryRepository>();
+builder.Services.AddScoped<ILoggedInquiryRepository, LoggedInquiryRepository>();
+builder.Services.AddScoped<IOffersSummaryRepository, OffersSummaryRepository>();
+builder.Services.AddScoped<IOfferRepository, OfferRepository>();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<ClientModel>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -67,7 +67,11 @@ builder.Services.AddAuthentication().AddGoogle(googleOptions =>
 });
 
 
-builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.AddSingleton<IOfferServer, OfferServer>()
+    .AddSingleton<IServiceProvider,ServiceProvider>();
+builder.Services.AddScoped<InquiryServer>();
+
 builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
 var app = builder.Build();
