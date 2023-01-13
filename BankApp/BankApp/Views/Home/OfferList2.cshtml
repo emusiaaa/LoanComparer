@@ -66,7 +66,26 @@
                     <tr>
                         <td>Percentage</td>
                         <td>@accepted.Percentage</td>
-                    </tr>                   
+                    </tr>
+                    <tr>
+                        <td>Monthly installment</td>
+                        <td>@accepted.MonthlyInstallment</td>
+                    </tr>
+                    <tr>
+                        <td>Requested period of months</td>
+                        <td>@accepted.RequestedPeriodInMonth</td>
+                    </tr>
+                    <tr>
+                        <td>How much you'll spend</td>
+                        @{
+                            double howmuch = accepted.MonthlyInstallment * accepted.RequestedPeriodInMonth;
+                        }
+                        <td>@howmuch</td>
+                    </tr>
+                    <tr>
+                        <td>Requested value</td>
+                        <td>@accepted.RequestedValue</td>
+                    </tr>
                 </tbody>
             </table>           
         </div>
@@ -95,6 +114,25 @@
                         <tr>
                             <td>Percentage</td>
                             <td>@offer.Percentage</td>
+                        </tr>
+                        <tr>
+                            <td>Monthly installment</td>
+                            <td>@offer.MonthlyInstallment</td>
+                        </tr>
+                         <tr>
+                            <td>Requested period of months</td>
+                            <td>@offer.RequestedPeriodInMonth</td>
+                        </tr>
+                         <tr>
+                            <td>How much you'll spend</td>
+                            @{
+                                double howmuch = offer.MonthlyInstallment * offer.RequestedPeriodInMonth;
+                            }
+                            <td>@howmuch</td>
+                        </tr>
+                        <tr>
+                            <td>Requested value</td>
+                            <td>@accepted.RequestedValue</td>
                         </tr>
                         <tr>
                             <td>My descision</td>
