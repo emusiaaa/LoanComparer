@@ -9,6 +9,7 @@
                 <th scope="col">Date</th>
                 <th scope="col">Loan Value</th>
                 <th scope="col">Number Of installments</th>
+                <th scope="col">Details</th>
             </tr>
         </thead>
         <tbody>
@@ -18,6 +19,7 @@
                     <td>@inquiry.SubmisionDate</td>
                     <td>@inquiry.LoanValue</td>
                     <td>@inquiry.InstallmentsCount</td>
+                    <td><a asp-controller="Home" asp-action="OfferList2" asp-route-inquiryID="@inquiry.Id">View</a></td>
                 </tr>
             }
         </tbody>

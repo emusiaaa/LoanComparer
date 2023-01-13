@@ -132,11 +132,18 @@ namespace BankApp.Controllers
 
         [Authorize, HttpPost]
         public async Task<IActionResult> LoggedInquiry(InquiryModel inquiry)
-        {
+        {           
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             inquiry.ClientId = user.Id;
             DateTime dt = DateTime.UtcNow;
             inquiry.SubmisionDate = dt.ToString("o");
+            var errors = ModelState.Values.SelectMany(v => v.Errors);
+            var er = errors.Count();
+            //if (!ModelState.IsValid)
+            if (er>1)
+            {
+                return View();
+            }
             int inqIdInOurDb = _loggedInquiryRepository.Add(inquiry);
             
             var inquiryJson = new jsonclass.Loan
@@ -192,6 +199,12 @@ namespace BankApp.Controllers
         [HttpPost]
         public async Task<ViewResult> InquiryNotRegistered(NotRegisteredInquiryModel inquiry)
         {
+            var errors = ModelState.Values.SelectMany(v => v.Errors);
+            var er = errors.Count();
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
             DateTime dt = DateTime.UtcNow;
             inquiry.SubmissionDate = dt.ToString("o");
             inquiry.ClientJobEndDay = dt.ToString("o");
@@ -242,6 +255,7 @@ namespace BankApp.Controllers
                              "</p><p>Government ID Number: " + inquiry.ClientGovernmentIDNumber +
                              "</p><p>Job type: " + inquiry.ClientJobType +
                              "</p><p>Income level: " + inquiry.ClientIncomeLevel +
+                             "</p><p>Link to check the status of  inquiry: <a href=\"https://localhost:7280/Home/OfferList2?inquiryID=" + inquiry.Id+ "&isNR=true\">"  + "here</a>"+
                              "</p>");
 
             return View("OfferList", new InquiryString { inquiryId = inquiryId, inquiryIdInOurDb =  inqIdInOurDb});
@@ -327,7 +341,31 @@ namespace BankApp.Controllers
         public IActionResult MakeDecision(int offerID, bool decision, string employeeID)
         {
             _offerRepository.UpdateIsApprovedByEmployee(offerID, decision, employeeID);
+            _MiNIClient.CompleteOfferAsync(offerID);
             return View("AllBankOffersRequests");
+        }
+        public IActionResult OfferList2(int inquiryID, bool isNR)
+        {           
+            if (isNR)
+            {
+                var model = _offerRepository.GetAllOffersForAGivenNRInquiry(inquiryID);
+                return View(model);
+            }
+            else
+            {
+                var model = _offerRepository.GetAllOffersForAGivenInquiry(inquiryID);
+                return View(model);
+            }                       
+        }
+        public string GetBankName(int offerID, int offerIDinBank)
+        {
+            var bankName = _offerRepository.GetOfferBank(offerID);
+            return "/Home/OfferDetails?id=" + offerIDinBank.ToString() + "&bankName=" + bankName;
+        }
+        public IActionResult AcceptOffer(int offerID)
+        {
+            var r = _offerRepository.UpdateIsOfferAccepted(offerID);
+            return View("Index");
         }
     }
 }

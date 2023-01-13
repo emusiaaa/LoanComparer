@@ -14,10 +14,14 @@ namespace BankApp.Repositories
 
         public OfferModel GetAllOffersForAClientForAGivenInquiryForAGivenBank(int offerIdInBank, string bankName);
         public OfferModel GetOfferForBankEmployee(int offerIdInOurDb);
+        public IEnumerable<OfferModel> GetAllOffersForAGivenInquiry(int inquiryID);
+        public IEnumerable<OfferModel> GetAllOffersForAGivenNRInquiry(int inquiryID);
 
+        public string GetOfferBank(int offerId);
         public long Add(Dictionary<string, dynamic> jsonOffer);
 
         public void Delete(int offerID);
         public void UpdateIsApprovedByEmployee(int offerID, bool decision, string employeeID);
+        public OfferModel UpdateIsOfferAccepted(int offerID);
     }
 }
