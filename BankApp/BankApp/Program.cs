@@ -16,13 +16,18 @@ using System;
 using BankApp.Client;
 using IdentityModel.Client;
 using System.Net.Http;
+using Humanizer;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using System.Text;
+using BankApp;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var DBconnectionString = builder.Configuration.GetConnectionString("LoansComparer");
-builder.Services.AddScoped<IMiNIApiCaller, MiNIApiCaller>();
+builder.Services.AddScoped<MiNIApiCaller>();
+builder.Services.AddScoped<BestAPIApiCaller>();
 
-//var idso = builder.Configuration.GetSection("IdentityServer").Get<IdServerOptions>();
 builder.Services.AddAccessTokenManagement(options =>
 {
     options.Client.Clients.Add("identityserver", new ClientCredentialsTokenRequest
@@ -32,18 +37,17 @@ builder.Services.AddAccessTokenManagement(options =>
         ClientSecret = "7D84D860-87AC-46AE-B955-68DC7D8C48E3"
     });
 }).ConfigureBackchannelHttpClient();
-//var fao = builder.Configuration.GetSection("FileApi").Get<FileApiOptions>();
 
-builder.Services.AddHttpClient<IMiNIApiCaller, MiNIApiCaller>(client =>
+builder.Services.AddHttpClient<MiNIApiCaller>(client =>
 {
     client.BaseAddress = new Uri("https://mini.loanbank.api.snet.com.pl/swagger/index.html");
 })
     .AddClientAccessTokenHandler("identityserver");
-//builder.Services.AddHttpClient("API",httpClient =>
-//{
-//    httpClient.BaseAddress = new Uri("https://mini.loanbank.api.snet.com.pl/swagger/index.html");
-//    //httpClient.DefaultRequestHeaders.Authorization = 
-//});
+
+builder.Services.AddHttpClient<BestAPIApiCaller>(client =>
+{
+    client.BaseAddress = new Uri("https://best-bank-webapi.azurewebsites.net");
+});
 
 builder.Services.AddDbContext<LoansComparerDBContext>(options =>
     options.UseSqlServer(DBconnectionString));

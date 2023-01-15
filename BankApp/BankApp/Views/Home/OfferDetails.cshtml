@@ -18,6 +18,34 @@
 <h1>@Model.DocumentLink</h1>
 <h1>@Model.OfferIdInBank</h1>
 <div>
-<input type="file"/>
-<a asp-controller="Home" asp-action="AcceptOffer" asp-route-offerID="@Model.Id">Accept Offer</a>
+    <form enctype="multipart/form-data" onsubmit="AJAXSubmit(this);return false;"
+    method="post">
+        <input type="file" name="formFile" required/>
+        <input class="btn btn-outline-primary" type="submit"/>
+    </form>
+    <div style="margin-top:15px">
+        <output name="result"></output>
+    </div>
+    <a idasp-controller="Home" asp-action="AcceptOffer" asp-route-offerID="@Model.Id">Accept Offer</a>
 </div>
+
+<script>
+    async function AJAXSubmit(oFormElement) {
+        var resultElement = oFormElement.elements.namedItem("result");
+        const formData = new FormData(oFormElement);
+
+        try {
+            const response = await fetch('SendFile/' + @Model.Id + '/' + @Model.OfferIdInBank, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                window.location.href = 'AcceptOffer/' + @Model.Id;
+                //document.getElementById("ahref").click();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+</script>
