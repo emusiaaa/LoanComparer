@@ -23,5 +23,6 @@ namespace BankApp.Repositories
         public void Delete(int offerID);
         public void UpdateIsApprovedByEmployee(int offerID, bool decision, string employeeID);
         public OfferModel UpdateIsOfferAccepted(int offerID);
+        public int GetOfferIdInBank(long offerId);
     }
 }

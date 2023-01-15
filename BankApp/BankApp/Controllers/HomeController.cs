@@ -42,12 +42,14 @@ namespace BankApp.Controllers
         private readonly IEmailSender _emailSender;
         private readonly IOfferServer _offerServer;
         private readonly InquiryServer _inquiryServer;
-        private readonly IMiNIApiCaller _MiNIClient;
-       
+        private readonly MiNIApiCaller _MiNIClient;
+        private readonly BestAPIApiCaller _BestAPIClient;
+
 
         public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository, UserManager<ClientModel> userManager,
             INotRegisteredInquiryRepository notRegisteredInquiryRepository, IEmailSender emailSender, ILoggedInquiryRepository loggedInquiryRepository, 
-             IOffersSummaryRepository offersSummaryRepository, IOfferRepository offerRepository, IOfferServer offerServer, InquiryServer inquiryServer, IMiNIApiCaller MiNIClient)
+             IOffersSummaryRepository offersSummaryRepository, IOfferRepository offerRepository, IOfferServer offerServer, InquiryServer inquiryServer, 
+             MiNIApiCaller MiNIClient, BestAPIApiCaller bestAPIClient)
         {
             _logger = logger;
             _clientRepository = clientRepository;
@@ -60,6 +62,7 @@ namespace BankApp.Controllers
             _MiNIClient = MiNIClient;
             _offerServer = offerServer;
             _inquiryServer = inquiryServer;
+            _BestAPIClient = bestAPIClient;
         }
 
         public IActionResult Index()
@@ -155,9 +158,6 @@ namespace BankApp.Controllers
 
             var inquiryJson = _inquiryServer.CreateInquiry(inquiry, user);
 
-            var responseContent = await _MiNIClient.PostInquiryAsync(inquiryJson);
-            var inquiryId = JObject.Parse(responseContent)["inquireId"].ToObject<int>();
-
             _ = _emailSender.SendEmailAsync(user.Email, "Confirmation of submitting inquiry",
                 "<h3>Thanks for submitting your form!</h3>" +
                 "<p>Here's a little summary: " +
@@ -171,7 +171,8 @@ namespace BankApp.Controllers
                 "</p><p>Income level: " + user.ClientIncomeLevel +
                 "</p>");
 
-             _offerServer.SaveOfferForLogged(_MiNIClient, inquiryId, inqIdInOurDb,user);
+            _offerServer.SaveOfferForLogged(_BestAPIClient, inquiryJson, inqIdInOurDb, "BestWorldAPI", user);
+            _offerServer.SaveOfferForLogged(_MiNIClient, inquiryJson, inqIdInOurDb, "projectAPI", user);
 
             //return View("OfferList", new InquiryString { inquiryId = inqIdInOurDb });
             return RedirectToActionPermanent("HistoryOfInquiries");
@@ -215,8 +216,8 @@ namespace BankApp.Controllers
                              "</p><p>Link to check the status of  inquiry: <a href=\"https://localhost:7280/Home/OfferList2?inquiryID=" + inquiry.Id+ "&isNR=true\">"  + "here</a>"+
                              "</p>");
 
-            _offerServer.SaveOfferForNotLogged(_MiNIClient,inquiryId, inqIdInOurDb);
-
+            _offerServer.SaveOfferForNotLogged(_BestAPIClient, inquiryJson, inqIdInOurDb, "BestWorldAPI");
+            _offerServer.SaveOfferForNotLogged(_MiNIClient, inquiryJson, inqIdInOurDb, "projectAPI");
             //return RedirectToActionPermanent("OfferList", new InquiryString { inquiryId = inqIdInOurDb });
             return RedirectToActionPermanent("HistoryOfInquiries");
         }
@@ -249,13 +250,31 @@ namespace BankApp.Controllers
             ViewBag.document = await _MiNIClient.GetOfferDetailsAsync(offerDetails.DocumentLink);
             return View("OfferDetails", offerDetails);
         }
-        public string Show(string id, string bankName)
+        public string Show(long id, string bankName)
         {
-            return "/Home/ShowOffer";
+            return "/Home/ShowOffer?id="+ id.ToString() + "&bankName=" + bankName;
         }
-        public IActionResult ShowOffer()
+        public IActionResult ShowOffer(long id, string bankName)
         {
-            return View();
+            var bankId = _offerRepository.GetOfferIdInBank(id);
+            return View(new FileForOfferModel(){ offerId = bankId });
+        }
+        [HttpPost]
+        [Route("Home/SendFile/{offerId:int}/{offerIdInBank:int}")]
+        public async Task<IActionResult> SendFile(int offerId, int offerIdInBank, IFormFile formFile)
+        {
+            bool response = false;
+            var bankName = _offerRepository.GetOfferBank(offerId);
+            switch (bankName)
+            {
+                case "projectAPI":
+                    response = await _MiNIClient.SendFileAsync(offerIdInBank, formFile);
+                    break;
+                case "BestWorldAPI":
+                    response = await _BestAPIClient.SendFileAsync(offerIdInBank, formFile);
+                    break;
+            }
+            return response ? Ok():View();
         }
         public async Task<IActionResult> AcceptDeclineOffer(string id)
         {
@@ -291,10 +310,12 @@ namespace BankApp.Controllers
             var bankName = _offerRepository.GetOfferBank(offerID);
             return "/Home/OfferDetails?id=" + offerIDinBank.ToString() + "&bankName=" + bankName;
         }
-        public IActionResult AcceptOffer(int offerID)
+
+        [Route("Home/AcceptOffer/{offerId:int}")]
+        public IActionResult AcceptOffer(int offerId)
         {
-            var r = _offerRepository.UpdateIsOfferAccepted(offerID);
-            return View("Index");
+            var r = _offerRepository.UpdateIsOfferAccepted(offerId);
+            return RedirectToAction("Index");
         }
     }
 }

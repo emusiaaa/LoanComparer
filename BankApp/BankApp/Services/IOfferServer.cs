@@ -5,7 +5,7 @@ namespace BankApp.Services
 {
     public interface IOfferServer
     {
-        public void SaveOfferForLogged(IMiNIApiCaller client, int inquiryId, int inquiryIdInOurDb, ClientModel user);
-        public void SaveOfferForNotLogged(IMiNIApiCaller client, int inquiryId, int inquiryIdInOurDb);
+        public void SaveOfferForLogged(IApiCaller client, jsonclass.Loan inquiryJson, int inquiryIdInOurDb, string bankName, ClientModel user);
+        public void SaveOfferForNotLogged(IApiCaller client, jsonclass.Loan inquiryJson, int inquiryIdInOurDb, string bankName);
     }
 }

@@ -21,9 +21,12 @@ namespace BankApp.Services
             _serviceProvider = serviceProvider;
         }
     
-        async public void SaveOfferForLogged(IMiNIApiCaller client, int inquiryId, int inquiryIdInOurDb, ClientModel user)
+        async public void SaveOfferForLogged(IApiCaller client, jsonclass.Loan inquiryJson, int inquiryIdInOurDb, string bankName, ClientModel user)
         {
             long offersId;
+            var responseContent = await client.PostInquiryAsync(inquiryJson);
+            var inquiryId = JObject.Parse(responseContent)["inquireId"].ToObject<int>();
+
             while (true)
             {
                 var inquiryContent = await client.GetInquiryAsync(inquiryId);
@@ -48,7 +51,6 @@ namespace BankApp.Services
             
 
             string clientID = user.Id;
-            string bankName = "projectAPI";
             using (var scope = _serviceProvider.CreateScope())
             {
                 var _offersSummaryRepository = scope.ServiceProvider.GetRequiredService<IOffersSummaryRepository>();
@@ -58,9 +60,12 @@ namespace BankApp.Services
 
             //_offersSummaryRepository.Add(inquiryIdInOurDb, false, bankName, offersId, clientID);
         }
-        async public void SaveOfferForNotLogged(IMiNIApiCaller client, int inquiryId, int inquiryIdInOurDb)
+        async public void SaveOfferForNotLogged(IApiCaller client, jsonclass.Loan inquiryJson, int inquiryIdInOurDb,string bankName)
         {
             long offersId;
+            var responseContent = await client.PostInquiryAsync(inquiryJson);
+            var inquiryId = JObject.Parse(responseContent)["inquireId"].ToObject<int>();
+
             while (true)
             {
                 var inquiryContent = await client.GetInquiryAsync(inquiryId);
@@ -83,7 +88,6 @@ namespace BankApp.Services
                 offersId = _offerRepository.Add(values);
             }
             //long offersId = _offerRepository.Add(values);
-            string bankName = "projectAPI";
             using (var scope = _serviceProvider.CreateScope())
             {
                 var _offersSummaryRepository = scope.ServiceProvider.GetRequiredService<IOffersSummaryRepository>();

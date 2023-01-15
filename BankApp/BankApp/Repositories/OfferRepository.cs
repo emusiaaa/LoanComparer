@@ -163,5 +163,10 @@ namespace BankApp.Repositories
             var c = _context.OffersSummary.Where(o => o.OfferIdInOurDb == offerId).FirstOrDefault();
             return c.BankName;
         }
+        public int GetOfferIdInBank(long offerId)
+        {
+            var c = _context.Offers.SingleOrDefault(o => o.Id == offerId);
+            return c.OfferIdInBank;
+        }
     }
 }

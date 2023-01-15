@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using RestSharp;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -7,7 +9,7 @@ using System.Web;
 
 namespace BankApp.Client
 {
-    public class MiNIApiCaller : IMiNIApiCaller
+    public class MiNIApiCaller : IApiCaller
     {
         private readonly HttpClient _httpClient;
         public MiNIApiCaller(HttpClient client)
@@ -36,6 +38,26 @@ namespace BankApp.Client
         {
             var result = await _httpClient.GetAsync(path);
             return await result.Content.ReadAsStringAsync();
+        }
+        public async Task<bool> SendFileAsync(int offerId,IFormFile formFile)
+        {
+            HttpResponseMessage result;
+            
+            using (var content = new MultipartFormDataContent())
+            {
+                content.Add(new StreamContent(formFile.OpenReadStream())
+                {
+                    Headers =
+                {
+                    ContentLength = formFile.Length,
+                    ContentType = new MediaTypeHeaderValue(formFile.ContentType)
+                }
+                }, "formFile", formFile.FileName);
+
+                result = await _httpClient.PostAsync("/api/v1/Offer" + $"/{offerId}" + "/document/upload", content);
+            }
+
+            return result.IsSuccessStatusCode;
         }
         public async void CompleteOfferAsync(int offerId)
         {
