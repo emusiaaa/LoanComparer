@@ -47,8 +47,8 @@ namespace BankApp.Controllers
 
 
         public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository, UserManager<ClientModel> userManager,
-            INotRegisteredInquiryRepository notRegisteredInquiryRepository, IEmailSender emailSender, ILoggedInquiryRepository loggedInquiryRepository, 
-             IOffersSummaryRepository offersSummaryRepository, IOfferRepository offerRepository, IOfferServer offerServer, InquiryServer inquiryServer, 
+            INotRegisteredInquiryRepository notRegisteredInquiryRepository, IEmailSender emailSender, ILoggedInquiryRepository loggedInquiryRepository,
+             IOffersSummaryRepository offersSummaryRepository, IOfferRepository offerRepository, IOfferServer offerServer, InquiryServer inquiryServer,
              MiNIApiCaller MiNIClient, BestAPIApiCaller bestAPIClient)
         {
             _logger = logger;
@@ -76,7 +76,7 @@ namespace BankApp.Controllers
             return View();
         }
         [Authorize]
-        public async Task<IActionResult> HistoryOfInquiries(int pageNumber=1, int pageSize=15)
+        public async Task<IActionResult> HistoryOfInquiries(int pageNumber = 1, int pageSize = 15)
         {
             int excludeRecords = (pageSize * pageNumber) - pageSize;
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
@@ -107,10 +107,10 @@ namespace BankApp.Controllers
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
             model1 = _loggedInquiryRepository.ToAllInquiryModel();
-            model2 = _notRegisteredInquiryRepository.ToAllInquiryModel();         
+            model2 = _notRegisteredInquiryRepository.ToAllInquiryModel();
             var model = model1.Concat(model2);
-
-            return Json(model) ;
+                
+            return Json(model);
         }
 
         public async Task<IActionResult> FilterOffersRequests(string searchString, int dateRange)
@@ -142,15 +142,12 @@ namespace BankApp.Controllers
 
         [Authorize, HttpPost]
         public async Task<IActionResult> LoggedInquiry(InquiryModel inquiry)
-        {           
+        {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             inquiry.ClientId = user.Id;
-            //DateTime dt = DateTime.UtcNow;
-            //inquiry.SubmisionDate = dt.ToString("o");
             var errors = ModelState.Values.SelectMany(v => v.Errors);
             var er = errors.Count();
-            //if (!ModelState.IsValid)
-            if (er>1)
+            if (er > 1)
             {
                 return View();
             }
@@ -159,17 +156,7 @@ namespace BankApp.Controllers
             var inquiryJson = _inquiryServer.CreateInquiry(inquiry, user);
 
             _ = _emailSender.SendEmailAsync(user.Email, "Confirmation of submitting inquiry",
-                "<h3>Thanks for submitting your form!</h3>" +
-                "<p>Here's a little summary: " +
-                "</p><p>Loan value: " + inquiry.LoanValue +
-                "</p>" +
-                "<p>Number of installments: " + inquiry.InstallmentsCount +
-                "</p><p>Name: " + user.UserFirstName + " " + user.UserLastName +
-                "</p><p>Government ID Type: " + user.ClientGovernmentIDType +
-                "</p><p>Government ID Number: " + user.ClientGovernmentIDNumber +
-                "</p><p>Job type: " + user.ClientJobType +
-                "</p><p>Income level: " + user.ClientIncomeLevel +
-                "</p>");
+                MailCreator.ConfirmationOfSubmittingAnInquiry(user, inquiry));
 
             _offerServer.SaveOfferForLogged(_BestAPIClient, inquiryJson, inqIdInOurDb, "BestWorldAPI", user);
             _offerServer.SaveOfferForLogged(_MiNIClient, inquiryJson, inqIdInOurDb, "projectAPI", user);
@@ -203,18 +190,7 @@ namespace BankApp.Controllers
             var inquiryId = (JObject.Parse(responseContent)["inquireId"]).ToObject<int>();
 
             _ = _emailSender.SendEmailAsync(inquiry.Email, "Confirmation of submitting inquiry",
-                             "<h3>Thanks for submitting your form!</h3>" +
-                             "<p>Here's a little summary: " +
-                             "</p><p>Loan value: " + inquiry.LoanValue +
-                             "</p>" +
-                             "<p>Number of installments: " + inquiry.InstallmentsCount +
-                             "</p><p>Name: " + inquiry.UserFirstName + " " + inquiry.UserLastName +
-                             "</p><p>Government ID Type: " + inquiry.ClientGovernmentIDType +
-                             "</p><p>Government ID Number: " + inquiry.ClientGovernmentIDNumber +
-                             "</p><p>Job type: " + inquiry.ClientJobType +
-                             "</p><p>Income level: " + inquiry.ClientIncomeLevel +
-                             "</p><p>Link to check the status of  inquiry: <a href=\"https://localhost:7280/Home/OfferList2?inquiryID=" + inquiry.Id+ "&isNR=true\">"  + "here</a>"+
-                             "</p>");
+                             MailCreator.ConfirmationOfSubmittingAnInquiryNR(inquiry));
 
             _offerServer.SaveOfferForNotLogged(_BestAPIClient, inquiryJson, inqIdInOurDb, "BestWorldAPI");
             _offerServer.SaveOfferForNotLogged(_MiNIClient, inquiryJson, inqIdInOurDb, "projectAPI");
@@ -236,13 +212,10 @@ namespace BankApp.Controllers
         {
             return MockOffers.GenerateMockOffer();
         }
-
-        
         public string GetLink(long id, string bankName)
         {
-            return "/Home/OfferDetails?id="+ id.ToString() + "&bankName=" + bankName;
+            return "/Home/OfferDetails?id=" + id.ToString() + "&bankName=" + bankName;
         }
-
         public async Task<IActionResult> OfferDetails(string id, string bankName)
         {
             var offerDetails = _offerRepository.GetAllOffersForAClientForAGivenInquiryForAGivenBank(Int32.Parse(id), bankName);
@@ -252,12 +225,12 @@ namespace BankApp.Controllers
         }
         public string Show(long id, string bankName)
         {
-            return "/Home/ShowOffer?id="+ id.ToString() + "&bankName=" + bankName;
+            return "/Home/ShowOffer?id=" + id.ToString() + "&bankName=" + bankName;
         }
         public IActionResult ShowOffer(long id, string bankName)
         {
             var bankId = _offerRepository.GetOfferIdInBank(id);
-            return View(new FileForOfferModel(){ offerId = bankId });
+            return View(new FileForOfferModel() { offerId = bankId });
         }
         [HttpPost]
         [Route("Home/SendFile/{offerId:int}/{offerIdInBank:int}")]
@@ -274,7 +247,7 @@ namespace BankApp.Controllers
                     response = await _BestAPIClient.SendFileAsync(offerIdInBank, formFile);
                     break;
             }
-            return response ? Ok():View();
+            return response ? Ok() : View();
         }
         public async Task<IActionResult> AcceptDeclineOffer(string id)
         {
@@ -286,14 +259,17 @@ namespace BankApp.Controllers
             return "/Home/AcceptDeclineOffer?id=" + offerId.ToString();
         }
         [Authorize]
-        public IActionResult MakeDecision(int offerID, bool decision, string employeeID)
+        public async Task<IActionResult> MakeDecision(int offerID, bool decision)
         {
-            _offerRepository.UpdateIsApprovedByEmployee(offerID, decision, employeeID);
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            _offerRepository.UpdateIsApprovedByEmployee(offerID, decision, user.Id);
             _MiNIClient.CompleteOfferAsync(offerID);
+            //_ = _emailSender.SendEmailAsync(user.Email, "Bank decision",
+            //    MailCreator.EmployeeDecision(decision));
             return View("AllBankOffersRequests");
         }
         public IActionResult OfferList2(int inquiryID, bool isNR)
-        {           
+        {
             if (isNR)
             {
                 var model = _offerRepository.GetAllOffersForAGivenNRInquiry(inquiryID);
@@ -303,7 +279,7 @@ namespace BankApp.Controllers
             {
                 var model = _offerRepository.GetAllOffersForAGivenInquiry(inquiryID);
                 return View(model);
-            }                       
+            }
         }
         public string GetBankName(int offerID, int offerIDinBank)
         {

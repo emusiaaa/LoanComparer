@@ -104,7 +104,7 @@
         $.each(inquiries, function (i, v) {
             var row = "<tr>";
 
-            row += "<td>" + v.submissionDate + "</td>";
+            row += "<td>" + v.submissionDate.substring(0,10) + "</td>";
             row += "<td>" + v.loanValue + "</td>";
             row += "<td>" + v.installmentsCount + "</td>";
             row += "<td>" + v.userFirstName + "</td>";

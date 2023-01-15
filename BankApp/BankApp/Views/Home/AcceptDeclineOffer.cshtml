@@ -1,11 +1,54 @@
 ﻿@model OfferModel
+<h1>Offer summary</h1>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Document link</td>
+            <td>@Model.DocumentLink</td>
+        </tr>
+        <tr>
+            <td>Status</td>
+            <td>@Model.StatusDescription</td>
+        </tr>
+        <tr>
+            <td>Percentage</td>
+            <td>@Model.Percentage</td>
+        </tr>
+        <tr>
+            <td>Monthly installment</td>
+            <td>@Model.MonthlyInstallment</td>
+        </tr>
+        <tr>
+            <td>Requested period of months</td>
+            <td>@Model.RequestedPeriodInMonth</td>
+        </tr>
+        <tr>
+            <td>How much you'll spend</td>
+            @{
+                double howmuch = Model.MonthlyInstallment * Model.RequestedPeriodInMonth;
+            }
+            <td>@howmuch</td>
+        </tr>
+        <tr>
+            <td>Requested value</td>
+            <td>@Model.RequestedValue</td>
+        </tr>
+    </tbody>
+</table>
+
 @if(Model.IsApprovedByEmployee == null){
-    <h1> @Model.MonthlyInstallment</h1>
-    <h1> @Model.StatusDescription</h1>
-    <h1> @Model.Percentage</h1>
-    <h1> @Model.IsApprovedByEmployee</h1>
-    <a asp-controller="Home" asp-action="MakeDecision" asp-route-offerID="@Model.Id" asp-route-decision="true" asp-route-employeeID="hehe">Accept</a>
-    <a asp-controller="Home" asp-action="MakeDecision" asp-route-offerID="@Model.Id" asp-route-decision="false" asp-route-employeeID="hehe">Decline</a>
+    <form asp-controller="Home" asp-action="MakeDecision" asp-route-offerID="@Model.Id" asp-route-decision="true">
+        <input type="submit" value="Accept"/>
+    </form>
+    <form asp-controller="Home" asp-action="MakeDecision" asp-route-offerID="@Model.Id" asp-route-decision="false">
+        <input type="submit" value="Decline" />
+    </form>
 }
 else{
     if ((bool)Model.IsApprovedByEmployee){

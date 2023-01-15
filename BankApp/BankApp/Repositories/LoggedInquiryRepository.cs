@@ -2,6 +2,7 @@
 using BankApp.Models;
 using Microsoft.EntityFrameworkCore.Internal;
 using System.ComponentModel.Design;
+using System.Linq;
 
 namespace BankApp.Repositories
 {
@@ -47,6 +48,7 @@ namespace BankApp.Repositories
             var res = _context.LoggedInquiries
                  .Where(s => s.ClientId == userID &&
                              (DateTime)(object)s.SubmisionDate >= DateTime.Now.AddDays(-30))
+                 .OrderByDescending(s=>s.SubmisionDate)
                  .ToList();
             return res;
         }
