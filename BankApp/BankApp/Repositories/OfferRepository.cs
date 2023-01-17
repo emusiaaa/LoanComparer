@@ -31,11 +31,11 @@ namespace BankApp.Repositories
             offer.StatusId = (int)jsonOffer["statusId"];
             offer.StatusDescription = (string)jsonOffer["statusDescription"];
             offer.InquireId = (int)jsonOffer["inquireId"];
-            offer.CreateDate = new DateTime((int)x.Year, (int)x.Month, (int)x.Day, (int)x.Hour, (int)x.Minute, (int)x.Second, DateTimeKind.Utc).ToString("o"); 
-            offer.UpdateDate = new DateTime((int)y.Year, (int)y.Month, (int)y.Day, (int)y.Hour, (int)y.Minute, (int)y.Second, DateTimeKind.Utc).ToString("o");
+            offer.CreateDate = typeof(string)==x.GetType()?x:new DateTime((int)x.Year, (int)x.Month, (int)x.Day, (int)x.Hour, (int)x.Minute, (int)x.Second, DateTimeKind.Utc).ToString("o"); 
+            offer.UpdateDate = typeof(string) == y.GetType()?y:new DateTime((int)y.Year, (int)y.Month, (int)y.Day, (int)y.Hour, (int)y.Minute, (int)y.Second, DateTimeKind.Utc).ToString("o");
             offer.ApprovedBy = (string?)jsonOffer["approvedBy"];
             offer.DocumentLink = (string)jsonOffer["documentLink"];
-            offer.DocumentLinkValidDate = new DateTime((int)z.Year, (int)z.Month, (int)z.Day, (int)z.Hour, (int)z.Minute, (int)z.Second, DateTimeKind.Utc).ToString("o"); ;
+            offer.DocumentLinkValidDate = typeof(string) == z.GetType()?z:new DateTime((int)z.Year, (int)z.Month, (int)z.Day, (int)z.Hour, (int)z.Minute, (int)z.Second, DateTimeKind.Utc).ToString("o"); ;
             offer.IsOfferAccepted = false;
 
             var res = _context.Offers.Add(offer); // może da się stąd wyciągnąć id stworzonej oferty i zwrócić z Add żeby OffersSummary miało??

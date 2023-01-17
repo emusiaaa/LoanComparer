@@ -45,12 +45,13 @@ namespace BankApp.Controllers
         private readonly InquiryServer _inquiryServer;
         private readonly MiNIApiCaller _MiNIClient;
         private readonly BestAPIApiCaller _BestAPIClient;
+        private readonly StrangerApiCaller _StrangerClient;
 
 
         public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository, UserManager<ClientModel> userManager,
-            INotRegisteredInquiryRepository notRegisteredInquiryRepository, IEmailSender emailSender, ILoggedInquiryRepository loggedInquiryRepository,
-             IOffersSummaryRepository offersSummaryRepository, IOfferRepository offerRepository, IOfferServer offerServer, InquiryServer inquiryServer,
-             MiNIApiCaller MiNIClient, BestAPIApiCaller bestAPIClient)
+            INotRegisteredInquiryRepository notRegisteredInquiryRepository, IEmailSender emailSender, ILoggedInquiryRepository loggedInquiryRepository, 
+             IOffersSummaryRepository offersSummaryRepository, IOfferRepository offerRepository, IOfferServer offerServer, InquiryServer inquiryServer, 
+             MiNIApiCaller MiNIClient, BestAPIApiCaller bestAPIClient, StrangerApiCaller strangerClient)
         {
             _logger = logger;
             _clientRepository = clientRepository;
@@ -64,6 +65,7 @@ namespace BankApp.Controllers
             _offerServer = offerServer;
             _inquiryServer = inquiryServer;
             _BestAPIClient = bestAPIClient;
+            _StrangerClient = strangerClient;
         }
 
         public IActionResult Index()
@@ -74,7 +76,8 @@ namespace BankApp.Controllers
         public IActionResult Privacy()
         {
             // var list = _offersSummaryRepository.GetAllOffersForAClientAllInquiries("1957dec4-3d3b-4a83-84b7-3ddeadbe2d06");
-            return View();
+            //return RedirectToAction("Index","Employee");
+           return View();
         }
         [Authorize]
         public async Task<IActionResult> HistoryOfInquiries(int pageNumber = 1, int pageSize = 15)
@@ -110,8 +113,8 @@ namespace BankApp.Controllers
             model1 = _loggedInquiryRepository.ToAllInquiryModel();
             model2 = _notRegisteredInquiryRepository.ToAllInquiryModel();
             var model = model1.Concat(model2);
-            var x = Json(model);    
-            return Json(model);
+
+            return Json(model) ;
         }
 
         public async Task<IActionResult> FilterOffersRequests(string searchString, int dateRange)
@@ -145,24 +148,24 @@ namespace BankApp.Controllers
         public async Task<IActionResult> LoggedInquiry(InquiryModel inquiry)
         {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
-            inquiry.ClientId = user.Id;
+
             var errors = ModelState.Values.SelectMany(v => v.Errors);
             var er = errors.Count();
             if (er > 1)
             {
                 return View();
             }
-            int inqIdInOurDb = _loggedInquiryRepository.Add(inquiry);
 
             var inquiryJson = _inquiryServer.CreateInquiry(inquiry, user);
+            int inqIdInOurDb = _loggedInquiryRepository.Add(inquiry);
+
+            _offerServer.SaveOfferForLogged(_BestAPIClient, inquiryJson, inqIdInOurDb, "BestWorldAPI", user);
+            _offerServer.SaveOfferForLogged(_MiNIClient, inquiryJson, inqIdInOurDb, "projectAPI", user);
+            _offerServer.SaveOfferForLogged(_StrangerClient, inquiryJson, inqIdInOurDb, "StrangerAPI", user);
 
             _ = _emailSender.SendEmailAsync(user.Email, "Confirmation of submitting inquiry",
                 MailCreator.ConfirmationOfSubmittingAnInquiry(user, inquiry));
 
-            _offerServer.SaveOfferForLogged(_BestAPIClient, inquiryJson, inqIdInOurDb, "BestWorldAPI", user);
-            _offerServer.SaveOfferForLogged(_MiNIClient, inquiryJson, inqIdInOurDb, "projectAPI", user);
-
-            //return View("OfferList", new InquiryString { inquiryId = inqIdInOurDb });
             return RedirectToActionPermanent("HistoryOfInquiries");
         }
         //public async Task<IActionResult> SendInquiry(InquiryModel inquiry)
@@ -178,24 +181,17 @@ namespace BankApp.Controllers
             {
                 return View();
             }
-            DateTime dt = DateTime.UtcNow;
-            inquiry.SubmissionDate = dt.ToString("o");
-            inquiry.ClientJobEndDay = dt.ToString("o");
-            inquiry.UserBirthDay = DateTimeOffset.Parse(inquiry.UserBirthDay).UtcDateTime.ToString("o");
-            inquiry.ClientJobStartDay = DateTimeOffset.Parse(inquiry.ClientJobStartDay).UtcDateTime.ToString("o");
-
+            
             var inquiryJson = _inquiryServer.CreateNRInquiry(inquiry);
             int inqIdInOurDb = _notRegisteredInquiryRepository.Add(inquiry);
 
-            var responseContent = await _MiNIClient.PostInquiryAsync(inquiryJson);
-            var inquiryId = (JObject.Parse(responseContent)["inquireId"]).ToObject<int>();
+            _offerServer.SaveOfferForNotLogged(_BestAPIClient, inquiryJson, inqIdInOurDb, "BestWorldAPI");
+            _offerServer.SaveOfferForNotLogged(_MiNIClient, inquiryJson, inqIdInOurDb, "projectAPI");
+            _offerServer.SaveOfferForNotLogged(_StrangerClient, inquiryJson, inqIdInOurDb, "StrangerAPI");
 
             _ = _emailSender.SendEmailAsync(inquiry.Email, "Confirmation of submitting inquiry",
                              MailCreator.ConfirmationOfSubmittingAnInquiryNR(inquiry));
 
-            _offerServer.SaveOfferForNotLogged(_BestAPIClient, inquiryJson, inqIdInOurDb, "BestWorldAPI");
-            _offerServer.SaveOfferForNotLogged(_MiNIClient, inquiryJson, inqIdInOurDb, "projectAPI");
-            //return RedirectToActionPermanent("OfferList", new InquiryString { inquiryId = inqIdInOurDb });
             return RedirectToActionPermanent("HistoryOfInquiries");
         }
 
@@ -222,7 +218,18 @@ namespace BankApp.Controllers
         {
             var offerDetails = _offerRepository.GetAllOffersForAClientForAGivenInquiryForAGivenBank(Int32.Parse(id), bankName);
             //offerDetails.document = await _MiNIClient.GetOfferDetailsAsync(offerDetails.offerModel.DocumentLink);
-            ViewBag.document = await _MiNIClient.GetOfferDetailsAsync(offerDetails.DocumentLink);
+            switch (bankName)
+            {
+                case "projectAPI":
+                    ViewBag.document = await _MiNIClient.GetOfferDetailsAsync(offerDetails.DocumentLink); ;
+                    break;
+                case "BestWorldAPI":
+                    ViewBag.document = await _BestAPIClient.GetOfferDetailsAsync(offerDetails.DocumentLink);
+                    break;
+                case "StrangerAPI":
+                    ViewBag.document = await _StrangerClient.GetOfferDetailsAsync(offerDetails.DocumentLink);
+                    break;
+            }
             return View("OfferDetails", offerDetails);
         }
         public string Show(long id, string bankName)
@@ -234,6 +241,7 @@ namespace BankApp.Controllers
             var bankId = _offerRepository.GetOfferIdInBank(id);
             return View(new FileForOfferModel() { offerId = bankId });
         }
+
         [HttpPost]
         [Route("Home/SendFile/{offerId:int}/{offerIdInBank:int}")]
         public async Task<IActionResult> SendFile(int offerId, int offerIdInBank, IFormFile formFile)
@@ -247,6 +255,9 @@ namespace BankApp.Controllers
                     break;
                 case "BestWorldAPI":
                     response = await _BestAPIClient.SendFileAsync(offerIdInBank, formFile);
+                    break;
+                case "StrangerAPI":
+                    response = await _StrangerClient.SendFileAsync(offerIdInBank, formFile);
                     break;
             }
             if(response) _offerRepository.UpdateIsOfferAccepted(offerId);

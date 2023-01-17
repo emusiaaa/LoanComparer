@@ -27,6 +27,7 @@ var builder = WebApplication.CreateBuilder(args);
 var DBconnectionString = builder.Configuration.GetConnectionString("LoansComparer");
 builder.Services.AddScoped<MiNIApiCaller>();
 builder.Services.AddScoped<BestAPIApiCaller>();
+builder.Services.AddScoped<StrangerApiCaller>();
 
 builder.Services.AddAccessTokenManagement(options =>
 {
@@ -47,6 +48,11 @@ builder.Services.AddHttpClient<MiNIApiCaller>(client =>
 builder.Services.AddHttpClient<BestAPIApiCaller>(client =>
 {
     client.BaseAddress = new Uri("https://best-bank-webapi.azurewebsites.net");
+});
+
+builder.Services.AddHttpClient<StrangerApiCaller>(client =>
+{
+    client.BaseAddress = new Uri("https://fictionbank20230111105722.azurewebsites.net");
 });
 
 builder.Services.AddDbContext<LoansComparerDBContext>(options =>
