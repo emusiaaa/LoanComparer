@@ -43,6 +43,7 @@ namespace BankApp.Services
         public jsonclass.Loan CreateInquiry(InquiryModel inquiry, ClientModel user)
         {
             DateTime dt = DateTime.UtcNow;
+            inquiry.ClientId = user.Id;
             inquiry.SubmisionDate = dt.ToString("o");
             return new jsonclass.Loan
             {
