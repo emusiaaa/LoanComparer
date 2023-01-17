@@ -282,7 +282,7 @@ namespace BankApp.Controllers
             _MiNIClient.CompleteOfferAsync(offerID);
             _ = _emailSender.SendEmailAsync(email, "Bank decision",
                 MailCreator.EmployeeDecision(decision));
-            return View("AllBankOffersRequests");
+            return RedirectToAction("AllBankOffersRequests");
         }
         public IActionResult OfferList2(int inquiryID, bool isNR)
         {
