@@ -42,7 +42,7 @@ namespace BankApp.Services
             string extra = decision ? "<p>Thanks for choosing our bank! We hope you'll enjoy your money ;)</p>" :
                 "<p>We hope that you'll still make ends meet</p>";
             return
-                "<p>Your offer was" + descisionString + " by the bank</p>" + extra;
+                "<p>Your offer was " + descisionString + " by the bank</p>" + extra;
         }
     }
 }

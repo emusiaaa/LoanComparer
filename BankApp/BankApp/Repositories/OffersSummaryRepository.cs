@@ -47,5 +47,16 @@ namespace BankApp.Repositories
                 _context.SaveChanges();
             }
         }
+        public NRmodel GetInquiryIdInOurDb(int offerId)
+        {
+            var res = _context.OffersSummary.Where(o => o.OfferIdInOurDb == offerId).FirstOrDefault();
+            if (res != null) {
+                var m = new NRmodel();
+                m.isNR = res.IsNRInquiry;
+                m.id = res.InquiryIdInOurDb;
+                return m;
+            }
+            else return new NRmodel();
+        }
     }
 }

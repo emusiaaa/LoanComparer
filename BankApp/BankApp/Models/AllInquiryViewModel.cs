@@ -14,7 +14,7 @@ namespace BankApp.Models
 
         public string UserLastName { get; set; }
 
-        public DateTime UserBirthDay { get; set; }
+        public string UserBirthDay { get; set; }
 
         public string Email { get; set; }
 
@@ -26,6 +26,6 @@ namespace BankApp.Models
 
         public string ClientIncomeLevel { get; set; }
         public string ClientJobStartDay { get; set; }
-        public DateTime ClientJobEndDay { get; set; }
+        public string ClientJobEndDay { get; set; }
     }
 }

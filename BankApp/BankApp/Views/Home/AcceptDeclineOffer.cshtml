@@ -1,6 +1,41 @@
-﻿@model OfferModel
+﻿@model OfferDetailsForBankEmployee
 <h1>Offer summary</h1>
 <table class="table table-hover">
+    <thead>
+
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Requested value</td>
+            <td>@Model.offer.RequestedValue</td>
+        </tr>
+        <tr>
+            <td>Percentage</td>
+            <td>@Model.offer.Percentage</td>
+        </tr>
+        <tr>
+            <td>Monthly installment</td>
+            <td>@Model.offer.MonthlyInstallment</td>
+        </tr>
+        <tr>
+            <td>Requested period of months</td>
+            <td>@Model.offer.RequestedPeriodInMonth</td>
+        </tr>
+        <tr>
+            <td>How much client'll spend</td>
+            @{
+                double howmuch = Model.offer.MonthlyInstallment * Model.offer.RequestedPeriodInMonth;
+            }
+            <td>@howmuch</td>
+        </tr>        
+    </tbody>
+</table>
+<table class="table table-hover">
+    <h1>Client's details</h1>
     <thead>
         <tr>
             <th scope="col">Name</th>
@@ -9,49 +44,54 @@
     </thead>
     <tbody>
         <tr>
-            <td>Document link</td>
-            <td>@Model.DocumentLink</td>
+            <td>First Name</td>
+            <td>@Model.inquiry.UserFirstName</td>
         </tr>
         <tr>
-            <td>Status</td>
-            <td>@Model.StatusDescription</td>
+            <td>Last Name</td>
+            <td>@Model.inquiry.UserLastName</td>
         </tr>
         <tr>
-            <td>Percentage</td>
-            <td>@Model.Percentage</td>
+            <td>Birth Date</td>
+            <td>@Model.inquiry.UserBirthDay</td>
         </tr>
         <tr>
-            <td>Monthly installment</td>
-            <td>@Model.MonthlyInstallment</td>
+            <td>Email</td>
+            <td>@Model.inquiry.Email</td>
         </tr>
         <tr>
-            <td>Requested period of months</td>
-            <td>@Model.RequestedPeriodInMonth</td>
+            <td>Job Type</td>
+            <td>@Model.inquiry.ClientJobType</td>
         </tr>
         <tr>
-            <td>How much you'll spend</td>
-            @{
-                double howmuch = Model.MonthlyInstallment * Model.RequestedPeriodInMonth;
-            }
-            <td>@howmuch</td>
+            <td>Job Start Date</td>
+            <td>@Model.inquiry.ClientJobStartDay</td>
         </tr>
         <tr>
-            <td>Requested value</td>
-            <td>@Model.RequestedValue</td>
+            <td>Income Level</td>
+            <td>@Model.inquiry.ClientIncomeLevel</td>
+        </tr>
+       <tr>
+            <td>Client Government ID Type</td>
+            <td>@Model.inquiry.ClientGovernmentIDType</td>
+        </tr>
+        <tr>
+            <td>Client Government ID Number</td>
+            <td>@Model.inquiry.ClientGovernmentIDNumber</td>
         </tr>
     </tbody>
 </table>
 
-@if(Model.IsApprovedByEmployee == null){
-    <form asp-controller="Home" asp-action="MakeDecision" asp-route-offerID="@Model.Id" asp-route-decision="true">
+@if(Model.offer.IsApprovedByEmployee == null){
+    <form asp-controller="Home" asp-action="MakeDecision" asp-route-offerID="@Model.offer.Id" asp-route-email="@Model.inquiry.Email" asp-route-decision="true">
         <input type="submit" value="Accept"/>
     </form>
-    <form asp-controller="Home" asp-action="MakeDecision" asp-route-offerID="@Model.Id" asp-route-decision="false">
+    <form asp-controller="Home" asp-action="MakeDecision" asp-route-offerID="@Model.offer.Id" asp-route-email="@Model.inquiry.Email" asp-route-decision="false">
         <input type="submit" value="Decline" />
     </form>
 }
 else{
-    if ((bool)Model.IsApprovedByEmployee){
+    if ((bool)Model.offer.IsApprovedByEmployee){
         <h1>You accepted the offer</h1>
     }
     else{

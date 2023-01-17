@@ -27,6 +27,7 @@ using Humanizer.Localisation.TimeToClockNotation;
 using cloudscribe.Pagination.Models;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Text.Json.Nodes;
 
 namespace BankApp.Controllers
 {
@@ -109,7 +110,7 @@ namespace BankApp.Controllers
             model1 = _loggedInquiryRepository.ToAllInquiryModel();
             model2 = _notRegisteredInquiryRepository.ToAllInquiryModel();
             var model = model1.Concat(model2);
-                
+            var x = Json(model);    
             return Json(model);
         }
 
@@ -216,6 +217,7 @@ namespace BankApp.Controllers
         {
             return "/Home/OfferDetails?id=" + id.ToString() + "&bankName=" + bankName;
         }
+        
         public async Task<IActionResult> OfferDetails(string id, string bankName)
         {
             var offerDetails = _offerRepository.GetAllOffersForAClientForAGivenInquiryForAGivenBank(Int32.Parse(id), bankName);
@@ -247,25 +249,28 @@ namespace BankApp.Controllers
                     response = await _BestAPIClient.SendFileAsync(offerIdInBank, formFile);
                     break;
             }
+            if(response) _offerRepository.UpdateIsOfferAccepted(offerId);
             return response ? Ok() : View();
         }
         public async Task<IActionResult> AcceptDeclineOffer(string id)
         {
-            var offer = _offerRepository.GetOfferForBankEmployee(Int32.Parse(id));
-            return View(offer);
+            //var offer = _offerRepository.GetOfferForBankEmployee(Int32.Parse(id));
+            var info = _offerRepository.OfferDetailsForBankEmployeeType(Int32.Parse(id));
+            return View(info);
         }
         public string RedirectToAcceptDeclineOffer(string offerId)
         {
             return "/Home/AcceptDeclineOffer?id=" + offerId.ToString();
         }
         [Authorize]
-        public async Task<IActionResult> MakeDecision(int offerID, bool decision)
+        public async Task<IActionResult> MakeDecision(int offerID, string email, bool decision)
         {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             _offerRepository.UpdateIsApprovedByEmployee(offerID, decision, user.Id);
+       
             _MiNIClient.CompleteOfferAsync(offerID);
-            //_ = _emailSender.SendEmailAsync(user.Email, "Bank decision",
-            //    MailCreator.EmployeeDecision(decision));
+            _ = _emailSender.SendEmailAsync(email, "Bank decision",
+                MailCreator.EmployeeDecision(decision));
             return View("AllBankOffersRequests");
         }
         public IActionResult OfferList2(int inquiryID, bool isNR)
@@ -287,11 +292,20 @@ namespace BankApp.Controllers
             return "/Home/OfferDetails?id=" + offerIDinBank.ToString() + "&bankName=" + bankName;
         }
 
-        [Route("Home/AcceptOffer/{offerId:int}")]
-        public IActionResult AcceptOffer(int offerId)
+        //[Route("Home/AcceptOffer/{offerId:int}")]
+        //public IActionResult AcceptOffer(int offerId)
+        //{
+        //    var r = _offerRepository.UpdateIsOfferAccepted(offerId);
+        //    return RedirectToAction("OfferList2","Home", new {id=offerId});
+        //    //return View("OfferDetails", r);
+        //}
+    
+        public string[] InquiryIDinOurDb(int offerId)
         {
-            var r = _offerRepository.UpdateIsOfferAccepted(offerId);
-            return RedirectToAction("Index");
+            var c =_offersSummaryRepository.GetInquiryIdInOurDb(offerId);
+            //var x = Json(c);
+            string[] cs = { c.id.ToString(), c.isNR.ToString() };
+            return cs ;
         }
     }
 }
