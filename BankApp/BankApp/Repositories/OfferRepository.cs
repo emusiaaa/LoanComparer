@@ -145,6 +145,7 @@ namespace BankApp.Repositories
             {
                 result.IsApprovedByEmployee = decision;
                 result.ApprovedBy = employeeID;
+                result.StatusDescription = decision ? "Accepted" : "Declined";
             }
             _context.SaveChanges();
         }
@@ -167,6 +168,65 @@ namespace BankApp.Repositories
         {
             var c = _context.Offers.SingleOrDefault(o => o.Id == offerId);
             return c.OfferIdInBank;
+        }
+        public OfferDetailsForBankEmployee OfferDetailsForBankEmployeeType(int offerId)
+        {
+            var model = new OfferDetailsForBankEmployee();
+            var query = from offerSummary in _context.OffersSummary
+                        join offer in _context.Offers
+                        on offerSummary.OfferIdInOurDb equals offer.Id
+                        where (offer.Id == offerId)
+                        select new {offer, offerSummary};
+            var first = query.FirstOrDefault();
+            if (first != null && first.offerSummary.IsNRInquiry)
+            {
+                model.offer = first.offer;
+                var i = _context.NotRegisteredInquiries
+                .Where(s => s.Id == first.offerSummary.InquiryIdInOurDb)
+                .Select(i => new AllInquiryViewModel
+                {
+                    SubmissionDate = i.SubmissionDate,
+                    InstallmentsCount = i.InstallmentsCount,
+                    LoanValue = i.LoanValue,
+                    UserFirstName = i.UserFirstName,
+                    UserLastName = i.UserLastName,
+                    ClientGovernmentIDNumber = i.ClientGovernmentIDNumber,
+                    ClientGovernmentIDType = i.ClientGovernmentIDType,
+                    ClientJobType = i.ClientJobType,
+                    ClientIncomeLevel = i.ClientIncomeLevel,
+                    Email = i.Email,
+                    UserBirthDay = i.UserBirthDay,
+                    ClientJobEndDay = i.ClientJobEndDay,
+                    ClientJobStartDay = i.ClientJobStartDay
+                })
+                .FirstOrDefault();
+                if (i != null) model.inquiry = i;
+            }
+            else
+            {
+               model.offer = first.offer;
+               var i = _context.LoggedInquiries
+               .Where(i => i.Id == first.offerSummary.InquiryIdInOurDb)
+               .Join(_context.Clients, i => i.ClientId, c => c.Id,
+               (i, c) => new AllInquiryViewModel
+               {
+                   SubmissionDate = i.SubmisionDate,
+                   InstallmentsCount = i.InstallmentsCount,
+                   LoanValue = i.LoanValue,
+                   UserFirstName = c.UserFirstName,
+                   UserLastName = c.UserLastName,
+                   ClientGovernmentIDNumber = c.ClientGovernmentIDNumber,
+                   ClientGovernmentIDType = c.ClientGovernmentIDType,
+                   ClientJobType = c.ClientJobType,
+                   ClientIncomeLevel = c.ClientIncomeLevel,
+                   Email = c.Email,
+                   UserBirthDay = c.UserBirthDay,
+                   ClientJobEndDay = c.ClientJobEndDay,
+                   ClientJobStartDay = c.ClientJobStartDay
+               }).FirstOrDefault();
+                if (i != null) model.inquiry = i;
+            }          
+            return model;
         }
     }
 }

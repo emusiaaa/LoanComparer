@@ -27,6 +27,7 @@ using Humanizer.Localisation.TimeToClockNotation;
 using cloudscribe.Pagination.Models;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Text.Json.Nodes;
 
 namespace BankApp.Controllers
 {
@@ -79,7 +80,7 @@ namespace BankApp.Controllers
            return View();
         }
         [Authorize]
-        public async Task<IActionResult> HistoryOfInquiries(int pageNumber=1, int pageSize=15)
+        public async Task<IActionResult> HistoryOfInquiries(int pageNumber = 1, int pageSize = 15)
         {
             int excludeRecords = (pageSize * pageNumber) - pageSize;
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
@@ -110,7 +111,7 @@ namespace BankApp.Controllers
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
             model1 = _loggedInquiryRepository.ToAllInquiryModel();
-            model2 = _notRegisteredInquiryRepository.ToAllInquiryModel();         
+            model2 = _notRegisteredInquiryRepository.ToAllInquiryModel();
             var model = model1.Concat(model2);
 
             return Json(model) ;
@@ -145,13 +146,12 @@ namespace BankApp.Controllers
 
         [Authorize, HttpPost]
         public async Task<IActionResult> LoggedInquiry(InquiryModel inquiry)
-        {           
+        {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
             var errors = ModelState.Values.SelectMany(v => v.Errors);
             var er = errors.Count();
-            //if (!ModelState.IsValid)
-            if (er>1)
+            if (er > 1)
             {
                 return View();
             }
@@ -164,17 +164,7 @@ namespace BankApp.Controllers
             _offerServer.SaveOfferForLogged(_StrangerClient, inquiryJson, inqIdInOurDb, "StrangerAPI", user);
 
             _ = _emailSender.SendEmailAsync(user.Email, "Confirmation of submitting inquiry",
-                "<h3>Thanks for submitting your form!</h3>" +
-                "<p>Here's a little summary: " +
-                "</p><p>Loan value: " + inquiry.LoanValue +
-                "</p>" +
-                "<p>Number of installments: " + inquiry.InstallmentsCount +
-                "</p><p>Name: " + user.UserFirstName + " " + user.UserLastName +
-                "</p><p>Government ID Type: " + user.ClientGovernmentIDType +
-                "</p><p>Government ID Number: " + user.ClientGovernmentIDNumber +
-                "</p><p>Job type: " + user.ClientJobType +
-                "</p><p>Income level: " + user.ClientIncomeLevel +
-                "</p>");
+                MailCreator.ConfirmationOfSubmittingAnInquiry(user, inquiry));
 
             return RedirectToActionPermanent("HistoryOfInquiries");
         }
@@ -200,18 +190,7 @@ namespace BankApp.Controllers
             _offerServer.SaveOfferForNotLogged(_StrangerClient, inquiryJson, inqIdInOurDb, "StrangerAPI");
 
             _ = _emailSender.SendEmailAsync(inquiry.Email, "Confirmation of submitting inquiry",
-                             "<h3>Thanks for submitting your form!</h3>" +
-                             "<p>Here's a little summary: " +
-                             "</p><p>Loan value: " + inquiry.LoanValue +
-                             "</p>" +
-                             "<p>Number of installments: " + inquiry.InstallmentsCount +
-                             "</p><p>Name: " + inquiry.UserFirstName + " " + inquiry.UserLastName +
-                             "</p><p>Government ID Type: " + inquiry.ClientGovernmentIDType +
-                             "</p><p>Government ID Number: " + inquiry.ClientGovernmentIDNumber +
-                             "</p><p>Job type: " + inquiry.ClientJobType +
-                             "</p><p>Income level: " + inquiry.ClientIncomeLevel +
-                             "</p><p>Link to check the status of  inquiry: <a href=\"https://localhost:7280/Home/OfferList2?inquiryID=" + inquiry.Id+ "&isNR=true\">"  + "here</a>"+
-                             "</p>");
+                             MailCreator.ConfirmationOfSubmittingAnInquiryNR(inquiry));
 
             return RedirectToActionPermanent("HistoryOfInquiries");
         }
@@ -230,13 +209,11 @@ namespace BankApp.Controllers
         {
             return MockOffers.GenerateMockOffer();
         }
-
-        
         public string GetLink(long id, string bankName)
         {
-            return "/Home/OfferDetails?id="+ id.ToString() + "&bankName=" + bankName;
+            return "/Home/OfferDetails?id=" + id.ToString() + "&bankName=" + bankName;
         }
-
+        
         public async Task<IActionResult> OfferDetails(string id, string bankName)
         {
             var offerDetails = _offerRepository.GetAllOffersForAClientForAGivenInquiryForAGivenBank(Int32.Parse(id), bankName);
@@ -257,12 +234,12 @@ namespace BankApp.Controllers
         }
         public string Show(long id, string bankName)
         {
-            return "/Home/ShowOffer?id="+ id.ToString() + "&bankName=" + bankName;
+            return "/Home/ShowOffer?id=" + id.ToString() + "&bankName=" + bankName;
         }
         public IActionResult ShowOffer(long id, string bankName)
         {
             var bankId = _offerRepository.GetOfferIdInBank(id);
-            return View(new FileForOfferModel(){ offerId = bankId });
+            return View(new FileForOfferModel() { offerId = bankId });
         }
 
         [HttpPost]
@@ -283,26 +260,32 @@ namespace BankApp.Controllers
                     response = await _StrangerClient.SendFileAsync(offerIdInBank, formFile);
                     break;
             }
-            return response ? Ok():View();
+            if(response) _offerRepository.UpdateIsOfferAccepted(offerId);
+            return response ? Ok() : View();
         }
         public async Task<IActionResult> AcceptDeclineOffer(string id)
         {
-            var offer = _offerRepository.GetOfferForBankEmployee(Int32.Parse(id));
-            return View(offer);
+            //var offer = _offerRepository.GetOfferForBankEmployee(Int32.Parse(id));
+            var info = _offerRepository.OfferDetailsForBankEmployeeType(Int32.Parse(id));
+            return View(info);
         }
         public string RedirectToAcceptDeclineOffer(string offerId)
         {
             return "/Home/AcceptDeclineOffer?id=" + offerId.ToString();
         }
         [Authorize]
-        public IActionResult MakeDecision(int offerID, bool decision, string employeeID)
+        public async Task<IActionResult> MakeDecision(int offerID, string email, bool decision)
         {
-            _offerRepository.UpdateIsApprovedByEmployee(offerID, decision, employeeID);
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            _offerRepository.UpdateIsApprovedByEmployee(offerID, decision, user.Id);
+       
             _MiNIClient.CompleteOfferAsync(offerID);
-            return View("AllBankOffersRequests");
+            _ = _emailSender.SendEmailAsync(email, "Bank decision",
+                MailCreator.EmployeeDecision(decision));
+            return RedirectToAction("AllBankOffersRequests");
         }
         public IActionResult OfferList2(int inquiryID, bool isNR)
-        {           
+        {
             if (isNR)
             {
                 var model = _offerRepository.GetAllOffersForAGivenNRInquiry(inquiryID);
@@ -312,7 +295,7 @@ namespace BankApp.Controllers
             {
                 var model = _offerRepository.GetAllOffersForAGivenInquiry(inquiryID);
                 return View(model);
-            }                       
+            }
         }
         public string GetBankName(int offerID, int offerIDinBank)
         {
@@ -320,11 +303,20 @@ namespace BankApp.Controllers
             return "/Home/OfferDetails?id=" + offerIDinBank.ToString() + "&bankName=" + bankName;
         }
 
-        [Route("Home/AcceptOffer/{offerId:int}")]
-        public IActionResult AcceptOffer(int offerId)
+        //[Route("Home/AcceptOffer/{offerId:int}")]
+        //public IActionResult AcceptOffer(int offerId)
+        //{
+        //    var r = _offerRepository.UpdateIsOfferAccepted(offerId);
+        //    return RedirectToAction("OfferList2","Home", new {id=offerId});
+        //    //return View("OfferDetails", r);
+        //}
+    
+        public string[] InquiryIDinOurDb(int offerId)
         {
-            var r = _offerRepository.UpdateIsOfferAccepted(offerId);
-            return RedirectToAction("Index");
+            var c =_offersSummaryRepository.GetInquiryIdInOurDb(offerId);
+            //var x = Json(c);
+            string[] cs = { c.id.ToString(), c.isNR.ToString() };
+            return cs ;
         }
     }
 }

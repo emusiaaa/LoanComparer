@@ -9,5 +9,6 @@ namespace BankApp.Repositories
         public void Update(int offersSummaryID, OffersSummaryModel offersSummary);
 
         public void Delete(int offersSummaryID);
+        public NRmodel GetInquiryIdInOurDb(int offerId);
     }
 }

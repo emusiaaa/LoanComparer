@@ -10,6 +10,14 @@
         flex: auto;
         margin: 10px 100px;
     }
+
+    .mybtn {
+        background:rgba(0, 0, 0, 0.075);
+        border-radius: 5px;
+        height: 40px;
+        width: 100%;
+        border: 1px black solid;
+    }
 </style>
 <script>
     function viewDetails(id, idBank){
@@ -36,16 +44,15 @@
     @if(isAccepted){
         <div class="offer-container">
             <h1>Choosen offer</h1>
-            <span>Status:</span>
             @if(accepted.IsApprovedByEmployee==null){
-                <span>Offer waits to be accepted by the bank</span>
+                <h4>Status: Offer waits to be accepted by the bank</h4>
             }
             else{
                 if((bool)accepted.IsApprovedByEmployee){
-                    <span>Offer is accepted by the bank!</span>
+                    <h4 style="color:limegreen">Status: Offer is accepted by the bank!</h4>
                 }
                 else{
-                    <span> Sorry your offer was declined by the bank :(</span>
+                    <h4 style="color:red">Status: Sorry your offer was declined by the bank :(</h4>
                 }
             }
             <table class="table table-hover">
@@ -55,11 +62,7 @@
                         <th scope="col">Value</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>Document link</td>
-                        <td>@accepted.DocumentLink</td>
-                    </tr>
+                <tbody>                  
                     <tr>
                         <td>Status</td>
                         <td>@accepted.StatusDescription</td>
@@ -103,11 +106,7 @@
                             <th scope="col">Value</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>Document link</td>
-                            <td>@offer.DocumentLink</td>
-                        </tr>
+                    <tbody>                      
                         <tr>
                             <td>Status</td>
                             <td>@offer.StatusDescription</td>
@@ -133,15 +132,11 @@
                         </tr>
                         <tr>
                             <td>Requested value</td>
-                            <td>@accepted.RequestedValue</td>
-                        </tr>
-                        <tr>
-                            <td>My descision</td>
-                            <td>@offer.IsOfferAccepted</td>
+                            <td>@offer.RequestedValue</td>
                         </tr>
                     </tbody>
                 </table>
-                <button onclick="return viewDetails(@offer.Id, @offer.OfferIdInBank)">Details</button>
+                <button class="mybtn" onclick="return viewDetails(@offer.Id, @offer.OfferIdInBank)">Details</button>
             </div>
             i++;
         }

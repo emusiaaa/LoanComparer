@@ -2,6 +2,14 @@
 @{
     ViewData["Title"] = "Offers";
 }
+<style>
+    .mybtn {
+        background: white;
+        border-radius: 5px;
+        width: 100px;
+        border: 1px black solid;
+    }
+</style>
 <!DOCTYPE html>
 <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"></script>
 
@@ -109,13 +117,13 @@
         $.each(inquiries, function (i, v) {
             var row = "<tr>";
 
-            row += "<td>" + v.createDate + "</td>";
+            row += "<td>" + v.createDate.substring(0,10) + "</td>";
             row += "<td>" + v.requestedValue + "</td>";
             row += "<td>" + v.percentage + "</td>";
             row += "<td>" + v.monthlyInstallment + "</td>";
             row += "<td>" + v.statusDescription + "</td>";
             row += "<td>" + v.requestedPeriodInMonth + "</td>";
-            row += "<td><button onclick=\"return showOffer(this.value)\" value=\"" + v.id +  "\">View</button></td>";
+            row += "<td><button class=\"mybtn\" onclick=\"return showOffer(this.value)\" value=\"" + v.id +  "\">View</button></td>";
             row += "</tr>";
 
             $("#mainTable").append($(row));

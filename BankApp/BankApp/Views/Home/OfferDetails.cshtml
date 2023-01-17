@@ -12,21 +12,54 @@
         document.body.removeChild(element);
     }
 </script>
-<h1>Twoja oferta</h1>
+<h1>Offer's summary</h1>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Value</th>
+        </tr>
+    </thead>
+    <tbody>              
+        <tr>
+            <td>Percentage</td>
+            <td>@Model.Percentage</td>
+        </tr>
+        <tr>
+            <td>Monthly installment</td>
+            <td>@Model.MonthlyInstallment</td>
+        </tr>
+        <tr>
+            <td>Requested period of months</td>
+            <td>@Model.RequestedPeriodInMonth</td>
+        </tr>
+        <tr>
+            <td>How much you'll spend</td>
+            @{
+                double howmuch = Model.MonthlyInstallment * Model.RequestedPeriodInMonth;
+            }
+            <td>@howmuch</td>
+        </tr>
+        <tr>
+            <td>Requested value</td>
+            <td>@Model.RequestedValue</td>
+        </tr>
+    </tbody>
+</table>
+<h4>To accept the offer please download, fill, sign and upload this document:</h4>
 <input type="button" id="dwn-btn" value="Download Agreement" onclick="downloadAgreement()" />
-<h1>@Model.CreateDate</h1>
-<h1>@Model.DocumentLink</h1>
-<h1>@Model.OfferIdInBank</h1>
+<h4>here upload:</h4>
 <div>
     <form enctype="multipart/form-data" onsubmit="AJAXSubmit(this);return false;"
     method="post">
         <input type="file" name="formFile" required/>
-        <input class="btn btn-outline-primary" type="submit"/>
+        <div style="margin-top:15px">
+            <output name="result"></output>
+        </div>
+        <input class="btn btn-outline-primary" type="submit" value="Accept offer"/>
     </form>
-    <div style="margin-top:15px">
-        <output name="result"></output>
-    </div>
-    <a idasp-controller="Home" asp-action="AcceptOffer" asp-route-offerID="@Model.Id">Accept Offer</a>
+ 
+   @* <a idasp-controller="Home" asp-action="AcceptOffer" asp-route-offerID="@Model.Id">Accept Offer</a>*@
 </div>
 
 <script>
@@ -41,7 +74,26 @@
             });
 
             if (response.ok) {
-                window.location.href = 'AcceptOffer/' + @Model.Id;
+                Promise.resolve($.ajax({
+                    type: "GET",
+                    url: '/Home/InquiryIDinOurDb?offerId='+@Model.Id,
+                    contentType: false,
+                    processData: false
+                })).then(function (result) {
+                    if (result) {
+                        if(result[1]=="True")
+                        {
+                            window.location.href = 'OfferList2?inquiryID=' + result[0] + '&isNR=true';
+                        }
+                        else{
+                            window.location.href = 'OfferList2?inquiryID=' + result[0];
+                        }
+                    }
+                }).catch(function (e) {
+                    console.log(e);
+                    console.log(result);
+                });
+                
                 //document.getElementById("ahref").click();
             }
         } catch (error) {
