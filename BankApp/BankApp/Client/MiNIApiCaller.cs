@@ -61,7 +61,8 @@ namespace BankApp.Client
         }
         public async void CompleteOfferAsync(int offerId)
         {
-            var result = await _httpClient.PostAsJsonAsync("/api/v1/Offer" + $"/{offerId}" + "/complete", JsonConvert.SerializeObject(offerId));
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/Offer" + $"/{offerId}" + "/complete");
+            var result = await _httpClient.SendAsync(request);
         }
 
     }
