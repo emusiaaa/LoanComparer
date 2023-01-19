@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using SendGrid.Helpers.Mail;
 using SendGrid;
 using BankApp.Repositories;
+using BankApp.Models;
 
 namespace BankApp.Services;
 
@@ -10,14 +11,15 @@ public class EmailSender : IEmailSender, IHostedService, IDisposable
 {
     private readonly ILogger _logger;
     private Timer? _timer = null;
-    private IClientRepository _clientRepository;
+    private IServiceProvider? _serviceProvider;
 
     public EmailSender(IOptions<AuthMessageSenderOptions> optionsAccessor,
-                       ILogger<EmailSender> logger, IClientRepository clientRepository)
+                       ILogger<EmailSender> logger,
+                       IServiceProvider serviceProvider = null)
     {
         Options = optionsAccessor.Value;
         _logger = logger;
-        _clientRepository = clientRepository;
+        _serviceProvider = serviceProvider;
     }
 
     public AuthMessageSenderOptions Options { get; } //Set with Secret Manager.
@@ -55,16 +57,27 @@ public class EmailSender : IEmailSender, IHostedService, IDisposable
     {
         _timer = new Timer(SendPeriodicalMail, null, TimeSpan.Zero,
             TimeSpan.FromHours(12));
+            // (for demo)
+           //TimeSpan.FromMinutes(2));
 
         return Task.CompletedTask;
     }
 
     private async void SendPeriodicalMail(object? state)
     {
-        
-        //var res = _clientRepository.Get("bb4887b5-5319-49de-bbc4-ab484fc6ede8");
-       //await SendEmailAsync(res.Email, "hi", "it is meeee i am checking that");
-       await SendEmailAsync("getaloanfrombankgirls2@gmail.com", "hi", "it is meeee i am checking that");
+        Random rnd = new Random();
+        string happyReceiversEmail;
+        using (var scope = _serviceProvider.CreateScope())
+        {
+            var help = scope.ServiceProvider.GetRequiredService<IClientRepository>();
+              happyReceiversEmail = help.GetRandomClientsEmail(rnd.Next(1000));
+        }
+
+        await SendEmailAsync(happyReceiversEmail, "Ready for another loan?",
+        MailCreator.ReminderEmail());
+        // (for demo)
+        //await SendEmailAsync("getaloanfrombankgirls2@gmail.com", "Ready for another loan?",
+        //         MailCreator.ReminderEmail());
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

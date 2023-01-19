@@ -4,6 +4,15 @@ namespace BankApp.Services
 {
     public static class MailCreator
     {
+        public static string ReminderEmail()
+        {
+            return
+                "<h3>Hey! Do you need a loan?</h3>" +
+                "<p> We have missed you! We hope you missed us too. " +
+                "</p><p>Let's turn another one of your dreams into reality! " +
+                "</p>" +
+                "<p>Start today! Don't hesitate and visit BankGirls for another loan! It's THAT easy! :)</p>";
+        }
         public static string ConfirmationOfSubmittingAnInquiry(ClientModel user, InquiryModel inquiry)
         {
             return

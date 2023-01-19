@@ -81,7 +81,7 @@ builder.Services.AddAuthentication().AddGoogle(googleOptions =>
 
 
 builder.Services.AddScoped<IEmailSender, EmailSender>();
-// (to be modified!!!)
+// uncomment before demo!
 // builder.Services.AddHostedService<EmailSender>();
 
 builder.Services.AddSingleton<IOfferServer, OfferServer>()
