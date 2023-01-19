@@ -13,10 +13,10 @@ namespace BankApp.Models
     {
         [Key]
         public int Id { get; set; }
-        [Range(1, int.MaxValue, ErrorMessage = "Please enter valid integer Number")]
+        [Range(1, int.MaxValue, ErrorMessage = "Please enter valid number")]
         [Required]
         public int InstallmentsCount { get; set; }       
-        [Range(1, float.MaxValue, ErrorMessage = "Please enter valid float Number")]
+        [Range(1, float.MaxValue, ErrorMessage = "Please enter valid amount")]
         [Required]
         public float LoanValue { get; set; }
 

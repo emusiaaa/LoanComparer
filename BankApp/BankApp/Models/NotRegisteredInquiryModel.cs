@@ -19,20 +19,22 @@ namespace BankApp.Models
         [Required]
         public string SubmissionDate { get; set; } = DateTime.UtcNow.ToString("o");
 
-        [Range(0, int.MaxValue, ErrorMessage = "Please enter valid int Number")]
+        [Range(1, int.MaxValue, ErrorMessage = "Please enter valid number")]
         [Required]
         public int InstallmentsCount { get; set; }
 
-        [Range(0, float.MaxValue, ErrorMessage = "Please enter valid float Number")]
+        [Range(1, float.MaxValue, ErrorMessage = "Please enter valid amount")]
         [Required]
         public float LoanValue { get; set; }
 
-        [RegularExpression(@"^[A-Z]+[a-zA-Z\s]*$")]
+        [RegularExpression(@"^[A-ZÀ-ÖØ-ÞĄĆĘŁŃÓŚŹŻ]{1}[a-zA-ZÀ-ÖØ-Þąćęłńóśźż'\-]*( [A-ZÀ-ÖØ-ÞĄĆĘŁŃÓŚŹŻ]{1}[a-zA-ZÀ-ÖØ-Þąćęłńóśźż'\-]*)*$",
+            ErrorMessage = "Please enter valid First Name with European characters")]
         [Required]
         [DisplayName("First Name")]
         public string UserFirstName { get; set; }
 
-        [RegularExpression(@"^[A-Z]+[a-zA-Z\s]*$")]
+        [RegularExpression(@"^[A-ZÀ-ÖØ-ÞĄĆĘŁŃÓŚŹŻ]{1}[a-zA-ZÀ-ÖØ-Þąćęłńóśźż'\-]*( [A-ZÀ-ÖØ-ÞĄĆĘŁŃÓŚŹŻ]{1}[a-zA-ZÀ-ÖØ-Þąćęłńóśźż'\-]*)*$",
+            ErrorMessage = "Please enter valid Last Name with European characters")]
         [Required]
         [DisplayName("Last Name")]
         public string UserLastName { get; set; }
