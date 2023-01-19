@@ -14,6 +14,13 @@ namespace BankApp.Repositories
 
         public ClientModel Get(string clientID) => _context.Clients.SingleOrDefault(x => x.Id == clientID);
 
+        public string GetRandomClientsEmail(int howManyClientsToSkip)
+        {
+            int allClientsNumber = _context.Clients.Count();
+            int index = (howManyClientsToSkip % allClientsNumber);
+            return _context.Clients.Skip(index).Take(1).FirstOrDefault().Email;
+        }
+
         public void Add(ClientModel client)
         {
             _context.Clients.Add(client);

@@ -21,6 +21,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System.Text;
 using BankApp;
+using Hangfire;
+using System.Net.Mail;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -78,6 +81,9 @@ builder.Services.AddAuthentication().AddGoogle(googleOptions =>
 
 
 builder.Services.AddScoped<IEmailSender, EmailSender>();
+// uncomment before demo!
+// builder.Services.AddHostedService<EmailSender>();
+
 builder.Services.AddSingleton<IOfferServer, OfferServer>()
     .AddSingleton<IServiceProvider,ServiceProvider>();
 builder.Services.AddScoped<InquiryServer>();

@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="cloudscribe.Pagination.Models" Version="1.1.0" />
     <PackageReference Include="cloudscribe.Web.Pagination" Version="6.0.0" />
+    <PackageReference Include="Hangfire.Core" Version="1.7.32" />
     <PackageReference Include="IdentityModel" Version="6.0.0" />
     <PackageReference Include="IdentityModel.AspNetCore" Version="4.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="6.0.11" />
