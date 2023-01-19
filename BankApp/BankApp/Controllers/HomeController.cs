@@ -156,17 +156,18 @@ namespace BankApp.Controllers
                 return View();
             }
 
-            var inquiryJson = _inquiryServer.CreateInquiry(inquiry, user);
-            int inqIdInOurDb = _loggedInquiryRepository.Add(inquiry);
+            //var inquiryJson = _inquiryServer.CreateInquiry(inquiry, user);
+            //int inqIdInOurDb = _loggedInquiryRepository.Add(inquiry);
 
-            _offerServer.SaveOfferForLogged(_BestAPIClient, inquiryJson, inqIdInOurDb, "BestWorldAPI", user);
-            _offerServer.SaveOfferForLogged(_MiNIClient, inquiryJson, inqIdInOurDb, "projectAPI", user);
-            _offerServer.SaveOfferForLogged(_StrangerClient, inquiryJson, inqIdInOurDb, "StrangerAPI", user);
+            //_offerServer.SaveOfferForLogged(_BestAPIClient, inquiryJson, inqIdInOurDb, "BestWorldAPI", user);
+            //_offerServer.SaveOfferForLogged(_MiNIClient, inquiryJson, inqIdInOurDb, "projectAPI", user);
+            //_offerServer.SaveOfferForLogged(_StrangerClient, inquiryJson, inqIdInOurDb, "StrangerAPI", user);
 
-            _ = _emailSender.SendEmailAsync(user.Email, "Confirmation of submitting inquiry",
-                MailCreator.ConfirmationOfSubmittingAnInquiry(user, inquiry));
+            //_ = _emailSender.SendEmailAsync(user.Email, "Confirmation of submitting inquiry",
+            //    MailCreator.ConfirmationOfSubmittingAnInquiry(user, inquiry));
 
-            return RedirectToActionPermanent("HistoryOfInquiries");
+            return RedirectToActionPermanent("SuccessConfirmation", "Home", new { inquiryId = 254 });
+            //return RedirectToActionPermanent("HistoryOfInquiries");
         }
         //public async Task<IActionResult> SendInquiry(InquiryModel inquiry)
         //{
@@ -192,11 +193,22 @@ namespace BankApp.Controllers
             _ = _emailSender.SendEmailAsync(inquiry.Email, "Confirmation of submitting inquiry",
                              MailCreator.ConfirmationOfSubmittingAnInquiryNR(inquiry));
 
-            return RedirectToActionPermanent("HistoryOfInquiries");
+            return RedirectToActionPermanent("SuccessConfirmation", "Home", new { inquiryId = inqIdInOurDb });
+            //return RedirectToActionPermanent("HistoryOfInquiries");
         }
 
-        public IActionResult OfferList(InquiryString model)
+        public IActionResult SuccessConfirmation(int inquiryId, bool isNR)
         {
+            InquiryString model;
+            if (isNR)
+            {
+                model = new InquiryString() { inquiryId = inquiryId,isNR=isNR };
+            }
+            else
+            {
+                model = new InquiryString() { inquiryId = inquiryId };
+            }
+            
             return View(model);
         }
         public IActionResult InquiryNotRegistered()
@@ -214,10 +226,11 @@ namespace BankApp.Controllers
             return "/Home/OfferDetails?id=" + id.ToString() + "&bankName=" + bankName;
         }
         
-        public async Task<IActionResult> OfferDetails(string id, string bankName)
+        public async Task<IActionResult> OfferDetails(int offerId, int offerIdInBank)
         {
-            var offerDetails = _offerRepository.GetAllOffersForAClientForAGivenInquiryForAGivenBank(Int32.Parse(id), bankName);
-            //offerDetails.document = await _MiNIClient.GetOfferDetailsAsync(offerDetails.offerModel.DocumentLink);
+            var bankName = _offerRepository.GetOfferBank(offerId);
+            var offerDetails = _offerRepository.GetAllOffersForAClientForAGivenInquiryForAGivenBank(offerIdInBank, bankName);
+           
             switch (bankName)
             {
                 case "projectAPI":

@@ -1,4 +1,5 @@
 ﻿@model OfferModel
+
 <script>
     function downloadAgreement() {
         let text = "@ViewBag.document";
@@ -74,25 +75,26 @@
             });
 
             if (response.ok) {
-                Promise.resolve($.ajax({
-                    type: "GET",
-                    url: '/Home/InquiryIDinOurDb?offerId='+@Model.Id,
-                    contentType: false,
-                    processData: false
-                })).then(function (result) {
-                    if (result) {
-                        if(result[1]=="True")
-                        {
-                            window.location.href = 'OfferList2?inquiryID=' + result[0] + '&isNR=true';
-                        }
-                        else{
-                            window.location.href = 'OfferList2?inquiryID=' + result[0];
-                        }
-                    }
-                }).catch(function (e) {
-                    console.log(e);
-                    console.log(result);
-                });
+                window.history.back();
+                //Promise.resolve($.ajax({
+                //    type: "GET",
+                //    url: '/Home/InquiryIDinOurDb?offerId='+@Model.Id,
+                //    contentType: false,
+                //    processData: false
+                //})).then(function (result) {
+                //    if (result) {
+                //        if(result[1]=="True")
+                //        {
+                //            window.location.href = 'OfferList2?inquiryID=' + result[0] + '&isNR=true';
+                //        }
+                //        else{
+                //            window.location.href = 'OfferList2?inquiryID=' + result[0];
+                //        }
+                //    }
+                //}).catch(function (e) {
+                //    console.log(e);
+                //    console.log(result);
+                //});
                 
                 //document.getElementById("ahref").click();
             }

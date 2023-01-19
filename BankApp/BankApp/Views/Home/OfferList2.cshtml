@@ -136,7 +136,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <button class="mybtn" onclick="return viewDetails(@offer.Id, @offer.OfferIdInBank)">Details</button>
+                <button class="mybtn" onclick="location.href='@Url.Action("OfferDetails", "Home",new {offerId=@offer.Id,offerIdInBank=@offer.OfferIdInBank})'">Details</button>
             </div>
             i++;
         }
