@@ -2,18 +2,22 @@
 using Microsoft.Extensions.Options;
 using SendGrid.Helpers.Mail;
 using SendGrid;
+using BankApp.Repositories;
 
 namespace BankApp.Services;
 
-public class EmailSender : IEmailSender
+public class EmailSender : IEmailSender, IHostedService, IDisposable
 {
     private readonly ILogger _logger;
+    private Timer? _timer = null;
+    private IClientRepository _clientRepository;
 
     public EmailSender(IOptions<AuthMessageSenderOptions> optionsAccessor,
-                       ILogger<EmailSender> logger)
+                       ILogger<EmailSender> logger, IClientRepository clientRepository)
     {
         Options = optionsAccessor.Value;
         _logger = logger;
+        _clientRepository = clientRepository;
     }
 
     public AuthMessageSenderOptions Options { get; } //Set with Secret Manager.
@@ -45,5 +49,33 @@ public class EmailSender : IEmailSender
         _logger.LogInformation(response.IsSuccessStatusCode
                                ? $"Email to {toEmail} queued successfully!"
                                : $"Failure Email to {toEmail}");
+    }
+
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
+        _timer = new Timer(SendPeriodicalMail, null, TimeSpan.Zero,
+            TimeSpan.FromHours(12));
+
+        return Task.CompletedTask;
+    }
+
+    private async void SendPeriodicalMail(object? state)
+    {
+        
+        //var res = _clientRepository.Get("bb4887b5-5319-49de-bbc4-ab484fc6ede8");
+       //await SendEmailAsync(res.Email, "hi", "it is meeee i am checking that");
+       await SendEmailAsync("getaloanfrombankgirls2@gmail.com", "hi", "it is meeee i am checking that");
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        _timer?.Change(Timeout.Infinite, 0);
+
+        return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
     }
 }
