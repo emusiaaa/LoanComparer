@@ -1,0 +1,75 @@
+﻿@{
+    ViewData["Title"] = "Inquiries";
+}
+@model cloudscribe.Pagination.Models.PagedResult<BankApp.Models.InquiryModel>
+<style>
+        .tbl{
+            border-color:black;
+            --bs-table-hover-bg: #BCF5A3;
+        }
+        .tbl:nth-child(2n+1) {
+            --bs-table-bg: #F2FDED;
+        }
+
+        .tbl:nth-child(2n) {
+            --bs-table-bg: #D9F8C9;
+        }
+        .header{
+            text-transform: uppercase;
+        }
+        .mybtn{
+            background: white;
+            border-radius: 5px;
+            width: 100px;
+            border: 1px black solid;
+        }
+</style>
+<div>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th class="header" scope="col">No.</th>
+                <th class="header" scope="col">Submission date</th>
+                <th class="header" scope="col">Loan Value</th>
+                <th class="header" scope="col">Number Of installments</th>
+                <th class="header" scope="col">Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int i = ((int)Model.PageNumber - 1) * (int)Model.PageSize;
+            }
+            @foreach (var inquiry in Model.Data)
+            {
+                <tr class="table-info tbl">
+                    @{
+                        var date = inquiry.SubmisionDate.Substring(0, 10);
+                        string no = ++i + ".";
+                    }
+                    <td>@no</td>
+                    <td>@date</td>
+                    <td>@inquiry.LoanValue</td>
+                    <td>@inquiry.InstallmentsCount</td>
+                    <td>
+                        <button class="mybtn" onclick="location.href='@Url.Action("OfferList", "Logged",new {inquiryID=@inquiry.Id})'">View</button>
+                        @*<form asp-controller="Home" asp-action="OfferList2" asp-route-inquiryID="@inquiry.Id">
+                            <input class="mybtn" type="submit" value="View" />
+                        </form>*@
+                    </td>
+                    @*<td><a asp-controller="Home" asp-action="OfferList2" asp-route-inquiryID="@inquiry.Id">View</a></td>*@
+                </tr>
+            }
+        </tbody>
+    </table>
+    <cs-pager cs-paging-pagenumber=Model.PageNumber
+              cs-paging-totalitems=Model.TotalItems
+              cs-paging-pagesize=Model.PageSize
+              cs-pagenumber-param="pageNumber"
+              asp-controller="Logged"
+              asp-action="HistoryOfInquiries"
+              cs-pager-li-current-class="page-item active"
+              cs-pager-li-other-class="page-item"
+              cs-pager-li-non-active-class="page-item disabled"
+              cs-pager-link-current-class="page-link"
+              cs-pager-link-other-class="page-link"></cs-pager>
+</div>

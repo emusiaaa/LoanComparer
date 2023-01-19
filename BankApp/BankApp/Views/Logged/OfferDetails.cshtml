@@ -1,0 +1,105 @@
+﻿@model OfferModel
+
+<script>
+    function downloadAgreement() {
+        let text = "@ViewBag.document";
+        var filename = "Agreement.txt";
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
+</script>
+<h1>Offer's summary</h1>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Value</th>
+        </tr>
+    </thead>
+    <tbody>              
+        <tr>
+            <td>Percentage</td>
+            <td>@Model.Percentage</td>
+        </tr>
+        <tr>
+            <td>Monthly installment</td>
+            <td>@Model.MonthlyInstallment</td>
+        </tr>
+        <tr>
+            <td>Requested period of months</td>
+            <td>@Model.RequestedPeriodInMonth</td>
+        </tr>
+        <tr>
+            <td>How much you'll spend</td>
+            @{
+                double howmuch = Model.MonthlyInstallment * Model.RequestedPeriodInMonth;
+            }
+            <td>@howmuch</td>
+        </tr>
+        <tr>
+            <td>Requested value</td>
+            <td>@Model.RequestedValue</td>
+        </tr>
+    </tbody>
+</table>
+<h4>To accept the offer please download, fill, sign and upload this document:</h4>
+<input type="button" id="dwn-btn" value="Download Agreement" onclick="downloadAgreement()" />
+<h4>here upload:</h4>
+<div>
+    <form enctype="multipart/form-data" onsubmit="AJAXSubmit(this);return false;"
+    method="post">
+        <input type="file" name="formFile" required/>
+        <div style="margin-top:15px">
+            <output name="result"></output>
+        </div>
+        <input class="btn btn-outline-primary" type="submit" value="Accept offer"/>
+    </form>
+ 
+   @* <a idasp-controller="Home" asp-action="AcceptOffer" asp-route-offerID="@Model.Id">Accept Offer</a>*@
+</div>
+
+<script>
+    async function AJAXSubmit(oFormElement) {
+        var resultElement = oFormElement.elements.namedItem("result");
+        const formData = new FormData(oFormElement);
+
+        try {
+            const response = await fetch('SendFile/' + @Model.Id + '/' + @Model.OfferIdInBank, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                window.history.back();
+                //Promise.resolve($.ajax({
+                //    type: "GET",
+                //    url: '/Home/InquiryIDinOurDb?offerId='+@Model.Id,
+                //    contentType: false,
+                //    processData: false
+                //})).then(function (result) {
+                //    if (result) {
+                //        if(result[1]=="True")
+                //        {
+                //            window.location.href = 'OfferList2?inquiryID=' + result[0] + '&isNR=true';
+                //        }
+                //        else{
+                //            window.location.href = 'OfferList2?inquiryID=' + result[0];
+                //        }
+                //    }
+                //}).catch(function (e) {
+                //    console.log(e);
+                //    console.log(result);
+                //});
+                
+                //document.getElementById("ahref").click();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+</script>

@@ -1,0 +1,66 @@
+﻿@model NotRegisteredInquiryModel
+
+<form method="post" asp-controller = "Unregistered" asp-action="Inquiry">
+    <label asp-for="LoanValue">Insert loan value</label>
+    <input type="number" asp-for="LoanValue" required /><br />
+    <span asp-validation-for="LoanValue" class="text-danger"></span>
+    <br />
+
+    <label asp-for="InstallmentsCount">Insert number of installments</label>
+    <input type="number" asp-for="InstallmentsCount" required />
+    <span asp-validation-for="InstallmentsCount" class="text-danger"></span><br />
+    <br />
+
+    <label asp-for="UserFirstName">First name:</label>
+    <input asp-for="UserFirstName" required /><br />
+    <span asp-validation-for="UserFirstName" class="text-danger"></span>
+    <br />
+
+    <label asp-for="UserLastName">Last name:</label>
+    <input asp-for="UserLastName" required /><br />
+    <span asp-validation-for="UserLastName" class="text-danger"></span>
+    <br />
+
+    <label asp-for="UserBirthDay">Birth date:</label>
+    <input type="datetime-local" asp-for="UserBirthDay" required /><br />
+    <span asp-validation-for="UserBirthDay" class="text-danger"></span>
+    <br />
+
+    <label asp-for="ClientGovernmentIDType">Government ID Type:</label>
+    @Html.DropDownListFor(
+    m=>m.ClientGovernmentIDType,
+    new SelectList(BankApp.Models.DocumentTypes.DocumentTypesDictionary.Keys),"Select Government ID Type", new {required = (string)null}) <br />
+    <span asp-validation-for="ClientGovernmentIDType" class="text-danger"></span>
+    <br/>
+
+    <label asp-for="ClientGovernmentIDNumber">Government ID Number:</label>
+    <input asp-for="ClientGovernmentIDNumber" required /> <br />
+    <span asp-validation-for="ClientGovernmentIDNumber" class="text-danger"></span>
+    <br />
+
+    <label asp-for="ClientJobType">Job type:</label>
+    @Html.DropDownListFor(
+    m=>m.ClientJobType,
+    new SelectList(BankApp.Models.JobTypes.JobTypesDictionary.Keys),"Select Job Type", new {required = (string)null}) <br />
+    <span asp-validation-for="ClientJobType" class="text-danger"></span>
+    <br />
+
+    <label asp-for="ClientJobStartDay">Job start date:</label>
+    <input type="datetime-local" asp-for="ClientJobStartDay" required /> <br />
+    <span asp-validation-for="ClientJobStartDay" class="text-danger"></span>
+    <br />
+
+    <label asp-for="ClientIncomeLevel">Income level:</label>
+    <input type="number" asp-for="ClientIncomeLevel" required /> <br />
+    <span asp-validation-for="ClientIncomeLevel" class="text-danger"></span>
+    <br />
+
+    <label asp-for="Email">Email:</label>
+    <input type=email asp-for="Email" /><br />
+    <span asp-validation-for="Email" class="text-danger"></span>
+    
+    <br required />
+
+    <input type="submit" value="Submit inquiry"/>
+</form>
+

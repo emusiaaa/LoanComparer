@@ -2,7 +2,7 @@
 
 namespace BankApp.Services
 {
-    public class InquiryServer
+    public class InquiryServer: IInquiryServer
     {
         public jsonclass.Loan CreateNRInquiry(NotRegisteredInquiryModel inquiry)
         {

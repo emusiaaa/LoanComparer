@@ -1,0 +1,27 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<BankApp.Models.ClientModel> SignInManager
+@inject UserManager<BankApp.Models.ClientModel> UserManager
+@{
+    ClientModel client = await UserManager.FindByNameAsync(User.Identity.Name);
+}
+
+
+<form style="width:395px">
+    <h2>Verify Your data</h2><br/>
+    <label style="width:200px">First Name:</label>
+    <input value="@client.UserFirstName" disabled /><br />
+    <label style="width:200px">Last Name:</label>
+    <input value="@client.UserLastName" disabled /><br />
+    <label style="width:200px">Government ID Number:</label>
+    <input value="@client.ClientGovernmentIDNumber" disabled /><br />
+    <label style="width:200px">Government ID Type:</label>
+    <input value="@client.ClientGovernmentIDType" disabled /><br />
+    <label style="width:200px">Job Type:</label>
+    <input value="@client.ClientJobType" disabled /><br />
+    <label style="width:200px">Income Level:</label>
+    <input value="@client.ClientIncomeLevel" disabled /><br />
+    <label style="width:200px">Email:</label>
+    <input value="@client.Email" style="margin:0 0 20px 0;" disabled /><br />
+    <input style="width:100px" type="submit" value="Modify" asp-area="Identity" asp-page="/Account/Manage/Index" />
+    <input style="width:100px;float:right;" type="submit" value="Correct" asp-controller="Logged" asp-action="Inquiry"/>
+</form>

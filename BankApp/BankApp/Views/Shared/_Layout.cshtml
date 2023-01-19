@@ -37,10 +37,10 @@
                             if (!user.IsBankEmployee)
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="InquiryCompleted">Inquiry</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Logged" asp-action="InquiryCompleted">Inquiry</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="HistoryOfInquiries">History</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Logged" asp-action="HistoryOfInquiries">History</a>
                                 </li>
                             }
                             else
@@ -56,7 +56,7 @@
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="InquiryNotRegistered">Inquiry</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Unregistered" asp-action="Inquiry">Inquiry</a>
                             </li>
                         }
                     </ul>
