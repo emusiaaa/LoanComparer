@@ -30,7 +30,8 @@ To contribute, feel free to write to us for access to pushing code to this repos
 merge your branch to main branch. That's it :).
 
 # Trunk based development
-While working on this project, we were using the trunk based development flow. main has been our 'trunk' branch. Following the trunk based development rules, to complete any tasks, each of us was checking out
-from main to her own branch, then making changes on that branch. Then we were testing whether our changes do not disturb any other working project functionalities. If all the tests have been passed, we were then
-merging the code with the main branch (after the code has been reviewed and accepted by the rest of the team, of course). This approach, hugely popular nowadays, allowed us to have continous integration of code. 
-We found small, often (daily/hourly) changes as easier and better ways of coding than making huge merges once a week and then spending the whole day solving merge conflicts.
+While working on this project, we were using the trunk based development flow. main has been our 'trunk' branch. We have assumed and took care that main branch was always stable and without issues, ready to deploy.
+Following the trunk based development rules, to complete any tasks, each of us was checking out from main to her own branch, then making changes on that branch. Then we were testing whether our changes do not disturb
+any other working project functionalities. If all the tests have been passed, we were then merging the code with the main branch (after the code has been reviewed and accepted by the rest of the team, of course). 
+This approach, hugely popular nowadays, allowed us to have continous integration of code. We found small, often (daily/hourly) changes as easier and better ways of coding than making huge merges once a week and then 
+spending the whole day solving merge conflicts.
