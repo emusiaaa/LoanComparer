@@ -78,11 +78,14 @@ namespace BankApp.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             /// 
-
+            [RegularExpression(@"^[A-ZÀ-ÖØ-ÞĄĆĘŁŃÓŚŹŻ]{1}[a-zA-ZÀ-ÖØ-Þąćęłńóśźż'\-]*( [A-ZÀ-ÖØ-ÞĄĆĘŁŃÓŚŹŻ]{1}[a-zA-ZÀ-ÖØ-Þąćęłńóśźż'\-]*)*$",
+            ErrorMessage = "Please enter valid First Name with European characters")]
             [Required]
             [Display(Name = "First Name")]
             public string UserFirstName { get; set; }
 
+            [RegularExpression(@"^[A-ZÀ-ÖØ-ÞĄĆĘŁŃÓŚŹŻ]{1}[a-zA-ZÀ-ÖØ-Þąćęłńóśźż'\-]*( [A-ZÀ-ÖØ-ÞĄĆĘŁŃÓŚŹŻ]{1}[a-zA-ZÀ-ÖØ-Þąćęłńóśźż'\-]*)*$",
+            ErrorMessage = "Please enter valid Last Name with European characters")]
             [Required]
             [Display(Name = "Last Name")]
             public string UserLastName { get; set; }
@@ -96,7 +99,7 @@ namespace BankApp.Areas.Identity.Pages.Account
             public string ClientJobType { get; set; }
 
             [Required]
-            [Range(0, float.MaxValue, ErrorMessage = "Please enter valid float Number")]
+            [Range(1, float.MaxValue, ErrorMessage = "Please enter valid amount")]
             [Display(Name = "Income Level")]
             public string ClientIncomeLevel { get; set; }
 

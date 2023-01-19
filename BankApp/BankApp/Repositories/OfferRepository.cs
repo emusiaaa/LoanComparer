@@ -88,7 +88,7 @@ namespace BankApp.Repositories
             var query = from offerSummary in _context.OffersSummary
                         join offer in _context.Offers
                         on offerSummary.OfferIdInOurDb equals offer.Id
-                        where (offerSummary.InquiryIdInOurDb == inquiryID)
+                        where (offerSummary.InquiryIdInOurDb == inquiryID && offerSummary.IsNRInquiry ==false)
                         select offer;
             return query.ToList();
         }
