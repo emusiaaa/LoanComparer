@@ -6,19 +6,19 @@ In our app, Users can make an inquiry, both after registering at our website - s
 for each inquiry.It also contains a website for a bank employee, where bank employee can login and accept or decline the offer requests from clients.Bank employee can also see the history etc.
 
 # Getting Started
-1.	Installation process
+1.	Installation process:
     To install the app, you need to clone the repository to your local computer. Then you need to configure your SendGrid account and Gmail auth service. You should also check if the connection to the
     database and Azure Blob Storage is working correctly.
-2.	Software dependencies
+2.	Software dependencies:
     The project uses the following NuGet packages: cloudscribe.Pagination.Models, cloudscribe.Web.Pagination, IdentityModel, IdentityModel.AspNetCore, Microsoft.AspNetCore.Authentication.Google, 
     Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore, Microsoft.AspNetCOre.Identitiy.EntityFrameworkCore, Microsoft.AspNetCore.Identity.UI, Microsoft.EntityFrameworkCore, Microsoft.EntityFrameworkCore.Design,
     Microsoft.EntityFrameworkCore.SqlServer, Microsoft.EntityFrameworkCore.Tools, Microsoft.IdentityModel, Microsoft.VisualStudio.Web.CodeGeneration.Design, RestSharp, SendGrid, System.Text.Json. 
-3.	API references
+3.	API references:
     The project references and connects to 3 different bank's APIs:
     https://mini.loanbank.api.snet.com.pl/swagger/index.html
     https://best-bank-webapi.azurewebsites.net/swagger/index.html
     https://fictionbank20230111105722.azurewebsites.net/swagger/index.html
-4. Latest releases
+4. Latest releases:
     The current and up-to-date version of the project is the one on main branch.
 
 # Build and Test
