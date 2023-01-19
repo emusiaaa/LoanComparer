@@ -1,6 +1,6 @@
 ﻿@model NotRegisteredInquiryModel
 
-<form method="post" asp-action="InquiryNotRegistered">
+<form method="post" asp-controller = "Unregistered" asp-action="Inquiry">
     <label asp-for="LoanValue">Insert loan value</label>
     <input type="number" asp-for="LoanValue" required /><br />
     <span asp-validation-for="LoanValue" class="text-danger"></span>

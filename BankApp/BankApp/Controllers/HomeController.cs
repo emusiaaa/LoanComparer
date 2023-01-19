@@ -42,7 +42,7 @@ namespace BankApp.Controllers
         private readonly UserManager<ClientModel> _userManager;
         private readonly IEmailSender _emailSender;
         private readonly IOfferServer _offerServer;
-        private readonly InquiryServer _inquiryServer;
+        private readonly IInquiryServer _inquiryServer;
         private readonly MiNIApiCaller _MiNIClient;
         private readonly BestAPIApiCaller _BestAPIClient;
         private readonly StrangerApiCaller _StrangerClient;
@@ -50,7 +50,7 @@ namespace BankApp.Controllers
 
         public HomeController(ILogger<HomeController> logger, IClientRepository clientRepository, UserManager<ClientModel> userManager,
             INotRegisteredInquiryRepository notRegisteredInquiryRepository, IEmailSender emailSender, ILoggedInquiryRepository loggedInquiryRepository, 
-             IOffersSummaryRepository offersSummaryRepository, IOfferRepository offerRepository, IOfferServer offerServer, InquiryServer inquiryServer, 
+             IOffersSummaryRepository offersSummaryRepository, IOfferRepository offerRepository, IOfferServer offerServer, IInquiryServer inquiryServer, 
              MiNIApiCaller MiNIClient, BestAPIApiCaller bestAPIClient, StrangerApiCaller strangerClient)
         {
             _logger = logger;
@@ -79,21 +79,21 @@ namespace BankApp.Controllers
             //return RedirectToAction("Index","Employee");
            return View();
         }
-        [Authorize]
-        public async Task<IActionResult> HistoryOfInquiries(int pageNumber = 1, int pageSize = 15)
-        {
-            int excludeRecords = (pageSize * pageNumber) - pageSize;
-            var user = await _userManager.FindByNameAsync(User.Identity.Name);
-            var model = _loggedInquiryRepository.GetAll(user.Id);
-            var result = new PagedResult<InquiryModel>
-            {
-                Data = model.Skip(excludeRecords).Take(pageSize).ToList(),
-                TotalItems = model.Count(),
-                PageNumber = pageNumber,
-                PageSize = pageSize,
-            };
-            return View(result);
-        }
+        //[Authorize]
+        //public async Task<IActionResult> HistoryOfInquiries(int pageNumber = 1, int pageSize = 15)
+        //{
+        //    int excludeRecords = (pageSize * pageNumber) - pageSize;
+        //    var user = await _userManager.FindByNameAsync(User.Identity.Name);
+        //    var model = _loggedInquiryRepository.GetAll(user.Id);
+        //    var result = new PagedResult<InquiryModel>
+        //    {
+        //        Data = model.Skip(excludeRecords).Take(pageSize).ToList(),
+        //        TotalItems = model.Count(),
+        //        PageNumber = pageNumber,
+        //        PageSize = pageSize,
+        //    };
+        //    return View(result);
+        //}
         [Authorize]
         public async Task<IActionResult> AllBankOffersRequests()
         {
@@ -135,103 +135,108 @@ namespace BankApp.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public IActionResult InquiryCompleted()
-        {
-            return View("InquiryCompleted");
-        }
-        public IActionResult LoggedInquiry()
-        {
-            return View();
-        }
+        //public IActionResult InquiryCompleted()
+        //{
+        //    return View("InquiryCompleted");
+        //}
+        //public IActionResult LoggedInquiry()
+        //{
+        //    return View();
+        //}
 
-        [Authorize, HttpPost]
-        public async Task<IActionResult> LoggedInquiry(InquiryModel inquiry)
-        {
-            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+        //[Authorize, HttpPost]
+        //public async Task<IActionResult> LoggedInquiry(InquiryModel inquiry)
+        //{
+        //    var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
-            var errors = ModelState.Values.SelectMany(v => v.Errors);
-            var er = errors.Count();
-            if (er > 1)
-            {
-                return View();
-            }
+        //    var errors = ModelState.Values.SelectMany(v => v.Errors);
+        //    var er = errors.Count();
+        //    if (er > 1)
+        //    {
+        //        return View();
+        //    }
 
-            var inquiryJson = _inquiryServer.CreateInquiry(inquiry, user);
-            int inqIdInOurDb = _loggedInquiryRepository.Add(inquiry);
+        //    var inquiryJson = _inquiryServer.CreateInquiry(inquiry, user);
+        //    int inqIdInOurDb = _loggedInquiryRepository.Add(inquiry);
 
-            _offerServer.SaveOfferForLogged(_BestAPIClient, inquiryJson, inqIdInOurDb, "BestWorldAPI", user);
-            _offerServer.SaveOfferForLogged(_MiNIClient, inquiryJson, inqIdInOurDb, "projectAPI", user);
-            _offerServer.SaveOfferForLogged(_StrangerClient, inquiryJson, inqIdInOurDb, "StrangerAPI", user);
+        //    _offerServer.SaveOfferForLogged(_BestAPIClient, inquiryJson, inqIdInOurDb, "BestWorldAPI", user);
+        //    _offerServer.SaveOfferForLogged(_MiNIClient, inquiryJson, inqIdInOurDb, "projectAPI", user);
+        //    _offerServer.SaveOfferForLogged(_StrangerClient, inquiryJson, inqIdInOurDb, "StrangerAPI", user);
 
-            _ = _emailSender.SendEmailAsync(user.Email, "Confirmation of submitting inquiry",
-                MailCreator.ConfirmationOfSubmittingAnInquiry(user, inquiry));
+        //    _ = _emailSender.SendEmailAsync(user.Email, "Confirmation of submitting inquiry",
+        //        MailCreator.ConfirmationOfSubmittingAnInquiry(user, inquiry));
 
-            return RedirectToActionPermanent("HistoryOfInquiries");
-        }
+        //    return RedirectToActionPermanent("SuccessConfirmation", "Home", new { inquiryId = inqIdInOurDb });
+        //}
         //public async Task<IActionResult> SendInquiry(InquiryModel inquiry)
         //{
 
         //}
-        [HttpPost]
-        public async Task<IActionResult> InquiryNotRegistered(NotRegisteredInquiryModel inquiry)
-        {
-            var errors = ModelState.Values.SelectMany(v => v.Errors);
-            var er = errors.Count();
-            if (!ModelState.IsValid)
-            {
-                return View();
-            }
+        //[HttpPost]
+        //public async Task<IActionResult> InquiryNotRegistered(NotRegisteredInquiryModel inquiry)
+        //{
+        //    var errors = ModelState.Values.SelectMany(v => v.Errors);
+        //    var er = errors.Count();
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View();
+        //    }
             
-            var inquiryJson = _inquiryServer.CreateNRInquiry(inquiry);
-            int inqIdInOurDb = _notRegisteredInquiryRepository.Add(inquiry);
+        //    var inquiryJson = _inquiryServer.CreateNRInquiry(inquiry);
+        //    int inqIdInOurDb = _notRegisteredInquiryRepository.Add(inquiry);
 
-            _offerServer.SaveOfferForNotLogged(_BestAPIClient, inquiryJson, inqIdInOurDb, "BestWorldAPI");
-            _offerServer.SaveOfferForNotLogged(_MiNIClient, inquiryJson, inqIdInOurDb, "projectAPI");
-            _offerServer.SaveOfferForNotLogged(_StrangerClient, inquiryJson, inqIdInOurDb, "StrangerAPI");
+        //    _offerServer.SaveOfferForNotLogged(_BestAPIClient, inquiryJson, inqIdInOurDb, "BestWorldAPI");
+        //    _offerServer.SaveOfferForNotLogged(_MiNIClient, inquiryJson, inqIdInOurDb, "projectAPI");
+        //    _offerServer.SaveOfferForNotLogged(_StrangerClient, inquiryJson, inqIdInOurDb, "StrangerAPI");
 
-            _ = _emailSender.SendEmailAsync(inquiry.Email, "Confirmation of submitting inquiry",
-                             MailCreator.ConfirmationOfSubmittingAnInquiryNR(inquiry));
+        //    _ = _emailSender.SendEmailAsync(inquiry.Email, "Confirmation of submitting inquiry",
+        //                     MailCreator.ConfirmationOfSubmittingAnInquiryNR(inquiry));
 
-            return RedirectToActionPermanent("HistoryOfInquiries");
-        }
+        //    return RedirectToActionPermanent("SuccessConfirmation", "Home", new { inquiryId = inqIdInOurDb });
+        //}
 
-        public IActionResult OfferList(InquiryString model)
-        {
-            return View(model);
-        }
-        public IActionResult InquiryNotRegistered()
-        {
-            return View(new NotRegisteredInquiryModel());
-        }
-
-        [HttpGet]
-        public async Task<string?> BestAPIWaitForOffer()
-        {
-            return MockOffers.GenerateMockOffer();
-        }
+        //public IActionResult SuccessConfirmation(int inquiryId, bool isNR)
+        //{
+        //    InquiryString model;
+        //    if (isNR)
+        //    {
+        //        model = new InquiryString() { inquiryId = inquiryId,isNR=isNR };
+        //    }
+        //    else
+        //    {
+        //        model = new InquiryString() { inquiryId = inquiryId };
+        //    }
+            
+        //    return View(model);
+        //}
+        //public IActionResult InquiryNotRegistered()
+        //{
+        //    return View(new NotRegisteredInquiryModel());
+        //}
         public string GetLink(long id, string bankName)
         {
             return "/Home/OfferDetails?id=" + id.ToString() + "&bankName=" + bankName;
         }
         
-        public async Task<IActionResult> OfferDetails(string id, string bankName)
-        {
-            var offerDetails = _offerRepository.GetAllOffersForAClientForAGivenInquiryForAGivenBank(Int32.Parse(id), bankName);
-            //offerDetails.document = await _MiNIClient.GetOfferDetailsAsync(offerDetails.offerModel.DocumentLink);
-            switch (bankName)
-            {
-                case "projectAPI":
-                    ViewBag.document = await _MiNIClient.GetOfferDetailsAsync(offerDetails.DocumentLink); ;
-                    break;
-                case "BestWorldAPI":
-                    ViewBag.document = await _BestAPIClient.GetOfferDetailsAsync(offerDetails.DocumentLink);
-                    break;
-                case "StrangerAPI":
-                    ViewBag.document = await _StrangerClient.GetOfferDetailsAsync(offerDetails.DocumentLink);
-                    break;
-            }
-            return View("OfferDetails", offerDetails);
-        }
+        //public async Task<IActionResult> OfferDetails(int offerId, int offerIdInBank)
+        //{
+        //    var bankName = _offerRepository.GetOfferBank(offerId);
+        //    var offerDetails = _offerRepository.GetAllOffersForAClientForAGivenInquiryForAGivenBank(offerIdInBank, bankName);
+           
+        //    switch (bankName)
+        //    {
+        //        case "projectAPI":
+        //            ViewBag.document = await _MiNIClient.GetOfferDetailsAsync(offerDetails.DocumentLink); ;
+        //            break;
+        //        case "BestWorldAPI":
+        //            ViewBag.document = await _BestAPIClient.GetOfferDetailsAsync(offerDetails.DocumentLink);
+        //            break;
+        //        case "StrangerAPI":
+        //            ViewBag.document = await _StrangerClient.GetOfferDetailsAsync(offerDetails.DocumentLink);
+        //            break;
+        //    }
+        //    return View("OfferDetails", offerDetails);
+        //}
         public string Show(long id, string bankName)
         {
             return "/Home/ShowOffer?id=" + id.ToString() + "&bankName=" + bankName;
@@ -242,27 +247,27 @@ namespace BankApp.Controllers
             return View(new FileForOfferModel() { offerId = bankId });
         }
 
-        [HttpPost]
-        [Route("Home/SendFile/{offerId:int}/{offerIdInBank:int}")]
-        public async Task<IActionResult> SendFile(int offerId, int offerIdInBank, IFormFile formFile)
-        {
-            bool response = false;
-            var bankName = _offerRepository.GetOfferBank(offerId);
-            switch (bankName)
-            {
-                case "projectAPI":
-                    response = await _MiNIClient.SendFileAsync(offerIdInBank, formFile);
-                    break;
-                case "BestWorldAPI":
-                    response = await _BestAPIClient.SendFileAsync(offerIdInBank, formFile);
-                    break;
-                case "StrangerAPI":
-                    response = await _StrangerClient.SendFileAsync(offerIdInBank, formFile);
-                    break;
-            }
-            if(response) _offerRepository.UpdateIsOfferAccepted(offerId);
-            return response ? Ok() : View();
-        }
+        //[HttpPost]
+        //[Route("Home/SendFile/{offerId:int}/{offerIdInBank:int}")]
+        //public async Task<IActionResult> SendFile(int offerId, int offerIdInBank, IFormFile formFile)
+        //{
+        //    bool response = false;
+        //    var bankName = _offerRepository.GetOfferBank(offerId);
+        //    switch (bankName)
+        //    {
+        //        case "projectAPI":
+        //            response = await _MiNIClient.SendFileAsync(offerIdInBank, formFile);
+        //            break;
+        //        case "BestWorldAPI":
+        //            response = await _BestAPIClient.SendFileAsync(offerIdInBank, formFile);
+        //            break;
+        //        case "StrangerAPI":
+        //            response = await _StrangerClient.SendFileAsync(offerIdInBank, formFile);
+        //            break;
+        //    }
+        //    if(response) _offerRepository.UpdateIsOfferAccepted(offerId);
+        //    return response ? Ok() : View();
+        //}
         public async Task<IActionResult> AcceptDeclineOffer(string id)
         {
             //var offer = _offerRepository.GetOfferForBankEmployee(Int32.Parse(id));
@@ -284,19 +289,19 @@ namespace BankApp.Controllers
                 MailCreator.EmployeeDecision(decision));
             return RedirectToAction("AllBankOffersRequests");
         }
-        public IActionResult OfferList2(int inquiryID, bool isNR)
-        {
-            if (isNR)
-            {
-                var model = _offerRepository.GetAllOffersForAGivenNRInquiry(inquiryID);
-                return View(model);
-            }
-            else
-            {
-                var model = _offerRepository.GetAllOffersForAGivenInquiry(inquiryID);
-                return View(model);
-            }
-        }
+        //public IActionResult OfferList2(int inquiryID, bool isNR)
+        //{
+        //    if (isNR)
+        //    {
+        //        var model = _offerRepository.GetAllOffersForAGivenNRInquiry(inquiryID);
+        //        return View(model);
+        //    }
+        //    else
+        //    {
+        //        var model = _offerRepository.GetAllOffersForAGivenInquiry(inquiryID);
+        //        return View(model);
+        //    }
+        //}
         public string GetBankName(int offerID, int offerIDinBank)
         {
             var bankName = _offerRepository.GetOfferBank(offerID);

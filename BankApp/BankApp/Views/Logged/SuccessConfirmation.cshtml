@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "Huraaa!:)";
+}
+@model InquiryString
+<div class="text-center">
+    <h1 class="display-4">Thank you for your application!</h1>
+    <span>We've sent You an email with confirmation of submitting inquiry. You can check offers 
+    <a asp-action="OfferList" asp-controller="Logged" asp-route-inquiryID=@Model.inquiryId>here</a>.
+    </span>
+</div>
+
+@*<style>
+    .container{
+        margin:auto
+    }
+</style>*@

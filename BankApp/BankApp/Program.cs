@@ -86,7 +86,7 @@ builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 builder.Services.AddSingleton<IOfferServer, OfferServer>()
     .AddSingleton<IServiceProvider,ServiceProvider>();
-builder.Services.AddScoped<InquiryServer>();
+builder.Services.AddScoped<IInquiryServer,InquiryServer>();
 
 builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 

@@ -51,7 +51,7 @@
                     <td>@inquiry.LoanValue</td>
                     <td>@inquiry.InstallmentsCount</td>
                     <td>
-                        <button class="mybtn" onclick="location.href='@Url.Action("OfferList2", "Home",new {inquiryID=@inquiry.Id})'">View</button>
+                        <button class="mybtn" onclick="location.href='@Url.Action("OfferList", "Logged",new {inquiryID=@inquiry.Id})'">View</button>
                         @*<form asp-controller="Home" asp-action="OfferList2" asp-route-inquiryID="@inquiry.Id">
                             <input class="mybtn" type="submit" value="View" />
                         </form>*@
@@ -65,7 +65,7 @@
               cs-paging-totalitems=Model.TotalItems
               cs-paging-pagesize=Model.PageSize
               cs-pagenumber-param="pageNumber"
-              asp-controller="Home"
+              asp-controller="Logged"
               asp-action="HistoryOfInquiries"
               cs-pager-li-current-class="page-item active"
               cs-pager-li-other-class="page-item"

@@ -43,7 +43,7 @@
     }
     @if(isAccepted){
         <div class="offer-container">
-            <h1>Choosen offer</h1>
+            <h1>Chosen offer</h1>
             @if(accepted.IsApprovedByEmployee==null){
                 <h4>Status: Offer waits to be accepted by the bank</h4>
             }
@@ -136,7 +136,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <button class="mybtn" onclick="location.href='@Url.Action("OfferDetails", "Home",new {offerId=@offer.Id,offerIdInBank=@offer.OfferIdInBank})'">Details</button>
+                <button class="mybtn" onclick="location.href='@Url.Action("OfferDetails", "Unregistered",new {offerId=@offer.Id,offerIdInBank=@offer.OfferIdInBank})'">Details</button>
             </div>
             i++;
         }
