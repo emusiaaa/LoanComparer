@@ -1,12 +1,33 @@
 ﻿using BankApp.Data;
 using BankApp.Models;
 using BankApp.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Claims;
+using System.Dynamic;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using BankApp.Services;
+using System.Text.Encodings.Web;
+using System.Net.Http;
+using Newtonsoft.Json.Linq;
+using System.Net.Http.Headers;
+using System.Web;
+using Newtonsoft.Json;
+using System.Text;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
+using System.Text.Json;
+using NuGet.Common;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using NuGet.Protocol;
 using BankApp.Client;
+using Humanizer.Localisation.TimeToClockNotation;
+using cloudscribe.Pagination.Models;
+using JsonSerializer = System.Text.Json.JsonSerializer;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Text.Json.Nodes;
 
 namespace BankApp.Controllers
 {
@@ -34,22 +55,5 @@ namespace BankApp.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        //public string Show(long id, string bankName)
-        //{
-        //    return "/Home/ShowOffer?id=" + id.ToString() + "&bankName=" + bankName;
-        //}
-        //public IActionResult ShowOffer(long id, string bankName)
-        //{
-        //    var bankId = _offerRepository.GetOfferIdInBank(id);
-        //    return View(new FileForOfferModel() { offerId = bankId });
-        //}
-    
-        //public string[] InquiryIDinOurDb(int offerId)
-        //{
-        //    var c =_offersSummaryRepository.GetInquiryIdInOurDb(offerId);
-        //    //var x = Json(c);
-        //    string[] cs = { c.id.ToString(), c.isNR.ToString() };
-        //    return cs ;
-        //}
     }
 }
