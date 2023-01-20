@@ -85,9 +85,10 @@ namespace BankApp.Client
 
             return result.IsSuccessStatusCode;
         }
-        public void CompleteOfferAsync(int offerId)
+        public async void CompleteOfferAsync(int offerId)
         {
-            throw new NotImplementedException();
+            GetToken();
+            var result = await _httpClient.PostAsync("/api/v1/Offer" + $"/{offerId}" + "/complete", null);
         }
         private void GetToken()
         {

@@ -37,7 +37,7 @@
         <tr>
             <td>How much you'll spend</td>
             @{
-                double howmuch = Model.MonthlyInstallment * Model.RequestedPeriodInMonth;
+                double howmuch = Math.Round(Model.MonthlyInstallment * Model.RequestedPeriodInMonth, 2);
             }
             <td>@howmuch</td>
         </tr>
@@ -53,7 +53,7 @@
 <div>
     <form enctype="multipart/form-data" onsubmit="AJAXSubmit(this);return false;"
     method="post">
-        <input type="file" name="formFile" required/>
+        <input type="file" name="formFile" value="Upload file" required/>
         <div style="margin-top:15px">
             <output name="result"></output>
         </div>

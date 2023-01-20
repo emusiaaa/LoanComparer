@@ -1,15 +1,7 @@
-﻿@model IEnumerable<OfferModel>
+﻿@model IEnumerable<AllInquiryViewModel>
 @{
-    ViewData["Title"] = "Offers";
+    ViewData["Title"] = "Inquiries";
 }
-<style>
-    .mybtn {
-        background: white;
-        border-radius: 5px;
-        width: 100px;
-        border: 1px black solid;
-    }
-</style>
 <!DOCTYPE html>
 <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"></script>
 
@@ -21,19 +13,19 @@
         var x = document.getElementById("dateRange").value;
         document.getElementById("days").textContent = "Show the last " + x + " days";
     }
+    
+    function ableDateRange () {
 
-    function ableDateRange() {
-
-        if (document.getElementById("dateCheckBox").checked) {
+        if (document.getElementById("dateCheckBox").checked){
             document.getElementById("dateRange").disabled = false;
             updateDaysLabel();
         }
-        else {
+        else{
             document.getElementById("dateRange").disabled = true;
             document.getElementById("days").textContent = "Filter by submission date";
         }
     }
-    function ableName() {
+    function ableName () {
         if (document.getElementById("nameCheckBox").checked) {
             document.getElementById("SearchString").disabled = false;
         }
@@ -56,14 +48,14 @@
         console.log(localStorage['mykey']);
         Promise.resolve($.ajax({
             type: "GET",
-            url: '/Employee/FilterOffersRequests',
+            url: '/Employee/Filter',
             contentType: false,
             processData: false
         })).then(function (result) {
             if (result) {
                 data = result;
                 filteredData = result;
-                let inquiries = FilterOffersRequests();
+                let inquiries = Filter();
                 inquiries = Sort(inquiries);
                 Show(inquiries);
                 localStorage.setItem('dateFilter', 0);
@@ -77,53 +69,48 @@
 
 <script>
 
-    function FilterOffersRequests() {
+    function Filter() {
         let filtered = data;
-        if (localStorage['nameFilter'] != undefined && localStorage['nameFilter'] != "") {
-            filtered = filtered.filter((el) => el.statusDescription == localStorage['nameFilter']);
+        if (localStorage['nameFilter'] != undefined && localStorage['nameFilter']!= "") {
+            filtered = filtered.filter((el) => el.userFirstName == localStorage['nameFilter'] || el.userLastName == localStorage['nameFilter']);
         }
         if (localStorage['dateFilter'] != 0) {
             var date = new Date();
             date.setDate(date.getDate() - localStorage['dateFilter']);
 
-            filtered = filtered.filter((el) => new Date(el.createDate) - date > 0);
+            filtered = filtered.filter((el) => new Date(el.submissionDate) - date > 0);
         }
         filteredData = filtered;
         return filtered;
     }
 
     function Sort(sorted) {
-        if (localStorage['sortString2'] == "loan_desc") {
-            return sorted.sort((a, b) => a.requestedValue < b.requestedValue)
+        if (localStorage['sortString'] == "loan_desc") {
+            return sorted.sort((a, b) => a.loanValue < b.loanValue)
         }
-        if (localStorage['sortString2'] == "loan_asc") {
-            return sorted.sort((a, b) => a.requestedValue >= b.requestedValue)
+        if (localStorage['sortString'] == "loan_asc") {
+            return sorted.sort((a, b) => a.loanValue > b.loanValue)
         }
-        if (localStorage['sortString2'] == "date_desc") {
-            return sorted.sort((a, b) => new Date(a.createDate).getTime() - new Date(b.createDate).getTime())
+        if (localStorage['sortString'] == "date_desc") {
+            return sorted.sort((a, b) => new Date(a.submissionDate).getTime() - new Date(b.submissionDate).getTime())
         }
         else {
-            return sorted.sort((a, b) => new Date(b.createDate).getTime() - new Date(a.createDate).getTime())
+            return sorted.sort((a, b) => new Date(b.submissionDate).getTime() - new Date(a.submissionDate).getTime())
         }
     }
-    function showOffer(id) {
-        $.get("/Employee/RedirectToAcceptDeclineOffer", { offerId:id})
-            .done(function (data) {
-                window.location.href = data;
-            })
-    }
+
     function Show(inquiries) {
         $("#mainTable").empty();
         $.each(inquiries, function (i, v) {
             var row = "<tr>";
 
-            row += "<td>" + v.createDate.substring(0,10) + "</td>";
-            row += "<td>" + v.requestedValue + "</td>";
-            row += "<td>" + v.percentage + "</td>";
-            row += "<td>" + v.monthlyInstallment + "</td>";
-            row += "<td>" + v.statusDescription + "</td>";
-            row += "<td>" + v.requestedPeriodInMonth + "</td>";
-            row += "<td><button class=\"mybtn\" onclick=\"return showOffer(this.value)\" value=\"" + v.id +  "\">View</button></td>";
+            row += "<td>" + v.submissionDate.substring(0,10) + "</td>";
+            row += "<td>" + v.loanValue + "</td>";
+            row += "<td>" + v.installmentsCount + "</td>";
+            row += "<td>" + v.userFirstName + "</td>";
+            row += "<td>" + v.userLastName + "</td>";
+            row += "<td>" + v.email + "</td>";
+
             row += "</tr>";
 
             $("#mainTable").append($(row));
@@ -131,18 +118,18 @@
     }
 
     function SortBy(sortOrder) {
-        localStorage.setItem('sortString2', sortOrder);
+        localStorage.setItem('sortString', sortOrder);
         inquiries = Sort(filteredData);
         Show(inquiries);
     }
-
+    
 </script>
 
 
 <form onsubmit="return validateForm()">
     <div class="form-actions no-color">
         <p>
-            <input type="checkbox" id="nameCheckBox" onclick="ableName()" />Find by offer status type: <input type="text" id="SearchString" name="SearchString" disabled />
+            <input type="checkbox" id="nameCheckBox" onclick="ableName()" />Find by name: <input type="text" id="SearchString" name="SearchString" disabled />
             <input type="range" class="form-range" id="dateRange" name="dateRange" min="1" max="100" value="30" oninput="updateDaysLabel()" disabled>
             <input type="checkbox" id="dateCheckBox" onclick="ableDateRange()" /><label for="dateCheckBox" class="form-label" id="days">Filter by submission date</label>
             <input type="submit" value="Search" />
@@ -155,21 +142,20 @@
     <div class="dropdown-menu" data-bs-popper="static">
         <label class="dropdown-item" onclick="SortBy('')">DATE, NEW TO OLD</label>
         <label class="dropdown-item" onclick="SortBy('date_desc')">DATE, OLD TO NEW</label>
-        <label class="dropdown-item" onclick="SortBy('loan_asc')">REQUESTED VALUE, LOW TO HIGH</label>
-        <label class="dropdown-item" onclick="SortBy('loan_desc')">REQUESTED VALUE, HIGH TO LOW</label>
+        <label class="dropdown-item" onclick="SortBy('loan_asc')">LOAN, LOW TO HIGH</label>
+        <label class="dropdown-item" onclick="SortBy('loan_desc')">LOAN, HIGH TO LOW</label>
     </div>
 </div>
 
 <table class="table table-hover">
     <thead>
         <tr>
-            <th scope="col">Create Date</th>
-            <th scope="col">Requested Value</th>
-            <th scope="col">Percentage</th>
-            <th scope="col">Monthly Installment</th>
-            <th scope="col">Status Description</th>
-            <th scope="col">Requested Period In Months</th>
-            <th scope="col">Details</th>
+            <th scope="col">Date</th>
+            <th scope="col">Loan Value</th>
+            <th scope="col">Number Of installments</th>
+            <th scope="col">Client's last name</th>
+            <th scope="col">Client's first name</th>
+            <th scope="col">Client's email</th>
         </tr>
     </thead>
     <tbody id="mainTable">

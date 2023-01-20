@@ -56,7 +56,7 @@
         console.log(localStorage['mykey']);
         Promise.resolve($.ajax({
             type: "GET",
-            url: '/Home/FilterOffersRequests',
+            url: '/Employee/FilterOffersRequests',
             contentType: false,
             processData: false
         })).then(function (result) {
@@ -107,7 +107,7 @@
         }
     }
     function showOffer(id) {
-        $.get("/Home/RedirectToAcceptDeclineOffer", { offerId:id})
+        $.get("/Employee/RedirectToAcceptDeclineOffer", { offerId:id})
             .done(function (data) {
                 window.location.href = data;
             })
