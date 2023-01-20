@@ -83,10 +83,10 @@
 </table>
 
 @if(Model.offer.IsApprovedByEmployee == null){
-    <form asp-controller="Home" asp-action="MakeDecision" asp-route-offerID="@Model.offer.Id" asp-route-email="@Model.inquiry.Email" asp-route-decision="true">
+    <form asp-controller="Employee" asp-action="MakeDecision" asp-route-offerID="@Model.offer.OfferIdInBank" asp-route-email="@Model.inquiry.Email" asp-route-decision="true">
         <input type="submit" value="Accept"/>
     </form>
-    <form asp-controller="Home" asp-action="MakeDecision" asp-route-offerID="@Model.offer.Id" asp-route-email="@Model.inquiry.Email" asp-route-decision="false">
+    <form asp-controller="Employee" asp-action="MakeDecision" asp-route-offerID="@Model.offer.OfferIdInBank" asp-route-email="@Model.inquiry.Email" asp-route-decision="false">
         <input type="submit" value="Decline" />
     </form>
 }

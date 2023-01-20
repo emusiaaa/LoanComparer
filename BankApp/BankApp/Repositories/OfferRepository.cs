@@ -155,6 +155,7 @@ namespace BankApp.Repositories
             if (result != null)
             {
                 result.IsOfferAccepted = true;
+                result.StatusDescription = "Pending";
             }
             _context.SaveChanges();
             return result;
