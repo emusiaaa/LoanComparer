@@ -3,7 +3,8 @@ The goal of this academic project was to create a loan comparer that compared 3 
 
 # Technology
 - ASP.NET Core MVC
-- AJAX/JS
+- JS
+- AJAX
 - LINQ
 
 # Project requirements
