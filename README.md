@@ -1,6 +1,6 @@
 # About
 The goal of this academic project was to create a loan comparer that compared 3 different banks offers (from self-made API, professor's and other team's).
-
+The website allows you to take a loan that had to be approved by a bank employee.
 # Technology
 - ASP.NET Core MVC
 - JS
